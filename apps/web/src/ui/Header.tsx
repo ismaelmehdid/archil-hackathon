@@ -5,15 +5,6 @@ import { useViewerStore } from '../store';
 import { createGame, restartReplay, useUi } from './feed';
 import { impostorTotal, useNow } from './common';
 
-const PHASE_LABEL: Record<string, string> = {
-  lobby: 'Lobby',
-  question: 'Question',
-  answering: 'Answering',
-  voting: 'Voting!',
-  reveal: 'Reveal',
-  game_over: 'Game over',
-};
-
 function fmt(ms: number) {
   const s = Math.max(0, Math.floor(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
@@ -82,29 +73,25 @@ export default function Header() {
           <span className="round">
             Round <b>{game.round}</b>/{game.config.rounds}
           </span>
-          <span className={`pill phase-${game.phase}`}>{PHASE_LABEL[game.phase] ?? game.phase}</span>
           <PhaseTimer />
-          {game.topic && (
-            <span className="topic" title={game.topic}>
-              {game.topic}
-            </span>
-          )}
-          <span className="counts" title="alive players">
-            <b className="c-crew">{crewAlive}</b> crew · <b className="c-imp">{impAlive}</b> impostor
-            {impAlive === 1 ? '' : 's'}
-          </span>
-          <span className="badges">
-            <span className={`badge ${game.mode.llm === 'mock' ? 'mock' : 'real'}`}>llm:{game.mode.llm}</span>
-            <span className={`badge ${game.mode.disks === 'memory' ? 'mock' : 'real'}`}>disks:{game.mode.disks}</span>
-            <span className={`badge ${game.mode.search === 'mock' ? 'mock' : 'real'}`}>search:{game.mode.search}</span>
-            {game.mode.impostorEgressBlocked && <span className="badge real">egress blocked</span>}
+          <span className="counts" title={`${crewAlive} crew + ${impAlive} impostor${impAlive === 1 ? '' : 's'} still playing`}>
+            <b>{alive.length}</b> players left · <b className="c-imp">{impAlive}</b> impostor{impAlive === 1 ? '' : 's'} hidden among them
           </span>
         </>
       ) : (
         <span className="muted">{connection === 'connecting' ? 'Connecting...' : 'Waiting for a game...'}</span>
       )}
       <div className="spacer" />
-      <span className={`conn conn-${connection}`}>{connection}</span>
+      <span
+        className={`conn conn-${connection}`}
+        title={
+          game
+            ? `llm: ${game.mode.llm} · disks: ${game.mode.disks} · search: ${game.mode.search}${game.mode.impostorEgressBlocked ? ' · impostor egress blocked' : ''}`
+            : undefined
+        }
+      >
+        {connection}
+      </span>
       <label className="toggle" title="Reveal roles, answer keys and impostor thoughts">
         <input type="checkbox" checked={godMode} onChange={(e) => setGodMode(e.target.checked)} /> God mode
       </label>

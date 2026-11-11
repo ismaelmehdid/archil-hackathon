@@ -65,8 +65,6 @@ const G = {
   tall: at(new THREE.IcosahedronGeometry(0.6, 0), 2.0, 1, 2.1, 1),
   bush: at(new THREE.IcosahedronGeometry(0.6, 0), 0.25, 1, 0.75, 1),
   rock: at(new THREE.DodecahedronGeometry(0.5, 0), 0.15, 1, 0.7, 1),
-  stem: at(new THREE.CylinderGeometry(0.22, 0.3, 1, 6), 0.5),
-  cap: at(new THREE.ConeGeometry(0.85, 0.65, 7), 1.25),
 };
 
 const lit = (color: string, extra: THREE.MeshStandardMaterialParameters = {}) =>
@@ -74,22 +72,19 @@ const lit = (color: string, extra: THREE.MeshStandardMaterialParameters = {}) =>
 
 const M = {
   ground: lit('#ffffff', { vertexColors: true, roughness: 1 }),
-  water: lit('#8fd0ff', { roughness: 0.4, emissive: '#5aa8e6', emissiveIntensity: 0.15 }),
+  water: lit('#b3d9ee', { roughness: 0.6 }),
   trunk: lit('#b07a54'),
   foliage: lit('#ffffff'), // tinted per instance
   rock: lit('#ffffff'),
-  stem: lit('#fff3e0'),
-  cap: lit('#ff6f8f'),
 };
 
-const GREENS = ['#5fd08e', '#4fbf86', '#7fd97a', '#9be36f', '#3fae7e', '#6fcfa8', '#58c47c'].map((c) => new THREE.Color(c));
-const ACCENTS = ['#ffb36b', '#ff9ec0', '#ffd95a', '#c7a6ff'].map((c) => new THREE.Color(c));
-const ROCKS = ['#b9a3c9', '#d7c8e0', '#a99bbb', '#c9bfd6'].map((c) => new THREE.Color(c));
+const GREENS = ['#8cc79a', '#7dbb8f', '#9fcf96', '#86c2a0', '#94c98c', '#7fb995'].map((c) => new THREE.Color(c));
+const ROCKS = ['#c9c3d1', '#d6d1dc', '#bdb7c6'].map((c) => new THREE.Color(c));
 
-const SAND = new THREE.Color('#f3dca6');
-const MEADOW = new THREE.Color('#a6e388');
-const FOREST_FLOOR = new THREE.Color('#6cc07a');
-const HILL = new THREE.Color('#9fd97a');
+const SAND = new THREE.Color('#eadfc0');
+const MEADOW = new THREE.Color('#c3e2b0');
+const FOREST_FLOOR = new THREE.Color('#a3cf9f');
+const HILL = new THREE.Color('#b5d6a6');
 
 /* ------------------------------ terrain ------------------------------ */
 
@@ -171,7 +166,7 @@ function scatter(R: number) {
   const rand = rng(1234);
   const pick = <T,>(a: T[]) => a[Math.floor(rand() * a.length)];
   const ring = (a: number, b: number) => Math.sqrt(a * a + (b * b - a * a) * rand());
-  const out = { pine: [] as Item[], round: [] as Item[], tall: [] as Item[], bush: [] as Item[], rock: [] as Item[], shroom: [] as Item[] };
+  const out = { pine: [] as Item[], round: [] as Item[], tall: [] as Item[], bush: [] as Item[], rock: [] as Item[] };
 
   const place = (list: Item[], rMin: number, rMax: number, sMin: number, sMax: number, colors?: THREE.Color[], minY = WATER_Y + 0.5) => {
     for (let tries = 0; tries < 6; tries++) {
@@ -189,7 +184,7 @@ function scatter(R: number) {
     }
   };
 
-  const foliage = () => (rand() < 0.08 ? ACCENTS : GREENS);
+  const foliage = () => GREENS;
   // Density scales with the clearing so big games still get a thick forest wall.
   const k = Math.min(2.5, Math.max(1, (R / 14) ** 2));
   const N = (n: number) => Math.round(n * k);
@@ -197,11 +192,10 @@ function scatter(R: number) {
   for (let i = 0; i < N(300); i++) place(out.pine, R * 1.12, R * 3.4, 1.1, 1.9, foliage());
   for (let i = 0; i < N(190); i++) place(out.round, R * 1.08, R * 3.2, 1.0, 1.7, foliage());
   for (let i = 0; i < N(110); i++) place(out.tall, R * 1.15, R * 3.3, 1.0, 1.6, foliage());
-  // Props: a few loose trees at the forest edge, bushes, rocks and goofy mushrooms in the outer clearing.
+  // Props: a few loose trees at the forest edge, then bushes and rocks (kept outside the clearing so it stays clean).
   for (let i = 0; i < N(20); i++) place(pick([out.pine, out.round, out.tall]), R * 0.98, R * 1.12, 0.8, 1.2, GREENS);
-  for (let i = 0; i < N(150); i++) place(out.bush, R - 2.2, R * 3.2, 0.6, 1.3, rand() < 0.15 ? ACCENTS : GREENS);
-  for (let i = 0; i < N(60); i++) place(out.rock, R - 2.4, R * 3.0, 0.5, 1.6, ROCKS, WATER_Y - 0.2);
-  for (let i = 0; i < N(12); i++) place(out.shroom, R - 2.2, R * 1.25, 0.8, 1.4);
+  for (let i = 0; i < N(150); i++) place(out.bush, R * 1.02, R * 3.2, 0.6, 1.3, GREENS);
+  for (let i = 0; i < N(60); i++) place(out.rock, R * 1.0, R * 3.0, 0.5, 1.6, ROCKS, WATER_Y - 0.2);
   return out;
 }
 
@@ -265,8 +259,6 @@ export const Forest = memo(function Forest({ radius }: { radius: number }) {
       <Instances items={items.tall} geometry={G.tall} material={M.foliage} />
       <Instances items={items.bush} geometry={G.bush} material={M.foliage} />
       <Instances items={items.rock} geometry={G.rock} material={M.rock} />
-      <Instances items={items.shroom} geometry={G.stem} material={M.stem} trunk />
-      <Instances items={items.shroom} geometry={G.cap} material={M.cap} />
     </group>
   );
 });

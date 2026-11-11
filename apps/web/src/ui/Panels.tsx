@@ -1,5 +1,5 @@
 'use client';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { REFEREE_ID } from '@susagent/shared';
 import { useViewerStore } from '../store';
 import { AgentName, RoleTag, Section, useAgents } from './common';
@@ -51,19 +51,11 @@ export function RefereeCard() {
   return (
     <section className="panel referee">
       <div className="panel-head">
-        <h3>
-          <AgentName id={REFEREE_ID} />
-        </h3>
-        {q && (
-          <span className="muted">
-            Q{q.round}.{q.index + 1}
-          </span>
-        )}
+        <h3>The question</h3>
+        {q && <span className="muted">Round {q.round}</span>}
       </div>
       {q ? <p className="question">{q.text}</p> : <p className="muted">{lastAnnouncement?.text ?? 'No question yet.'}</p>}
-      {q && lastAnnouncement && lastAnnouncement.round === game?.round && (
-        <p className="muted small">{lastAnnouncement.text}</p>
-      )}
+      {game?.topic && <p className="muted small">Topic: {game.topic}</p>}
       {godMode && key && (
         <div className="answer-key">
           <b>Answer key:</b> {key.answer}
@@ -84,10 +76,30 @@ export function AnswersPanel() {
   const godMode = useViewerStore((s) => s.godMode);
   const agents = useAgents();
   const answers = game?.answers.filter((a) => a.round === game.round) ?? [];
+  const alive = game?.agents.filter((a) => a.alive).length ?? 0;
+  // Once voting starts the answers fold away (one click to reopen, one line each) so the votes stay in view.
+  const compact = game?.phase === 'voting' || game?.phase === 'reveal';
+  const foldKey = `${game?.round}:${compact}`;
+  const [openKey, setOpenKey] = useState<string | null>(null);
+  const folded = compact && openKey !== foldKey;
   return (
-    <Section title="Answers" right={<span className="muted">{answers.length}</span>}>
+    <Section
+      title="Answers"
+      right={
+        compact && answers.length > 0 ? (
+          <button className="fold" onClick={() => setOpenKey(folded ? foldKey : null)}>
+            {folded ? `Show all ${answers.length}` : 'Hide'}
+          </button>
+        ) : (
+          <span className="muted">
+            {answers.length} / {alive}
+          </span>
+        )
+      }
+    >
       {answers.length === 0 && <p className="muted">Waiting for answers...</p>}
-      <ul className="answers">
+      {folded && answers.length > 0 && <p className="muted small">{answers.length} answers given. Now everyone votes.</p>}
+      <ul className={compact ? 'answers compact' : 'answers'} hidden={folded}>
         {answers.map((a) => (
           <li
             key={a.id}
@@ -128,16 +140,15 @@ export function LiveVotesPanel() {
 
   return (
     <Section
-      title="Live votes"
+      title="Votes"
       right={
         <span className={voting ? 'live-dot' : 'muted'}>
-          {voting ? 'VOTING ' : rows.length ? 'result ' : ''}
-          {rows.length > 0 && `${rows.length}/${voters}`}
+          {rows.length > 0 ? `${rows.length} of ${voters} voted` : voting ? 'voting now' : ''}
         </span>
       }
     >
       {rows.length === 0 && (
-        <p className="muted">{voting ? 'First votes incoming...' : 'Votes appear here live during voting.'}</p>
+        <p className="muted">{voting ? 'First votes incoming...' : 'Votes show up here during the vote.'}</p>
       )}
       {tally.length > 0 && (
         <div className="tally">
@@ -156,7 +167,7 @@ export function LiveVotesPanel() {
       )}
       {elimThisRound.map((e) => (
         <div key={e.agentId} className={`elim-banner fade-in role-bg-${e.role}`}>
-          <b>{agents[e.agentId]?.name ?? e.agentId}</b> was eliminated and was <RoleTag role={e.role} />
+          <b>{agents[e.agentId]?.name ?? e.agentId}</b> was voted out. They were <RoleTag role={e.role} />
         </div>
       ))}
       <ul className="votes">
@@ -181,47 +192,25 @@ export function LiveVotesPanel() {
 export function HistoryPanel() {
   const game = useViewerStore((s) => s.game);
   if (!game || game.eliminated.length === 0) return null;
-  const rounds = [...new Set(game.eliminated.map((e) => e.round))].sort((a, b) => b - a);
+  const list = [...game.eliminated].sort((a, b) => b.round - a.round);
   return (
-    <Section title="Eliminations" right={<span className="muted">{game.eliminated.length} out</span>}>
-      <table className="history">
-        <thead>
-          <tr>
-            <th>Rd</th>
-            <th>Eliminated</th>
-            <th>Role</th>
-            <th>Votes</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rounds.map((round) => {
-            const out = game.eliminated.filter((e) => e.round === round);
-            const rv = game.votes.filter((v) => v.round === round);
-            return out.map((e, i) => {
-              const n = rv.filter((v) => v.targetId === e.agentId).length;
-              return (
-                <tr key={e.agentId} className={i === 0 ? 'round-first' : ''}>
-                  {i === 0 && (
-                    <td rowSpan={out.length} title={`${out.length} eliminated in round ${round}`}>
-                      {round}
-                      {out.length > 1 && <div className="muted small">x{out.length}</div>}
-                    </td>
-                  )}
-                  <td>
-                    <AgentName id={e.agentId} showRole={false} />
-                  </td>
-                  <td>
-                    <RoleTag role={e.role} />
-                  </td>
-                  <td title={`${n} of ${rv.length} votes`}>
-                    {n}/{rv.length}
-                  </td>
-                </tr>
-              );
-            });
-          })}
-        </tbody>
-      </table>
+    <Section title="Voted out so far" right={<span className="muted">{game.eliminated.length}</span>}>
+      <ul className="out-list">
+        {list.map((e) => {
+          const rv = game.votes.filter((v) => v.round === e.round);
+          const n = rv.filter((v) => v.targetId === e.agentId).length;
+          return (
+            <li key={e.agentId}>
+              <span className="out-round">R{e.round}</span>
+              <AgentName id={e.agentId} showRole={false} />
+              <RoleTag role={e.role} />
+              <span className="muted small out-votes">
+                {n} of {rv.length} votes
+              </span>
+            </li>
+          );
+        })}
+      </ul>
     </Section>
   );
 }

@@ -10,39 +10,100 @@ import { useViewerStore } from '../store';
 import { AgentName, RoleTag, useAgents } from './common';
 import { createGame, fixture, restartReplay, SERVER_URL, useUi } from './feed';
 
-const PHASE_BANNERS: Partial<Record<string, { title: string; sub: string }>> = {
-  question: { title: 'QUESTION TIME!', sub: 'the referee has a question' },
-  answering: { title: 'ANSWER UP!', sub: 'tell the truth... or fake it' },
-  voting: { title: 'VOTE TIME!', sub: "who's the sus one?" },
-  reveal: { title: 'THE REVEAL!', sub: 'and... YEET!' },
-};
-const PHASE_BANNER_MS = 2000;
+/** Same delay as the 3D role card, so the caption doesn't spoil the role before the launch. */
+const ROLE_REVEAL_DELAY_MS = 900;
 
-/** Big bouncy banner over the arena for ~2 s whenever the phase changes. */
-export function PhaseBanner() {
-  const phase = useViewerStore((s) => s.game?.phase);
-  const round = useViewerStore((s) => s.game?.round ?? 0);
-  const key = `${round}:${phase}`;
-  const [shown, setShown] = useState<string | null>(null);
-  useEffect(() => {
-    if (!phase || !PHASE_BANNERS[phase]) return;
-    setShown(key);
-    const t = setTimeout(() => setShown((k) => (k === key ? null : k)), PHASE_BANNER_MS);
-    return () => clearTimeout(t);
-  }, [key, phase]);
-  const b = phase && shown === key ? PHASE_BANNERS[phase] : undefined;
-  if (!b) return null;
+function joinNames(names: string[]) {
+  if (names.length <= 1) return names[0] ?? '';
+  return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+}
+
+/**
+ * One big plain-language caption, top-centre over the arena, that always says what is happening right now.
+ * A first-time viewer should get each moment in ~2 seconds.
+ */
+export function PhaseCaption() {
+  const game = useViewerStore((s) => s.game);
+  const liveVoteCount = useViewerStore((s) => Object.keys(s.liveVotes).length);
+  const eliminations = useViewerStore((s) => s.eliminations);
+  useNowWhile(game?.phase === 'reveal', 250);
+  if (!game) return null;
+  const { phase, round } = game;
+  const rounds = game.config.rounds;
+  const alive = game.agents.filter((a) => a.alive).length;
+  const outNow = game.eliminated.filter((e) => e.round === round);
+  const roundTag = round > 0 ? `Round ${round}/${rounds}` : '';
+
+  let title = '';
+  let sub = '';
+  switch (phase) {
+    case 'lobby':
+      title = 'Getting the players ready…';
+      sub = `${game.config.agentCount} AI players are joining. A few of them are secret impostors.`;
+      break;
+    case 'question': {
+      title = 'The referee asks a question';
+      sub = 'Everyone has to answer it. The impostors will try to bluff.';
+      break;
+    }
+    case 'answering': {
+      const n = game.answers.filter((a) => a.round === round).length;
+      title = 'Everyone answers…';
+      sub = `${n} of ${alive} answers are in. Liars give fake facts.`;
+      break;
+    }
+    case 'voting': {
+      const voters = alive + outNow.length;
+      title = 'Vote! Who is the impostor?';
+      sub = `${liveVoteCount} of ${voters} have voted. Arrows show who votes for whom.`;
+      break;
+    }
+    case 'reveal': {
+      if (!outNow.length) {
+        title = 'Counting the votes…';
+        sub = 'The most-voted player gets launched off the field.';
+        break;
+      }
+      const names = outNow.map((e) => game.agents.find((a) => a.id === e.agentId)?.name ?? e.agentId);
+      const lastAt = Math.max(...outNow.map((e) => eliminations[e.agentId]?.at ?? 0));
+      const shown = performance.now() - lastAt >= ROLE_REVEAL_DELAY_MS;
+      title = `${joinNames(names)} ${names.length > 1 ? 'were' : 'was'} voted out…`;
+      if (shown) {
+        const roles = outNow.map((e, i) => `${names[i]} was ${e.role === 'impostor' ? 'an IMPOSTOR' : 'innocent CREW'}`);
+        sub = roles.join(' · ');
+      } else sub = 'and was…';
+      break;
+    }
+    case 'game_over':
+      title = game.winner === 'impostor' ? 'Game over · The impostors win' : 'Game over · The crew wins';
+      sub = game.winReason ?? '';
+      break;
+  }
+  const roleClass =
+    phase === 'reveal' && outNow.length && sub !== 'and was…'
+      ? outNow.some((e) => e.role === 'impostor')
+        ? 'cap-imp'
+        : 'cap-crew'
+      : '';
   return (
-    <div className="phase-banner-wrap" key={key}>
-      <div className={`phase-banner pb-${phase}`}>
-        <div className="pb-title">{b.title}</div>
-        <div className="pb-sub">
-          {phase === 'question' || phase === 'answering' ? `Round ${round} · ` : ''}
-          {b.sub}
-        </div>
+    <div className="caption-wrap">
+      <div className={`caption cap-${phase} ${roleClass}`} key={`${round}:${phase}`}>
+        {roundTag && phase !== 'lobby' && phase !== 'game_over' && <div className="cap-round">{roundTag}</div>}
+        <div className="cap-title">{title}</div>
+        {sub && <div className="cap-sub">{sub}</div>}
       </div>
     </div>
   );
+}
+
+/** Re-renders every `ms` while `on` (used for the timed role reveal in the caption). */
+function useNowWhile(on: boolean, ms: number) {
+  const [, setT] = useState(0);
+  useEffect(() => {
+    if (!on) return;
+    const id = setInterval(() => setT((t) => t + 1), ms);
+    return () => clearInterval(id);
+  }, [on, ms]);
 }
 
 export function Banner() {

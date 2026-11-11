@@ -80,8 +80,23 @@ function useLabelRef(key: string) {
   );
 }
 
+/** Hard-truncated so bubbles stay short and readable. */
 function Bubble({ text, wide }: { text: string; wide?: boolean }) {
-  return <div className={wide ? 'sus-bubble sus-bubble-ref' : 'sus-bubble'}>{truncate(text, wide ? 90 : 60)}</div>;
+  return <div className={wide ? 'sus-bubble sus-bubble-ref' : 'sus-bubble'}>{truncate(text, wide ? 64 : 48)}</div>;
+}
+
+/** True for `ms` after `at` (re-renders once when it flips back). */
+function useFreshAt(at: number | undefined, ms: number): boolean {
+  const [, force] = useState(0);
+  const remaining = at === undefined ? 0 : ms - (performance.now() - at);
+  const fresh = remaining > 0;
+  useEffect(() => {
+    if (!fresh) return;
+    const t = setTimeout(() => force((x) => x + 1), remaining + 30);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [at, fresh]);
+  return fresh;
 }
 
 let gifFailed = false;
@@ -93,7 +108,7 @@ function VotedBadge() {
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src="/voted.gif"
-      width={48}
+      width={40}
       alt="voted"
       className="sus-voted-gif"
       onError={() => {
@@ -104,28 +119,38 @@ function VotedBadge() {
   );
 }
 
-const MAX_BUBBLES = 6;
+const MAX_BUBBLES = 3;
+/** How long the VOTED badge pops after a vote; afterwards the name tag just shows a small check. */
+const VOTED_POP_MS = 2500;
 
 /** rank: 0 = newest speaker ... MAX_BUBBLES-1; -1 = bubble suppressed (too many talking at once). */
-function AgentLabel({ agent, rank }: { agent: AgentPublic; rank: number }) {
+function AgentLabel({ agent, rank, topVotes }: { agent: AgentPublic; rank: number; topVotes: number }) {
   const id = agent.id;
   const speech = useFreshSpeech(useViewerStore((s) => s.speech[id]));
-  const voted = useViewerStore((s) => !!s.liveVotes[id]);
+  const votedAt = useViewerStore((s) => s.liveVotes[id]?.at);
+  const votesFor = useViewerStore((s) => s.liveTally[id] ?? 0);
   const selected = useViewerStore((s) => s.selectedAgentId === id);
+  const justVoted = useFreshAt(votedAt, VOTED_POP_MS);
   const showBubble = !!speech && (rank >= 0 || selected);
-  const small = rank >= 2 && !selected;
+  const lead = votesFor > 0 && votesFor === topVotes;
   return (
     <div ref={useLabelRef(id)} style={anchorBase}>
       <div className="sus-stack">
         {showBubble && (
-          <div key={speech.id} className={small ? 'sus-bubble-wrap small' : 'sus-bubble-wrap'}>
+          <div key={speech.id} className="sus-bubble-wrap">
             <Bubble text={speech.text} />
           </div>
         )}
-        {voted && <VotedBadge />}
+        {votesFor > 0 && (
+          <div key={votesFor} className={lead ? 'sus-count lead' : 'sus-count'}>
+            {votesFor} {votesFor === 1 ? 'vote' : 'votes'}
+          </div>
+        )}
+        {justVoted && <VotedBadge />}
         <div className={selected ? 'sus-tag selected' : 'sus-tag'}>
           <span className="sus-tag-dot" style={{ background: agent.color }} />
           {agent.name}
+          {votedAt !== undefined && !justVoted && <span className="sus-tag-check" title="has voted">✓</span>}
         </div>
       </div>
     </div>
@@ -133,7 +158,10 @@ function AgentLabel({ agent, rank }: { agent: AgentPublic; rank: number }) {
 }
 
 function RefereeLabel() {
-  const speech = useFreshSpeech(useViewerStore((s) => s.speech[REFEREE_ID]));
+  const fresh = useFreshSpeech(useViewerStore((s) => s.speech[REFEREE_ID]));
+  // The question itself already sits in the caption + side panel; only show the referee's other announcements.
+  const isQuestion = useViewerStore((s) => !!fresh && !!s.game?.questions.some((q) => q.text === fresh.text));
+  const speech = isQuestion ? null : fresh;
   return (
     <div ref={useLabelRef(REFEREE_ID)} style={anchorBase}>
       <div className="sus-stack">
@@ -201,12 +229,18 @@ export function LabelLayer() {
     fresh.forEach(([id], i) => (r[id] = i));
     return r;
   }, [speech]);
+  // Highest live vote count, so the current front-runner's count bubble can be emphasised.
+  const topVotes = useViewerStore((s) => {
+    let m = 0;
+    for (const k in s.liveTally) m = Math.max(m, s.liveTally[k]);
+    return m;
+  });
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
       <RefereeLabel />
       <div key={gameId}>
         {(agents ?? []).map((a) => (
-          <AgentLabel key={a.id} agent={a} rank={ranks[a.id] ?? -1} />
+          <AgentLabel key={a.id} agent={a} rank={ranks[a.id] ?? -1} topVotes={topVotes} />
         ))}
         {Object.entries(eliminations).map(([id, fx]) => (
           <RevealLabel key={id} id={id} name={names[id] ?? id} fx={fx} />
