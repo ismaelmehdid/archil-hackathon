@@ -5,6 +5,15 @@ import { useViewerStore } from '../store';
 import { createGame, restartReplay, useUi } from './feed';
 import { impostorTotal, useNow } from './common';
 
+const PHASE_LABEL: Record<string, string> = {
+  lobby: 'Lobby',
+  question: 'Question',
+  answering: 'Answering',
+  voting: 'Voting!',
+  reveal: 'Reveal',
+  game_over: 'Game over',
+};
+
 function fmt(ms: number) {
   const s = Math.max(0, Math.floor(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
@@ -65,14 +74,15 @@ export default function Header() {
   return (
     <header className="header">
       <div className="brand">
+        <span className="brand-blob" aria-hidden />
         Sus<span>Agent</span>
       </div>
       {game ? (
         <>
           <span className="round">
-            Round {game.round} / {game.config.rounds}
+            Round <b>{game.round}</b>/{game.config.rounds}
           </span>
-          <span className={`pill phase-${game.phase}`}>{game.phase.replace('_', ' ')}</span>
+          <span className={`pill phase-${game.phase}`}>{PHASE_LABEL[game.phase] ?? game.phase}</span>
           <PhaseTimer />
           {game.topic && (
             <span className="topic" title={game.topic}>

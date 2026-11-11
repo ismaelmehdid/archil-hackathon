@@ -43,6 +43,7 @@ export function LabelProjector() {
 }
 
 /* ------------------------------ styles ------------------------------ */
+/* Visual styling lives in globals.css (.sus-*) so bubbles can have CSS tails + keyframes. */
 
 const anchorBase: CSSProperties = {
   position: 'absolute',
@@ -51,45 +52,6 @@ const anchorBase: CSSProperties = {
   display: 'none',
   willChange: 'transform',
   pointerEvents: 'none',
-};
-
-const stackStyle: CSSProperties = {
-  transform: 'translate(-50%, -100%)',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: 3,
-  userSelect: 'none',
-  whiteSpace: 'nowrap',
-  fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif',
-};
-
-function tagStyle(color: string, selected: boolean, gold = false): CSSProperties {
-  return {
-    fontSize: 11,
-    fontWeight: 600,
-    lineHeight: '14px',
-    padding: '1px 6px',
-    borderRadius: 8,
-    color: gold ? '#2a1d00' : '#fff',
-    background: gold ? '#e6b43c' : 'rgba(15,20,35,0.72)',
-    borderBottom: `2px solid ${color}`,
-    outline: selected ? '2px solid #fff' : 'none',
-  };
-}
-
-const bubbleStyle: CSSProperties = {
-  maxWidth: 180,
-  width: 'max-content',
-  whiteSpace: 'normal',
-  fontSize: 11,
-  lineHeight: '14px',
-  padding: '4px 8px',
-  borderRadius: 10,
-  background: '#ffffff',
-  color: '#1a1a1a',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.35)',
-  textAlign: 'center',
 };
 
 /* ------------------------------ pieces ------------------------------ */
@@ -119,41 +81,21 @@ function useLabelRef(key: string) {
 }
 
 function Bubble({ text, wide }: { text: string; wide?: boolean }) {
-  return (
-    <div style={wide ? { ...bubbleStyle, maxWidth: 260, fontWeight: 600 } : bubbleStyle}>
-      {truncate(text, wide ? 90 : 60)}
-    </div>
-  );
+  return <div className={wide ? 'sus-bubble sus-bubble-ref' : 'sus-bubble'}>{truncate(text, wide ? 90 : 60)}</div>;
 }
 
 let gifFailed = false;
 
 function VotedBadge() {
   const [failed, setFailed] = useState(gifFailed);
-  if (failed) {
-    return (
-      <div
-        style={{
-          fontSize: 10,
-          fontWeight: 800,
-          letterSpacing: 0.5,
-          padding: '1px 6px',
-          borderRadius: 8,
-          background: '#ef476f',
-          color: '#fff',
-        }}
-      >
-        VOTED
-      </div>
-    );
-  }
+  if (failed) return <div className="sus-voted">VOTED!</div>;
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src="/voted.gif"
       width={48}
       alt="voted"
-      style={{ display: 'block', borderRadius: 6 }}
+      className="sus-voted-gif"
       onError={() => {
         gifFailed = true;
         setFailed(true);
@@ -174,14 +116,17 @@ function AgentLabel({ agent, rank }: { agent: AgentPublic; rank: number }) {
   const small = rank >= 2 && !selected;
   return (
     <div ref={useLabelRef(id)} style={anchorBase}>
-      <div style={stackStyle}>
+      <div className="sus-stack">
         {showBubble && (
-          <div style={small ? { transform: 'scale(0.82)', transformOrigin: 'bottom center', opacity: 0.85 } : undefined}>
+          <div key={speech.id} className={small ? 'sus-bubble-wrap small' : 'sus-bubble-wrap'}>
             <Bubble text={speech.text} />
           </div>
         )}
         {voted && <VotedBadge />}
-        <div style={tagStyle(agent.color, selected)}>{agent.name}</div>
+        <div className={selected ? 'sus-tag selected' : 'sus-tag'}>
+          <span className="sus-tag-dot" style={{ background: agent.color }} />
+          {agent.name}
+        </div>
       </div>
     </div>
   );
@@ -191,9 +136,13 @@ function RefereeLabel() {
   const speech = useFreshSpeech(useViewerStore((s) => s.speech[REFEREE_ID]));
   return (
     <div ref={useLabelRef(REFEREE_ID)} style={anchorBase}>
-      <div style={stackStyle}>
-        {speech && <Bubble text={speech.text} wide />}
-        <div style={tagStyle('#e6b43c', false, true)}>Referee</div>
+      <div className="sus-stack">
+        {speech && (
+          <div key={speech.id} className="sus-bubble-wrap">
+            <Bubble text={speech.text} wide />
+          </div>
+        )}
+        <div className="sus-tag sus-tag-ref">Referee</div>
       </div>
     </div>
   );
@@ -201,9 +150,6 @@ function RefereeLabel() {
 
 export const REVEAL_FROM_MS = 900;
 export const REVEAL_TO_MS = 4800;
-
-const POP_CSS =
-  "@keyframes susPop{0%{transform:scale(0.2);opacity:0}70%{transform:scale(1.25);opacity:1}100%{transform:scale(1)}}@keyframes susFade{to{opacity:0;transform:translateY(-12px)}}";
 
 function RevealLabel({ id, name, fx }: { id: string; name: string; fx: EliminationFx }) {
   const [show, setShow] = useState(false);
@@ -222,21 +168,10 @@ function RevealLabel({ id, name, fx }: { id: string; name: string; fx: Eliminati
   return (
     <div ref={ref} style={anchorBase}>
       <div style={{ transform: 'translate(-50%, -100%)' }}>
-        <div
-          style={{
-            fontFamily: 'system-ui, sans-serif',
-            textAlign: 'center',
-            padding: '4px 12px',
-            borderRadius: 10,
-            color: '#fff',
-            background: imp ? '#d62828' : '#2a9d8f',
-            boxShadow: `0 0 18px ${imp ? '#ff4d4d' : '#4dd6c4'}`,
-            animation: "susPop 350ms ease-out, susFade 700ms ease-in 3200ms forwards",
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.9 }}>{name} was</div>
-          <div style={{ fontSize: 18, fontWeight: 900, letterSpacing: 2 }}>{imp ? 'IMPOSTOR' : 'CREW'}</div>
+        <div className={imp ? 'sus-reveal imp' : 'sus-reveal crew'}>
+          <div className="sus-reveal-who">{name} was</div>
+          <div className="sus-reveal-role">{imp ? 'IMPOSTOR!' : 'CREW'}</div>
+          <div className="sus-reveal-quip">{imp ? 'nice catch!' : 'oops... innocent'}</div>
         </div>
       </div>
     </div>
@@ -268,7 +203,6 @@ export function LabelLayer() {
   }, [speech]);
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
-      <style>{POP_CSS}</style>
       <RefereeLabel />
       <div key={gameId}>
         {(agents ?? []).map((a) => (

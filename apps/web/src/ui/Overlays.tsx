@@ -10,6 +10,41 @@ import { useViewerStore } from '../store';
 import { AgentName, RoleTag, useAgents } from './common';
 import { createGame, fixture, restartReplay, SERVER_URL, useUi } from './feed';
 
+const PHASE_BANNERS: Partial<Record<string, { title: string; sub: string }>> = {
+  question: { title: 'QUESTION TIME!', sub: 'the referee has a question' },
+  answering: { title: 'ANSWER UP!', sub: 'tell the truth... or fake it' },
+  voting: { title: 'VOTE TIME!', sub: "who's the sus one?" },
+  reveal: { title: 'THE REVEAL!', sub: 'and... YEET!' },
+};
+const PHASE_BANNER_MS = 2000;
+
+/** Big bouncy banner over the arena for ~2 s whenever the phase changes. */
+export function PhaseBanner() {
+  const phase = useViewerStore((s) => s.game?.phase);
+  const round = useViewerStore((s) => s.game?.round ?? 0);
+  const key = `${round}:${phase}`;
+  const [shown, setShown] = useState<string | null>(null);
+  useEffect(() => {
+    if (!phase || !PHASE_BANNERS[phase]) return;
+    setShown(key);
+    const t = setTimeout(() => setShown((k) => (k === key ? null : k)), PHASE_BANNER_MS);
+    return () => clearTimeout(t);
+  }, [key, phase]);
+  const b = phase && shown === key ? PHASE_BANNERS[phase] : undefined;
+  if (!b) return null;
+  return (
+    <div className="phase-banner-wrap" key={key}>
+      <div className={`phase-banner pb-${phase}`}>
+        <div className="pb-title">{b.title}</div>
+        <div className="pb-sub">
+          {phase === 'question' || phase === 'answering' ? `Round ${round} · ` : ''}
+          {b.sub}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Banner() {
   const banner = useUi((s) => s.banner);
   if (!banner) return null;
