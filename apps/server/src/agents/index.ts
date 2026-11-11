@@ -1,5 +1,7 @@
 import {
+  DISK_PATHS,
   REFEREE_ID,
+  type GameSnapshot,
   type AgentFactory,
   type AgentFactoryInput,
   type AgentRuntime,
@@ -20,6 +22,7 @@ import { heuristicCrewAnswer, heuristicImpostorAnswer, heuristicQuestion, heuris
 import { searchProvider } from './search';
 import { llmAnswer, llmQuestion, llmVote } from './llm';
 import { ArchilDisk, createAgentSandbox, createArchilDisk, sandboxFetcher } from './archil';
+import { loadLessons, lessonsSummaryLine, PROMPT_LESSONS, recordGameOver } from './lessons';
 
 export { toolsFor } from './env';
 export { searchWeb, searchProvider } from './search';
@@ -146,6 +149,7 @@ export function createAgentFactory(opts: FactoryOptions = {}): AgentFactory {
 
   return {
     mode,
+    recordGameOver: (snapshot: GameSnapshot) => recordGameOver(mode, snapshot),
     async createAll(input: AgentFactoryInput) {
       const t0 = Date.now();
       const { config, hooks, agents, secrets, gameId } = input;
@@ -156,7 +160,14 @@ export function createAgentFactory(opts: FactoryOptions = {}): AgentFactory {
       const log = (level: 'info' | 'warn' | 'error', message: string) => hooks.emit({ type: 'log', level, message: `[agents] ${message}` });
 
       const actors = [{ id: REFEREE_ID, name: 'Referee' }, ...agents.map((a) => ({ id: a.id, name: a.name }))];
+      const lessonsP = loadLessons(mode);
       let archilFailures = 0;
+
+      // Cross-game lessons (persistent store), loaded in parallel with the per-game disks.
+      const lessons = await lessonsP;
+      const summary = lessonsSummaryLine(lessons);
+      console.log(summary);
+      hooks.emit({ type: 'log', level: 'info', message: summary });
 
       // 1) Disks, in parallel.
       const envs = await mapLimit(actors, 10, async (actor) => {
@@ -187,6 +198,12 @@ export function createAgentFactory(opts: FactoryOptions = {}): AgentFactory {
               ? 'I am the referee. I ask one checkable recent-news question per round.'
               : 'I am crew. Search, answer truthfully, find the impostors.',
         );
+        const roleLessons = lessons.byRole[role];
+        env.opts.lessons = roleLessons;
+        if (roleLessons.length) {
+          const recent = roleLessons.slice(-PROMPT_LESSONS);
+          await env.update(DISK_PATHS.notes, (prev) => `${prev ?? ''}\n## Lessons from previous games (${role})\n${recent.map((l) => `- ${l}`).join('\n')}\n`);
+        }
         hooks.emit({ type: 'agent_ready', agentId: actor.id, backend: disk.backend, diskId: disk.diskId });
         return env;
       });

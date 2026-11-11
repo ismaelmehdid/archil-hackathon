@@ -567,8 +567,26 @@ export interface AgentFactoryInput {
 /** Provisions referee + all N agents IN PARALLEL. Engine uses a fake factory in tests. */
 export interface AgentFactory {
   readonly mode: ModeInfo;
+  /**
+   * Also loads cross-game LESSONS (see LESSONS_DISK_NAME) for each role and injects them into
+   * that role's system prompt + copies them into each agent's notes.md.
+   */
   createAll(input: AgentFactoryInput): Promise<{ referee: RefereeRuntime; agents: AgentRuntime[] }>;
+  /**
+   * Optional cross-game learning. Called by the engine ONCE after game_over (not for stopped
+   * games), BEFORE runtimes are disposed. Appends 3-5 short dated lessons per role (one summary per
+   * role, not per agent, to bound LLM cost), keeps the last ~30 per role, updates stats.json.
+   * Must never throw (engine also wraps it with a timeout).
+   */
+  recordGameOver?(snapshot: GameSnapshot): Promise<void>;
 }
+
+/**
+ * Persistent Archil disk shared across games (NOT tied to a gameId, never deleted by game cleanup).
+ * Layout: crew/lessons.md, impostor/lessons.md, referee/lessons.md, stats.json
+ * (stats.json = { games, crewWins, impostorWins, avgRounds, updatedAt }). Mock: local/in-memory.
+ */
+export const LESSONS_DISK_NAME = 'susagent-lessons';
 
 /* ------------------------------------------------------------------ */
 /* Web viewer store (apps/web/src/store.ts implements this)            */

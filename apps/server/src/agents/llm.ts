@@ -14,6 +14,7 @@ import type { AgentEnv } from './env';
 import { toolsFor } from './env';
 import { fakeSourceUrl, heuristicQuestion } from './heuristic';
 import { tokens } from './mockData';
+import { lessonsPrompt } from './lessons';
 
 const MAX_STEPS = 4;
 // Reasoning models spend part of this on (minimal) reasoning tokens.
@@ -64,13 +65,20 @@ const TOOL_DEFS: Record<string, Tool> = {
         target_id: { type: 'string', description: 'Agent id from the candidate list.' },
         reason: { type: 'string', description: 'One short public sentence.' },
         suspicion: {
-          type: 'object',
-          description: 'Map agent id -> suspicion 0..1 for agents you have an opinion on.',
-          additionalProperties: { type: 'number' },
+          type: 'array',
+          description: 'Suspicion 0..1 for the agents you have an opinion on.',
+          items: {
+            type: 'object',
+            properties: { agent_id: { type: 'string' }, score: { type: 'number' } },
+            required: ['agent_id', 'score'],
+            additionalProperties: false,
+          },
         },
         private_reasoning: { type: 'string', description: 'One private sentence (only the game master sees it).' },
       },
-      required: ['target_id', 'reason', 'private_reasoning'],
+      // strict function calling: every property required, no extras (enum on target_id/agent_id added per call).
+      required: ['target_id', 'reason', 'suspicion', 'private_reasoning'],
+      additionalProperties: false,
     },
   },
   submit_question: {
@@ -103,9 +111,9 @@ function toolsForPhase(env: AgentEnv, final: 'submit_answer' | 'cast_vote' | 'su
   return allowed.filter((n) => !finals.includes(n) || n === final).map((n) => TOOL_DEFS[n]!);
 }
 
-const toOpenAI = (t: Tool): OpenAI.Chat.Completions.ChatCompletionTool => ({
+const toOpenAI = (t: Tool, strict = false): OpenAI.Chat.Completions.ChatCompletionTool => ({
   type: 'function',
-  function: { name: t.name, description: t.description, parameters: t.input_schema },
+  function: { name: t.name, description: t.description, parameters: t.input_schema, ...(strict ? { strict: true } : {}) },
 });
 
 function parseArgs(raw: string | undefined): Record<string, any> {
@@ -125,26 +133,29 @@ async function runLoop(
   system: string,
   user: string,
   final: 'submit_answer' | 'cast_vote' | 'submit_question',
-  opts: { forceFirstTool?: boolean; candidates?: string[] } = {},
+  opts: { forceFirstTool?: boolean; firstTool?: string; candidates?: string[] } = {},
 ): Promise<Record<string, any>> {
   const tools = toolsForPhase(env, final).map((t) => {
-    // Constrain vote targets to the valid candidates (avoids self/dead-agent votes).
+    // Votes: strict schema with target_id / agent_id restricted to the valid candidates.
     if (t.name !== 'cast_vote' || !opts.candidates?.length) return toOpenAI(t);
     const schema = structuredClone(t.input_schema) as any;
     schema.properties.target_id.enum = opts.candidates;
-    return toOpenAI({ ...t, input_schema: schema });
+    schema.properties.suspicion.items.properties.agent_id.enum = opts.candidates;
+    return toOpenAI({ ...t, input_schema: schema }, true);
   });
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-    { role: 'system', content: system },
+    { role: 'system', content: system + lessonsPrompt(env.opts.lessons ?? []) },
     { role: 'user', content: user },
   ];
   for (let step = 0; step < MAX_STEPS; step++) {
     const last = step === MAX_STEPS - 1;
     const tool_choice: OpenAI.Chat.Completions.ChatCompletionToolChoiceOption = last
       ? { type: 'function', function: { name: final } }
-      : step === 0 && opts.forceFirstTool
-        ? 'required'
-        : 'auto';
+      : step === 0 && opts.firstTool && tools.some((t) => t.type === 'function' && t.function.name === opts.firstTool)
+        ? { type: 'function', function: { name: opts.firstTool } }
+        : step === 0 && opts.forceFirstTool
+          ? 'required'
+          : 'auto';
     callsByGame.set(env.opts.gameId, llmCallCount(env.opts.gameId) + 1);
     const res = await openai().chat.completions.create({
       model: env.model,
@@ -260,11 +271,21 @@ export async function llmVote(env: AgentEnv, ctx: VoteContext): Promise<VoteDeci
   const budget = env.hasWebSearch ? `\nSearches left this round: ${env.budgetRemaining(ctx.round)}.` : '';
   const user = `Question this round: ${q}\nAnswers this round:\n${thisRound}\n\nVotes so far this round: ${ctx.votesSoFar.map((v) => `${v.voterId}->${v.targetId} ("${v.reason}")`).join('; ') || 'none'}\n\nEarlier:\n${history(ctx)}\n\nYour previous suspects.json: ${prev ? prev.slice(0, 800) : '(none)'}${budget}\n\nCandidates: ${ctx.candidates.join(', ')}. Call cast_vote with one target_id from the candidates.`;
   const input = await runLoop(env, ctx.round, ctx.topic, systemFor(env, ctx), user, 'cast_vote', { candidates: ctx.candidates });
-  const targetId = String(input.target_id ?? '');
-  if (!ctx.candidates.includes(targetId)) throw new Error(`invalid vote target ${targetId}`);
   const suspicion: Record<AgentId, number> = {};
-  if (input.suspicion && typeof input.suspicion === 'object') {
-    for (const [k, v] of Object.entries(input.suspicion)) if (ctx.candidates.includes(k) && typeof v === 'number') suspicion[k] = Math.max(0, Math.min(1, v));
+  // Strict schema returns [{agent_id, score}]; also accept a plain {id: score} map.
+  const pairs: [string, unknown][] = Array.isArray(input.suspicion)
+    ? input.suspicion.map((x: any) => [String(x?.agent_id ?? ''), x?.score] as [string, unknown])
+    : input.suspicion && typeof input.suspicion === 'object'
+      ? Object.entries(input.suspicion)
+      : [];
+  for (const [k, v] of pairs) if (ctx.candidates.includes(k) && typeof v === 'number') suspicion[k] = Math.max(0, Math.min(1, v));
+  let targetId = String(input.target_id ?? '');
+  if (!ctx.candidates.includes(targetId)) {
+    // Model ignored the enum (voted itself / an eliminated agent): use its own most-suspected valid candidate.
+    const best = Object.entries(suspicion).sort((a, b) => b[1] - a[1])[0]?.[0];
+    if (!best) throw new Error(`invalid vote target ${targetId}`);
+    env.log('info', `vote target ${targetId} invalid; using most-suspected candidate ${best}`);
+    targetId = best;
   }
   suspicion[targetId] = Math.max(suspicion[targetId] ?? 0, 0.6);
   const reason = String(input.reason ?? 'Suspicious answer.').slice(0, 160);

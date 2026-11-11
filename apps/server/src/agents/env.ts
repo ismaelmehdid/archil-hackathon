@@ -57,6 +57,8 @@ export class AgentEnv {
       publicSelf?: AgentPublic;
       /** Runs the keyed search from inside this agent's Archil sandbox (firewall injects the key). */
       sandboxFetch?: (url: string, body: unknown) => Promise<any>;
+      /** Cross-game lessons for this role (newest last), injected into the LLM system prompt. */
+      lessons?: string[];
     },
   ) {}
 

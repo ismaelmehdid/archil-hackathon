@@ -294,6 +294,13 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
     });
   };
   const finish = async (force = false): Promise<GameSnapshot> => {
+    // Cross-game lessons: completed games only, after game_over, BEFORE disposal. Never blocks > 35 s.
+    if (!force && factory.recordGameOver && (snapshot as GameSnapshot | null)?.status === 'over') {
+      const snap = snapshot as GameSnapshot | null;
+      await guarded('factory.recordGameOver', () => factory.recordGameOver!(snap!), () => undefined, 35_000, (lvl, msg) =>
+        console.warn(`[engine] ${gameId}: ${lvl} ${msg}`),
+      );
+    }
     if (force || opts.disposeOnEnd !== false) await disposeAll(force ? 'game stopped' : 'game over', force);
     return snapshot!;
   };
