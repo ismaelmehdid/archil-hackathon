@@ -28,8 +28,13 @@ describe('verdict mapping', () => {
       quote: 'Anthropic raised $13 billion',
     });
     expect(parseVerdict('CONTRADICTED — "the round was led by Nvidia"').verdict).toBe('contradicted');
-    expect(parseVerdict('NOT_FOUND').verdict).toBe('not_found');
-    expect(parseVerdict('not found: the page is about something else').verdict).toBe('not_found');
+    // reader NOT_FOUND = real page lacks the claim -> "source unsupported" (not_found is for missing pages)
+    expect(parseVerdict('NOT_FOUND').verdict).toBe('contradicted');
+    expect(parseVerdict('not found: the page is about something else').verdict).toBe('contradicted');
+    // negations must not flip to supported
+    expect(parseVerdict('NOT SUPPORTED. The page is about Mistral.').verdict).toBe('contradicted');
+    expect(parseVerdict("The page doesn't support the claim").verdict).toBe('contradicted');
+    expect(parseVerdict('This page does not support it').verdict).toBe('contradicted');
     expect(parseVerdict('Unsupported by the text').verdict).toBe('contradicted');
     // earliest keyword wins
     expect(parseVerdict('SUPPORTED: nothing here is CONTRADICTED').verdict).toBe('supported');
@@ -39,7 +44,8 @@ describe('verdict mapping', () => {
 
   it('maps HTTP status codes', () => {
     expect(verdictForHttpStatus(404)).toBe('not_found');
-    expect(verdictForHttpStatus(400)).toBe('not_found');
+    expect(verdictForHttpStatus(410)).toBe('not_found');
+    expect(verdictForHttpStatus(400)).toBe('unknown');
     expect(verdictForHttpStatus(429)).toBe('unknown');
     expect(verdictForHttpStatus(500)).toBe('unknown');
   });
@@ -59,8 +65,15 @@ describe('mock fact-check (deterministic)', () => {
   it('wrong claim on a real page -> contradicted', () => {
     expect(mockVerify(question, ans(`${bq.decoys[0]} (per techcrunch.com)`, realUrl)).verdict).toBe('contradicted');
   });
-  it('impostor-invented URL -> not_found', () => {
-    expect(mockVerify(question, ans(bq.answer, 'https://reuters.com/ai-funding-rounds-this-week')).verdict).toBe('not_found');
+  it('short (entity-only) crew answer on a real page -> supported', () => {
+    expect(mockVerify(question, ans('Anthropic', realUrl)).verdict).toBe('supported');
+  });
+  it('impostor-invented URLs -> not_found (clean 404) or unknown (site blocks), deterministic', () => {
+    const urls = Array.from({ length: 40 }, (_, i) => `https://reuters.com/2026/11/invented-story-${i}`);
+    const v = urls.map((u) => mockVerify(question, ans(bq.answer, u)).verdict);
+    expect(new Set(v)).toEqual(new Set(['not_found', 'unknown']));
+    expect(v.filter((x) => x === 'not_found').length).toBeGreaterThan(4);
+    expect(urls.map((u) => mockVerify(question, ans(bq.answer, u)).verdict)).toEqual(v);
   });
   it('no URL -> no_source', () => {
     expect(mockVerify(question, ans(bq.answer)).verdict).toBe('no_source');
@@ -79,6 +92,12 @@ describe('real fact-check fallbacks (Keenable Fetch)', () => {
   it('network error -> unknown', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('ECONNRESET'); }));
     expect((await fetchVerify(question, ans('x', 'https://example.com/a'))).verdict).toBe('unknown');
+  });
+  it('canned offline URL in real mode -> unknown without a network call', async () => {
+    const f = vi.fn();
+    vi.stubGlobal('fetch', f);
+    expect((await fetchVerify(question, ans('x', bq.results[0]!.url))).verdict).toBe('unknown');
+    expect(f).not.toHaveBeenCalled();
   });
   it('invalid URL -> not_found without a network call', async () => {
     const f = vi.fn();
@@ -122,7 +141,7 @@ describe('fact-check in a full mock game', () => {
     }
     // impostor-fabricated answers (own invented URL) are never "supported" in mock mode
     const fabricatedIds = new Set(snap.answers.filter((a) => a.fabricated && a.sourceUrl).map((a) => a.id));
-    for (const v of verified) if (fabricatedIds.has(v.answerId)) expect(v.verdict).toBe('not_found');
+    for (const v of verified) if (fabricatedIds.has(v.answerId)) expect(['not_found', 'unknown']).toContain(v.verdict);
     // server snapshot carries the verification
     for (const a of snap.answers) expect(a.verification, a.id).toBeDefined();
     // the server reducer and the web store reducer agree

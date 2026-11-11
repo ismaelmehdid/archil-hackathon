@@ -599,9 +599,11 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
       mine.map(async (a): Promise<SourceCheck> => {
         if (!a.sourceUrl) return { verdict: 'no_source' };
         const unknown = (): SourceCheck => ({ verdict: 'unknown', url: a.sourceUrl, quote: 'Check failed or timed out.' });
+        // Public view only: the referee never sees god-only fabricated/copiedFrom.
+        const { copiedFrom: _godOnly, ...pub } = a;
         const r = await guarded<SourceCheck>(
           `referee.verify(${a.agentId})`,
-          () => ref.verifyAnswer!({ gameId, round, topic, question, answer: { ...a } }),
+          () => ref.verifyAnswer!({ gameId, round, topic, question, answer: { ...pub, fabricated: false } }),
           unknown,
           VERIFY_TIMEOUT_MS,
           log,

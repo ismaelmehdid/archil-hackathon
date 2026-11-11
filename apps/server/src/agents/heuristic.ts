@@ -159,11 +159,11 @@ export function outlierScores(ctx: VoteContext, anchorText?: string): Record<Age
  * A missing page (invented URL) is the strongest signal; a verified source clears a little suspicion.
  */
 export const VERDICT_WEIGHT: Record<SourceVerdict, number> = {
-  not_found: 0.6,
-  contradicted: 0.35,
-  no_source: 0.15,
+  not_found: 0.2,
+  contradicted: 0.1,
+  no_source: 0.05,
   unknown: 0,
-  supported: -0.15,
+  supported: -0.05,
 };
 
 export function verdictScores(ctx: VoteContext): Record<AgentId, number> {
