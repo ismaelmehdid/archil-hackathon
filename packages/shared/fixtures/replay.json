@@ -17,9 +17,9 @@
     "pacingMs": 700,
     "mock": true,
     "models": {
-     "crew": "claude-haiku-5-5",
-     "impostor": "claude-sonnet-5-5",
-     "referee": "claude-sonnet-5-5"
+     "crew": "gpt-5-nano",
+     "impostor": "gpt-5-mini",
+     "referee": "gpt-5-mini"
     },
     "topics": [
      "AI funding rounds this week",
@@ -180,18 +180,18 @@
     "a12": "crew"
    },
    "models": {
-    "a01": "claude-haiku-5-5",
-    "a02": "claude-haiku-5-5",
-    "a03": "claude-haiku-5-5",
-    "a04": "claude-sonnet-5-5",
-    "a05": "claude-haiku-5-5",
-    "a06": "claude-haiku-5-5",
-    "a07": "claude-haiku-5-5",
-    "a08": "claude-haiku-5-5",
-    "a09": "claude-haiku-5-5",
-    "a10": "claude-sonnet-5-5",
-    "a11": "claude-haiku-5-5",
-    "a12": "claude-haiku-5-5"
+    "a01": "gpt-5-nano",
+    "a02": "gpt-5-nano",
+    "a03": "gpt-5-nano",
+    "a04": "gpt-5-mini",
+    "a05": "gpt-5-nano",
+    "a06": "gpt-5-nano",
+    "a07": "gpt-5-nano",
+    "a08": "gpt-5-nano",
+    "a09": "gpt-5-nano",
+    "a10": "gpt-5-mini",
+    "a11": "gpt-5-nano",
+    "a12": "gpt-5-nano"
    }
   },
   {

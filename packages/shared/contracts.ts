@@ -101,9 +101,9 @@ export const DEFAULT_CONFIG: GameConfig = {
   pacingMs: 700,
   mock: false,
   models: {
-    crew: 'claude-haiku-5-5',
-    impostor: 'claude-sonnet-5-5',
-    referee: 'claude-sonnet-5-5',
+    crew: 'gpt-5-nano', // cheapest tier; confirmed by a real call in apps/server/src/agents
+    impostor: 'gpt-5-mini',
+    referee: 'gpt-5-mini',
   },
   topics: [
     'AI funding rounds this week',
@@ -275,7 +275,7 @@ export interface DiskSnapshot {
 /* ------------------------------------------------------------------ */
 
 export interface ModeInfo {
-  llm: 'anthropic' | 'mock';
+  llm: 'openai' | 'mock';
   disks: 'archil' | 'memory';
   /** Provider cascade: keenable (KEENABLE_API_KEY, else public endpoint) > linkup > exa > tavily > mock. */
   search: 'keenable' | 'linkup' | 'exa' | 'tavily' | 'mock';

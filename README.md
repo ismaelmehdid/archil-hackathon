@@ -42,8 +42,8 @@ Port 4000 must be free, or pick another one with `PORT` (the demo points the vie
 ### Mock mode (no keys needed)
 
 Every external service is optional. With no `.env`, or with `SUSAGENT_MOCK=1`, SusAgent runs fully
-offline: scripted heuristic brains instead of Claude, in-memory disks instead of Archil, canned search
-results instead of a search API. The viewer shows the active mode (`llm / disks / search`).
+offline: scripted heuristic brains instead of OpenAI models, in-memory disks instead of Archil, canned search
+results instead of a search API. The viewer shows the active mode as a badge (`llm / disks / search`, e.g. `llm: mock` here, `llm: openai` with a key).
 
 ## Configuration
 
@@ -51,7 +51,7 @@ Copy `.env.example` to `.env` at the repo root. Every key is optional, and a mis
 
 | Variable | Purpose |
 | --- | --- |
-| `ANTHROPIC_API_KEY` | Claude brains for agents and the referee (crew: Haiku, impostors and referee: Sonnet). Missing: scripted brains. |
+| `OPENAI_API_KEY` | OpenAI brains for agents and the referee (crew: `gpt-5-nano`, impostors and referee: `gpt-5-mini`). The mode badge shows `llm: openai`. Missing: scripted brains. |
 | `ARCHIL_API_KEY`, `ARCHIL_REGION` | One Archil disk (and sandbox) per agent. Missing: local in-memory disks. |
 | `KEENABLE_API_KEY` | Preferred web search for crew and referee. Without it, Keenable's public endpoint is still tried before falling back. |
 | `LINKUP_API_KEY` / `EXA_API_KEY` / `TAVILY_API_KEY` | Fallback search providers. Cascade: Keenable > Linkup > Exa > Tavily > canned mock results. |
@@ -66,7 +66,7 @@ Copy `.env.example` to `.env` at the repo root. Every key is optional, and a mis
 
 Impostors never get a `web_search` tool: it is absent from their tool list. With an Archil
 **Developer plan**, each impostor's sandbox also gets a per-role network firewall, so it can't reach
-`api.keenable.ai` or any other search API. The **Free plan** has no firewall, so the server relies on
+`api.keenable.ai` or any other search API: the allowlist only lets through `api.openai.com` for the model calls. The **Free plan** has no firewall, so the server relies on
 removing the tool server-side. `mode.impostorEgressBlocked` (in the viewer and `GET /api/health`)
 shows which one applies.
 
@@ -102,7 +102,7 @@ are provisioned in parallel; agents are laid out on islands of 6.
 packages/shared/      @susagent/shared - contracts.ts (THE source of truth: types, events, API), replay fixture
 apps/server/          @susagent/server - Fastify on :4000
   src/game/           engine: roles, rounds, voting, win checks, event stream (pure helpers + runGame)
-  src/agents/         agent runtimes: Claude brains, tools (web_search for crew/referee only), Archil disks, search
+  src/agents/         agent runtimes: OpenAI brains, tools (web_search for crew/referee only), Archil disks, search
 apps/web/             @susagent/web    - Next.js on :3000, react-three-fiber 3D arena + zustand store + UI panels
 tests/                vitest suites (engine rules, impostor tooling, fixture)
 scripts/              demo.mjs (run everything), e2e.ts (headless full game)

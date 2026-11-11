@@ -124,7 +124,7 @@ export interface FactoryOptions {
 function computeMode(forceMock: boolean): ModeInfo {
   const mock = forceMock || process.env.SUSAGENT_MOCK === '1';
   return {
-    llm: !mock && process.env.ANTHROPIC_API_KEY ? 'anthropic' : 'mock',
+    llm: !mock && process.env.OPENAI_API_KEY ? 'openai' : 'mock',
     disks: !mock && process.env.ARCHIL_API_KEY ? 'archil' : 'memory',
     search: mock ? 'mock' : searchProvider(),
     // Becomes true (mutated in place) only once every impostor sandbox's deny-egress firewall is verified.
@@ -142,7 +142,7 @@ const PROVISION_DEADLINE_MS = 75_000;
  */
 export function createAgentFactory(opts: FactoryOptions = {}): AgentFactory {
   const mode = computeMode(!!opts.forceMock);
-  const brain: Brain = mode.llm === 'anthropic' ? llmBrain : heuristicBrain;
+  const brain: Brain = mode.llm === 'openai' ? llmBrain : heuristicBrain;
 
   return {
     mode,

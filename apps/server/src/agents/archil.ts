@@ -102,15 +102,15 @@ export async function createArchilDisk(gameId: string, agentId: AgentId): Promis
 /**
  * Per-role sandbox firewall (Archil Developer plan+):
  *  - crew + referee: deny by default; allow api.keenable.ai (firewall injects X-API-Key, so the key never
- *    enters the sandbox) and api.anthropic.com.
- *  - impostor: deny by default; api.keenable.ai is NOT allowed (only api.anthropic.com).
+ *    enters the sandbox) and api.openai.com.
+ *  - impostor: deny by default; api.keenable.ai is NOT allowed (only api.openai.com).
  */
 export function egressFor(role: ActorRole): archil.SandboxNetwork {
   const key = process.env.KEENABLE_API_KEY;
   const keenable = key ? { target: 'api.keenable.ai', transform: { headers: { 'X-API-Key': key } } } : 'api.keenable.ai';
   return role === 'impostor'
-    ? { egress: { default: 'deny', allow: ['api.anthropic.com'] } }
-    : { egress: { default: 'deny', allow: [keenable, 'api.anthropic.com'] } };
+    ? { egress: { default: 'deny', allow: ['api.openai.com'] } }
+    : { egress: { default: 'deny', allow: [keenable, 'api.openai.com'] } };
 }
 
 export interface SandboxOutcome {

@@ -16,7 +16,7 @@ const IMPOSTORS = new Set(['a04', 'a10']); // Dax, Juno
 const config = {
   agentCount: 12, roomSize: 6, impostorRatio: 1 / 6, rounds: 5, questionsPerRound: 1, eliminationsPerRound: 0,
   searchBudgetPerRound: 3, maxAnswerChars: 280, pacingMs: 700, mock: true,
-  models: { crew: 'claude-haiku-5-5', impostor: 'claude-sonnet-5-5', referee: 'claude-sonnet-5-5' },
+  models: { crew: 'gpt-5-nano', impostor: 'gpt-5-mini', referee: 'gpt-5-mini' },
   topics: ['AI funding rounds this week', 'Space launches this month', 'Electric vehicle battery breakthroughs'],
 };
 const mode = { llm: 'mock', disks: 'memory', search: 'mock', impostorEgressBlocked: false };

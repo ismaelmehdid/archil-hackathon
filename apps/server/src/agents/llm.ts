@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import {
   DISK_PATHS,
   type AgentContext,
@@ -14,10 +14,14 @@ import type { AgentEnv } from './env';
 import { toolsFor } from './env';
 
 const MAX_STEPS = 4;
-const MAX_TOKENS = 700;
+// Reasoning models spend part of this on (minimal) reasoning tokens.
+const MAX_TOKENS = 1500;
 
-type Tool = Anthropic.Messages.Tool;
-type MessageParam = Anthropic.Messages.MessageParam;
+interface Tool {
+  name: string;
+  description: string;
+  input_schema: Record<string, unknown>;
+}
 
 const TOOL_DEFS: Record<string, Tool> = {
   web_search: {
@@ -83,8 +87,12 @@ const TOOL_DEFS: Record<string, Tool> = {
   },
 };
 
-let client: Anthropic | null = null;
-const anthropic = () => (client ??= new Anthropic({ maxRetries: 1, timeout: 30_000 }));
+let client: OpenAI | null = null;
+const openai = () => (client ??= new OpenAI({ maxRetries: 1, timeout: 30_000 }));
+
+/** LLM calls per game (for logs / reports). */
+const callsByGame = new Map<string, number>();
+export const llmCallCount = (gameId: string) => callsByGame.get(gameId) ?? 0;
 
 /** Tools offered for a phase. web_search comes only from toolsFor(role), so impostors never see it. */
 function toolsForPhase(env: AgentEnv, final: 'submit_answer' | 'cast_vote' | 'submit_question'): Tool[] {
@@ -93,7 +101,21 @@ function toolsForPhase(env: AgentEnv, final: 'submit_answer' | 'cast_vote' | 'su
   return allowed.filter((n) => !finals.includes(n) || n === final).map((n) => TOOL_DEFS[n]!);
 }
 
-/** Generic tool-use loop. Returns the input of the final tool call. Throws on API errors (caller falls back). */
+const toOpenAI = (t: Tool): OpenAI.Chat.Completions.ChatCompletionTool => ({
+  type: 'function',
+  function: { name: t.name, description: t.description, parameters: t.input_schema },
+});
+
+function parseArgs(raw: string | undefined): Record<string, any> {
+  try {
+    const v = JSON.parse(raw || '{}');
+    return v && typeof v === 'object' ? v : {};
+  } catch {
+    return {};
+  }
+}
+
+/** Generic tool-calling loop (OpenAI Chat Completions). Returns the final tool's arguments. Throws on API errors. */
 async function runLoop(
   env: AgentEnv,
   round: number,
@@ -101,53 +123,63 @@ async function runLoop(
   system: string,
   user: string,
   final: 'submit_answer' | 'cast_vote' | 'submit_question',
-  opts: { forceFirstTool?: boolean } = {},
+  opts: { forceFirstTool?: boolean; candidates?: string[] } = {},
 ): Promise<Record<string, any>> {
-  const tools = toolsForPhase(env, final);
-  const messages: MessageParam[] = [{ role: 'user', content: user }];
+  const tools = toolsForPhase(env, final).map((t) => {
+    // Constrain vote targets to the valid candidates (avoids self/dead-agent votes).
+    if (t.name !== 'cast_vote' || !opts.candidates?.length) return toOpenAI(t);
+    const schema = structuredClone(t.input_schema) as any;
+    schema.properties.target_id.enum = opts.candidates;
+    return toOpenAI({ ...t, input_schema: schema });
+  });
+  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    { role: 'system', content: system },
+    { role: 'user', content: user },
+  ];
   for (let step = 0; step < MAX_STEPS; step++) {
     const last = step === MAX_STEPS - 1;
-    const tool_choice: Anthropic.Messages.ToolChoice = last
-      ? { type: 'tool', name: final }
+    const tool_choice: OpenAI.Chat.Completions.ChatCompletionToolChoiceOption = last
+      ? { type: 'function', function: { name: final } }
       : step === 0 && opts.forceFirstTool
-        ? { type: 'any' }
-        : { type: 'auto' };
-    const res = await anthropic().messages.create({
+        ? 'required'
+        : 'auto';
+    callsByGame.set(env.opts.gameId, llmCallCount(env.opts.gameId) + 1);
+    const res = await openai().chat.completions.create({
       model: env.model,
-      max_tokens: MAX_TOKENS,
-      system,
+      max_completion_tokens: MAX_TOKENS,
+      reasoning_effort: 'minimal',
+      messages,
       tools,
       tool_choice,
-      messages,
     });
-    messages.push({ role: 'assistant', content: res.content });
-    const uses = res.content.filter((b): b is Anthropic.Messages.ToolUseBlock => b.type === 'tool_use');
-    const finalUse = uses.find((u) => u.name === final);
-    if (finalUse) return finalUse.input as Record<string, any>;
-    if (!uses.length) {
+    const msg = res.choices[0]?.message;
+    if (!msg) throw new Error('empty completion');
+    const calls = (msg.tool_calls ?? []).filter((c): c is OpenAI.Chat.Completions.ChatCompletionMessageFunctionToolCall => c.type === 'function');
+    const finalCall = calls.find((c) => c.function.name === final);
+    if (finalCall) return parseArgs(finalCall.function.arguments);
+    messages.push(calls.length ? { role: 'assistant', content: msg.content ?? null, tool_calls: calls } : { role: 'assistant', content: msg.content ?? '' });
+    if (!calls.length) {
       messages.push({ role: 'user', content: `Call ${final} now.` });
       continue;
     }
-    const results: Anthropic.Messages.ToolResultBlockParam[] = [];
-    for (const u of uses) {
-      const input = u.input as Record<string, any>;
+    for (const c of calls) {
+      const input = parseArgs(c.function.arguments);
       let out: string;
-      if (u.name === 'web_search' && env.hasWebSearch) {
+      if (c.function.name === 'web_search' && env.hasWebSearch) {
         const r = await env.search(round, String(input.query ?? ''), topic);
         out = r
           ? JSON.stringify(r.map((x) => ({ title: x.title, url: x.url, snippet: x.snippet })))
           : `Search denied: budget exhausted (${env.config.searchBudgetPerRound}/round). Answer with what you have.`;
-      } else if (u.name === 'read_my_disk') {
+      } else if (c.function.name === 'read_my_disk') {
         out = ((await env.disk.read(String(input.path ?? ''))) ?? '(file not found)').slice(0, 3000);
-      } else if (u.name === 'write_note') {
+      } else if (c.function.name === 'write_note') {
         await env.appendNote(String(input.text ?? '').slice(0, 300));
         out = 'saved';
       } else {
-        out = `Tool ${u.name} is not available to you.`;
+        out = `Tool ${c.function.name} is not available to you.`;
       }
-      results.push({ type: 'tool_result', tool_use_id: u.id, content: out });
+      messages.push({ role: 'tool', tool_call_id: c.id, content: out });
     }
-    messages.push({ role: 'user', content: results });
   }
   throw new Error('tool loop ended without a final answer');
 }
@@ -210,7 +242,7 @@ export async function llmVote(env: AgentEnv, ctx: VoteContext): Promise<VoteDeci
   const q = ctx.questions.filter((x) => x.round === ctx.round).map((x) => x.text).join(' / ');
   const prev = await env.disk.read(DISK_PATHS.suspects);
   const user = `Question this round: ${q}\nAnswers this round:\n${thisRound}\n\nVotes so far this round: ${ctx.votesSoFar.map((v) => `${v.voterId}->${v.targetId} ("${v.reason}")`).join('; ') || 'none'}\n\nEarlier:\n${history(ctx)}\n\nYour previous suspects.json: ${prev ? prev.slice(0, 800) : '(none)'}\n\nCandidates: ${ctx.candidates.join(', ')}. Call cast_vote with one target_id from the candidates.`;
-  const input = await runLoop(env, ctx.round, ctx.topic, systemFor(env, ctx), user, 'cast_vote');
+  const input = await runLoop(env, ctx.round, ctx.topic, systemFor(env, ctx), user, 'cast_vote', { candidates: ctx.candidates });
   const targetId = String(input.target_id ?? '');
   if (!ctx.candidates.includes(targetId)) throw new Error(`invalid vote target ${targetId}`);
   const suspicion: Record<AgentId, number> = {};
@@ -226,6 +258,7 @@ export async function llmVote(env: AgentEnv, ctx: VoteContext): Promise<VoteDeci
 }
 
 export async function llmQuestion(env: AgentEnv, ctx: RefereeContext): Promise<RefereeQuestionDraft> {
+  env.log('info', `LLM calls so far this game: ${llmCallCount(env.opts.gameId)}`);
   const system = `You are the REFEREE of "SusAgent". Each round you ask ONE question about recent news on the round topic. It must have a short, checkable answer (a name, number, date or place) that a web search can verify. Use web_search first (results are limited to the last 7 days), base the question on what you find, and give the answer key with source URLs. Avoid repeating earlier questions. Keep the question under 160 characters.`;
   const user = `Round ${ctx.round}/${ctx.totalRounds}. Topic: ${ctx.topic}\nEarlier questions: ${ctx.previousQuestions.map((q) => q.text).join(' | ') || 'none'}\nSearch, then call submit_question.`;
   const input = await runLoop(env, ctx.round, ctx.topic, system, user, 'submit_question', { forceFirstTool: true });
