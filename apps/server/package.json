@@ -10,7 +10,6 @@
     "smoke": "tsx src/game/smoke.ts"
   },
   "dependencies": {
-    "@archildata/sqlite": "^0.0.23",
     "@fastify/cors": "^11.4.1",
     "@susagent/shared": "workspace:*",
     "disk": "^1.12.0",

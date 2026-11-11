@@ -23,9 +23,6 @@ importers:
 
   apps/server:
     dependencies:
-      '@archildata/sqlite':
-        specifier: ^0.0.23
-        version: 0.0.23(disk@1.12.0)
       '@fastify/cors':
         specifier: ^11.4.1
         version: 11.4.1
@@ -85,12 +82,6 @@ packages:
 
   '@archildata/api-types@0.0.81':
     resolution: {integrity: sha512-v5POIAOhko0pzVM9kQUvFJj31D3fDo/8kwHgmly0wNT20SepGPGThoB6qOcvUoA3rfiS3PGCkynLNfkoZf/QxQ==}
-
-  '@archildata/sqlite@0.0.23':
-    resolution: {integrity: sha512-wES6XJXWqev8d0lOCimBshlWO8jbEm5OZmaCnYyI7KXI4gp8fSw6nHUIema8LkIlC2t+7YwehJ5efbfFM31nhQ==}
-    engines: {node: '>= 22'}
-    peerDependencies:
-      disk: 1.12.0
 
   '@babel/runtime@7.29.13':
     resolution: {integrity: sha512-v+oN26xP4YIlQsbQ/CbTH1WG5m/l/DjKKZNy/Kp3f/AFvbgt7Em/D0FeMM3O2hX0YzeN2M16W8lOpyhIkfCBcQ==}
@@ -1448,10 +1439,6 @@ packages:
 snapshots:
 
   '@archildata/api-types@0.0.81': {}
-
-  '@archildata/sqlite@0.0.23(disk@1.12.0)':
-    dependencies:
-      disk: 1.12.0
 
   '@babel/runtime@7.29.13': {}
 
