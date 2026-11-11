@@ -610,7 +610,7 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
         const v = r.value;
         if (!v || !VERDICTS.includes(v.verdict)) return unknown();
         const check: SourceCheck = { verdict: v.verdict, url: a.sourceUrl };
-        const quote = typeof v.quote === 'string' ? v.quote.replace(/s+/g, ' ').trim().slice(0, 200) : '';
+        const quote = typeof v.quote === 'string' ? v.quote.replace(/\s+/g, ' ').trim().slice(0, 200) : '';
         if (quote) check.quote = quote;
         return check;
       }),

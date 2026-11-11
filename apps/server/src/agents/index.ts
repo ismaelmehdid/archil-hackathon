@@ -88,9 +88,7 @@ class PlayerRuntime implements AgentRuntime {
   /** Appends the referee's verdict on my cited source to sources/r<N>.md (env.update never throws). */
   recordSourceCheck(question: RefereeQuestion, answer: Answer, check: SourceCheck): Promise<void> {
     const path = `${DISK_PATHS.sourcesDir}/r${question.round}.md`;
-    return this.env.update(path, (prev) => (prev ?? `# Round ${question.round} sources
-
-`) + sourceCheckMarkdown(question, answer, check));
+    return this.env.update(path, (prev) => (prev ?? `# Round ${question.round} sources\n\n`) + sourceCheckMarkdown(question, answer, check));
   }
 }
 

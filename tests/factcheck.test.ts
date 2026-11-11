@@ -138,5 +138,9 @@ describe('fact-check in a full mock game', () => {
     const file = disk.files.find((f) => f.path === 'sources/r1.md');
     expect(file?.content).toContain('Referee fact-check');
     expect(file?.content).toContain(first.verdict.toUpperCase());
+    // quotes survive whitespace normalisation intact (regression: a broken regex once stripped every 's')
+    const quoted = verified.filter((v) => v.quote);
+    expect(quoted.length).toBeGreaterThan(0);
+    expect(quoted.some((v) => v.quote!.includes('s'))).toBe(true);
   }, 30_000);
 });
