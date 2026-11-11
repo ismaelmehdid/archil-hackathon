@@ -7,7 +7,7 @@ import type { LiveVote } from '@susagent/shared';
 import { useViewerStore } from '../store';
 import { GEO, positions } from './shared';
 
-const DOTS = 22;
+const DOTS = 26;
 const GROW_MS = 300;
 const p0 = new THREE.Vector3();
 const p1 = new THREE.Vector3();
@@ -45,7 +45,7 @@ const Beam = memo(function Beam({ vote, color }: { vote: LiveVote; color: string
         iu * iu * p0.z + 2 * iu * u * p1.z + u * u * p2.z,
       );
       const last = i === DOTS - 1;
-      const s = last ? 0.32 : 0.13 + 0.06 * (0.5 + 0.5 * Math.sin(t * 9 - i * 0.7));
+      const s = last ? 0.4 : 0.15 + 0.04 * (0.5 + 0.5 * Math.sin(t * 9 - i * 0.7));
       dummy.position.copy(pt);
       dummy.scale.setScalar(s);
       dummy.updateMatrix();

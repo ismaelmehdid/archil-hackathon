@@ -137,7 +137,7 @@ function World() {
 
   return (
     <>
-      <fog attach="fog" args={[PALETTE.fog, layout.ringRadius * 2.4, layout.ringRadius * 6.5]} />
+      <fog attach="fog" args={[PALETTE.fog, layout.ringRadius * 2.1, layout.ringRadius * 5.2]} />
       <Clouds radius={layout.ringRadius} />
       <CameraRig ring={layout.ringRadius} council={layout.councilRadius} />
       <Forest radius={layout.clearingRadius} />

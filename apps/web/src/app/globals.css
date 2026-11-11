@@ -7,7 +7,7 @@
   --border: #eee5d8;
   --ink: #2d2a3e;
   --text: #2d2a3e;
-  --muted: #8b849b;
+  --muted: #6f6982;
   --crew: #1693c4;
   --imp: #ef4670;
   --amber: #e79a00;
@@ -141,7 +141,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .role-bg-crew { background: #def3fc; }
 .votes li { padding: 6px 10px; border-left: 4px solid #d9cffc; background: var(--panel2); border-radius: 10px; margin-bottom: 5px; }
 .votes .arrow { color: var(--imp); font-weight: 800; }
-.votes .reason { color: #5d5872; font-size: 12px; margin-top: 2px; }
+.votes .reason { color: #5d5872; font-size: 12px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .votes.compact li { border-left-width: 3px; padding: 4px 8px; }
 .live-dot { font-family: var(--fun); color: var(--imp); font-weight: 700; font-size: 12px; }
 .live-dot::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--imp); margin-right: 5px; animation: pulse 1s infinite; }
@@ -154,7 +154,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .thoughts .text { color: #6a4a9a; font-style: italic; margin-top: 2px; }
 
 /* ---------- selected agent card ---------- */
-.selected { position: absolute; left: 12px; top: 12px; width: 360px; max-height: calc(100% - 24px); overflow-y: auto; background: rgba(255, 255, 255, 0.97); border-radius: 18px; padding: 12px 14px; z-index: 5; box-shadow: 0 10px 30px rgba(45, 42, 62, 0.2); animation: popIn 0.3s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.selected { position: absolute; left: 12px; top: 112px; width: 340px; max-height: calc(100% - 124px); overflow-y: auto; background: rgba(255, 255, 255, 0.97); border-radius: 18px; padding: 12px 14px; z-index: 5; box-shadow: 0 10px 30px rgba(45, 42, 62, 0.2); animation: popIn 0.3s cubic-bezier(0.3, 1.6, 0.5, 1); }
 .selected .panel-head h3 { font-size: 17px; }
 .selected .close { background: var(--panel2); border: none; width: 26px; height: 26px; border-radius: 50%; font-size: 17px; line-height: 1; color: var(--muted); }
 .selected .close:hover { color: var(--ink); transform: rotate(90deg); transition: transform 0.2s; }
@@ -193,7 +193,6 @@ details summary { cursor: pointer; color: #6d6782; font-family: ui-monospace, Co
 .sus-tag-dot { width: 9px; height: 9px; border-radius: 50%; box-shadow: inset 0 -1.5px 0 rgba(0, 0, 0, 0.18); }
 .sus-tag-ref { padding: 2px 10px; background: #ffc94d; font-weight: 700; }
 .sus-bubble-wrap { transform-origin: bottom center; animation: bubblePop 0.32s cubic-bezier(0.3, 1.7, 0.5, 1); }
-.sus-bubble-wrap.small { transform: scale(0.82); opacity: 0.85; animation: none; }
 .sus-bubble { position: relative; max-width: 180px; width: max-content; white-space: normal; font-family: var(--body); font-size: 11.5px; font-weight: 700; line-height: 1.25; padding: 5px 10px 6px; margin-bottom: 7px; border-radius: 14px; background: #fff; color: var(--ink); border: 2px solid var(--ink); box-shadow: 0 3px 0 rgba(45, 42, 62, 0.22); text-align: center; }
 .sus-bubble::after { content: ''; position: absolute; left: 50%; bottom: -7px; width: 10px; height: 10px; background: inherit; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); transform: translateX(-50%) rotate(45deg); border-bottom-right-radius: 3px; }
 .sus-bubble-ref { max-width: 260px; font-family: var(--fun); font-weight: 500; font-size: 13px; background: #fff7dc; padding: 6px 12px 7px; }
@@ -206,16 +205,23 @@ details summary { cursor: pointer; color: #6d6782; font-family: ui-monospace, Co
 .sus-reveal-role { font-size: 24px; font-weight: 700; letter-spacing: 1.5px; line-height: 1.05; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.2); }
 .sus-reveal-quip { font-size: 11px; font-weight: 500; opacity: 0.9; }
 
-/* ---------- phase banner ---------- */
-.phase-banner-wrap { position: absolute; left: 0; right: 0; top: 13%; display: flex; justify-content: center; pointer-events: none; z-index: 4; }
-.phase-banner { font-family: var(--fun); text-align: center; padding: 10px 30px 12px; border-radius: 24px; color: #fff; border: 4px solid var(--ink); box-shadow: 0 6px 0 var(--ink); animation: bannerIn 0.55s cubic-bezier(0.3, 1.7, 0.5, 1), bannerOut 0.35s ease-in 1.65s forwards; }
-.pb-title { font-size: 40px; font-weight: 700; letter-spacing: 1px; line-height: 1; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.18); }
-.pb-sub { font-size: 14px; font-weight: 500; margin-top: 4px; opacity: 0.95; }
-.pb-question { background: #9b7bff; }
-.pb-answering { background: #3fb3e6; }
-.pb-voting { background: #ff5c8a; }
-.pb-reveal { background: #ff9a3c; }
 
+/* ---------- phase caption (always on, top-centre over the arena) ---------- */
+.caption-wrap { position: absolute; top: 12px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; z-index: 4; padding: 0 16px; }
+.caption { --cap: #b6aec7; max-width: 640px; background: rgba(255, 255, 255, 0.97); border-radius: 18px; padding: 9px 24px 11px; text-align: center; box-shadow: 0 6px 22px rgba(45, 42, 62, 0.16); border-top: 5px solid var(--cap); animation: capIn 0.35s cubic-bezier(0.3, 1.5, 0.5, 1); }
+.cap-question { --cap: #9b7bff; }
+.cap-answering { --cap: #3fb3e6; }
+.cap-voting { --cap: #ff5c8a; }
+.cap-reveal { --cap: #ff9a3c; }
+.cap-game_over { --cap: #2fc48d; }
+.caption.cap-imp { --cap: #ef4670; }
+.caption.cap-crew { --cap: #1693c4; }
+.cap-round { font-family: var(--fun); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--muted); }
+.cap-title { font-family: var(--fun); font-size: 26px; font-weight: 700; line-height: 1.15; color: var(--ink); }
+.cap-imp .cap-sub { color: #d42c55; }
+.cap-crew .cap-sub { color: #1580ad; }
+.cap-sub { font-size: 14px; font-weight: 700; color: #4a4560; margin-top: 3px; }
+@keyframes capIn { from { opacity: 0; transform: translateY(-8px) scale(0.97); } to { opacity: 1; transform: none; } }
 /* ---------- motion ---------- */
 @keyframes spin { to { transform: rotate(360deg); } }
 .fade-in { animation: fade 0.35s ease; }
@@ -231,6 +237,18 @@ details summary { cursor: pointer; color: #6d6782; font-family: ui-monospace, Co
 @keyframes revealPop { 0% { transform: scale(0.2) rotate(-12deg); opacity: 0; } 70% { transform: scale(1.18) rotate(3deg); opacity: 1; } 100% { transform: scale(1); } }
 @keyframes revealWobble { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-3deg) scale(1.03); } 75% { transform: rotate(3deg) scale(1.03); } }
 @keyframes susFade { to { opacity: 0; transform: translateY(-14px); } }
-@keyframes bannerIn { 0% { transform: scale(0.3) rotate(-10deg); opacity: 0; } 60% { transform: scale(1.12) rotate(3deg); opacity: 1; } 80% { transform: scale(0.97) rotate(-1deg); } 100% { transform: scale(1) rotate(0); } }
-@keyframes bannerOut { to { transform: translateY(-24px) scale(0.9); opacity: 0; } }
+
+/* ---------- clarity helpers ---------- */
+.answers.compact li { padding: 5px 10px; margin-bottom: 4px; }
+.answers.compact .text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 1px 0 0; font-size: 12px; }
+.answers.compact .src { display: none; }
+.out-list li { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--panel2); border-radius: 10px; margin-bottom: 5px; }
+.out-round { font-family: var(--fun); font-size: 11px; font-weight: 700; color: var(--muted); min-width: 22px; }
+.out-votes { margin-left: auto; }
+/* Vote count above each target in the 3D view; the front-runner is red and a bit bigger. */
+.sus-count { font-size: 12px; font-weight: 700; line-height: 1; padding: 4px 9px; border-radius: 999px; background: var(--ink); color: #fff; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); animation: bubblePop 0.3s cubic-bezier(0.3, 1.7, 0.5, 1); }
+.sus-count.lead { background: #ef4670; font-size: 13.5px; padding: 5px 11px; }
+.sus-tag-check { color: var(--ok); font-weight: 700; margin-left: 1px; }
+button.fold { background: var(--panel2); border: none; border-radius: 999px; padding: 2px 10px; font-family: var(--fun); font-weight: 600; font-size: 12px; color: var(--accent); }
+button.fold:hover { background: #ece6ff; }
 .hof-dot { font-weight: 800; margin-right: 3px; }

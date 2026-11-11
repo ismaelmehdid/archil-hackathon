@@ -47,7 +47,7 @@ export const GEO = {
 
 export const PALETTE = {
   /** Fog/horizon tint (the sky itself is a CSS gradient behind a transparent canvas). */
-  fog: '#cfe0ff',
+  fog: '#e3ebf1',
   gold: '#ffc94d',
   ink: '#2d2a3e',
 };
@@ -63,7 +63,7 @@ export const MAT = {
   dirt: std('#e0aa76'),
   rock: std('#b9a3c9'),
   councilTop: std('#fff1d2'),
-  councilInlay: std('#ffd27a'),
+  councilInlay: std('#efdcb4'),
   councilRock: std('#d7c2e6'),
   tree: std('#5fd08e'),
   treeAlt: std('#b4e86b'),
