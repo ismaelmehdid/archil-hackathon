@@ -205,6 +205,23 @@ export interface Answer {
   fabricated: boolean;
   /** GOD-ONLY: impostor copied this agent's revealed answer. */
   copiedFrom?: AgentId;
+  /** PUBLIC: the referee's Keenable Fetch check of sourceUrl (set by answer_verified, before voting). */
+  verification?: SourceCheck;
+}
+
+/**
+ * Referee fact-check of a cited source (Keenable Fetch with a prompt).
+ * supported / contradicted: the page exists and does / does not back the claim.
+ * not_found: no page at that URL (HTTP 404/400) or the page doesn't mention it — strong "fabricated" signal.
+ * unknown: the check itself failed (timeout, network, quota). no_source: the answer cited no URL.
+ */
+export type SourceVerdict = 'supported' | 'contradicted' | 'not_found' | 'unknown' | 'no_source';
+
+export interface SourceCheck {
+  verdict: SourceVerdict;
+  url?: string;
+  /** One short quote from the page (or why the check failed). */
+  quote?: string;
 }
 
 /**
@@ -277,7 +294,8 @@ export interface Message {
  *   /answers.md          every question + own answer, newest round first
  *   /suspects.json       SuspectsFile (updated each voting phase)
  *   /notes.md            free-form private notes (impostor strategy lives here)
- *   /sources/r<N>.md     raw search results used in round N (crew only)
+ *   /sources/r<N>.md     raw search results used in round N (crew only), plus the referee's
+ *                        fact-check of this agent's cited source (every agent)
  */
 export const DISK_PATHS = {
   answers: 'answers.md',
@@ -378,6 +396,19 @@ export type GameEventPayload =
   | { type: 'search_denied'; agentId: AgentId; round: number; query: string; reason: 'budget_exhausted' }
   /** An agent's answer is revealed. 3D: speech bubble above the agent for ~3 s. */
   | { type: 'answer_submitted'; answer: Answer }
+  /**
+   * PUBLIC evidence (reveals no roles): the referee fetched the answer's cited URL and judged the claim.
+   * One per answer, after all answers to a question are revealed and before voting. Sets answer.verification.
+   */
+  | {
+      type: 'answer_verified';
+      answerId: string;
+      agentId: AgentId;
+      round: number;
+      url?: string;
+      verdict: SourceVerdict;
+      quote?: string;
+    }
   /** GOD-ONLY private reasoning (impostor strategy, crew hunches). */
   | { type: 'agent_thought'; agentId: AgentId; round: number; phase: Phase; text: string }
   /** Referee announcements / misc chat. 3D: speech bubble. */
@@ -580,6 +611,17 @@ export interface AgentRuntime {
   vote(ctx: VoteContext): Promise<VoteDecision>;
   readDisk(): Promise<DiskSnapshot>;
   dispose(): Promise<void>;
+  /** Optional: append the referee's fact-check of this agent's answer to sources/r<N>.md. Never throws. */
+  recordSourceCheck?(question: RefereeQuestion, answer: Answer, check: SourceCheck): Promise<void>;
+}
+
+/** What the referee needs to fact-check one answer's cited source. */
+export interface VerifyContext {
+  gameId: string;
+  round: number;
+  topic: string;
+  question: RefereeQuestion;
+  answer: Answer;
 }
 
 export interface RefereeContext {
@@ -603,6 +645,11 @@ export interface RefereeQuestionDraft {
 export interface RefereeRuntime {
   readonly id: typeof REFEREE_ID;
   askQuestion(ctx: RefereeContext): Promise<RefereeQuestionDraft>;
+  /**
+   * Optional: fetch answer.sourceUrl (Keenable Fetch) and judge the claim. The engine calls it in parallel
+   * for every answer with a URL, with a short timeout; any failure becomes verdict 'unknown'.
+   */
+  verifyAnswer?(ctx: VerifyContext): Promise<SourceCheck>;
   readDisk(): Promise<DiskSnapshot>;
   dispose(): Promise<void>;
 }

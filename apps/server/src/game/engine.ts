@@ -24,6 +24,8 @@ import {
   type RefereeQuestionDraft,
   type RefereeRuntime,
   type Role,
+  type SourceCheck,
+  type SourceVerdict,
   type Vote,
   type VoteContext,
   type VoteDecision,
@@ -58,6 +60,22 @@ export interface RunGameOptions {
   onRuntimes?: (r: { referee: RefereeRuntime; agents: AgentRuntime[] }) => void;
   /** Dispose runtimes when the game ends. Default true. */
   disposeOnEnd?: boolean;
+}
+
+const VERDICTS: readonly SourceVerdict[] = ['supported', 'contradicted', 'not_found', 'unknown', 'no_source'];
+/** Per fact-check timeout (Keenable Fetch with a prompt runs a reader model). */
+const VERIFY_TIMEOUT_MS = 15_000;
+
+/** Short public summary of a round's fact-check verdicts. */
+export function factCheckSummary(checks: SourceCheck[]): string {
+  const n = (v: SourceVerdict) => checks.filter((c) => c.verdict === v).length;
+  const parts = [
+    `${n('supported')} verified`,
+    `${n('contradicted') + n('not_found')} unsupported`,
+  ];
+  if (n('no_source')) parts.push(`${n('no_source')} without a source`);
+  if (n('unknown')) parts.push(`${n('unknown')} unchecked`);
+  return `Fact-check done: ${parts.join(', ')}.`;
 }
 
 const HOOK_ALLOWED = new Set<GameEventPayload['type']>([
@@ -440,6 +458,7 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
         // ---- answering ----
         phase(round, 'answering');
         await runAnswering(round, topic, question);
+        await runFactCheck(round, topic, question);
       }
 
       // ---- referee greps the shared council disk for copied answers ----
@@ -647,6 +666,69 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
       }
       await beat(1);
     }
+  }
+
+  /**
+   * Referee fact-checks every cited source of this question's answers IN PARALLEL (Keenable Fetch),
+   * emits one public answer_verified per answer and appends each verdict to the answerer's
+   * sources/r<N>.md. Failures/timeouts become 'unknown'; skipped if the referee can't verify.
+   */
+  async function runFactCheck(round: number, topic: string, question: RefereeQuestion): Promise<void> {
+    const ref = referee;
+    if (!ref?.verifyAnswer) return;
+    const mine = answers.filter((a) => a.questionId === question.id);
+    if (!mine.length) return;
+    if (mine.some((a) => a.sourceUrl)) say(round, 'Checking every cited source before the vote...');
+    const checks = await Promise.all(
+      mine.map(async (a): Promise<SourceCheck> => {
+        if (!a.sourceUrl) return { verdict: 'no_source' };
+        const unknown = (): SourceCheck => ({ verdict: 'unknown', url: a.sourceUrl, quote: 'Check failed or timed out.' });
+        // Public view only: the referee never sees god-only fabricated/copiedFrom.
+        const { copiedFrom: _godOnly, ...pub } = a;
+        const r = await guarded<SourceCheck>(
+          `referee.verify(${a.agentId})`,
+          () => ref.verifyAnswer!({ gameId, round, topic, question, answer: { ...pub, fabricated: false } }),
+          unknown,
+          VERIFY_TIMEOUT_MS,
+          log,
+          signal,
+        );
+        const v = r.value;
+        if (!v || !VERDICTS.includes(v.verdict)) return unknown();
+        const check: SourceCheck = { verdict: v.verdict, url: a.sourceUrl };
+        const quote = typeof v.quote === 'string' ? v.quote.replace(/\s+/g, ' ').trim().slice(0, 200) : '';
+        if (quote) check.quote = quote;
+        return check;
+      }),
+    );
+    if (signal?.aborted) throw new Aborted();
+    const writes: Promise<unknown>[] = [];
+    for (let i = 0; i < mine.length; i++) {
+      const a = mine[i]!;
+      const check = checks[i]!;
+      const idx = answers.findIndex((x) => x.id === a.id);
+      const verified: Answer = { ...a, verification: check };
+      if (idx >= 0) answers[idx] = verified;
+      emit({
+        type: 'answer_verified',
+        answerId: a.id,
+        agentId: a.agentId,
+        round,
+        verdict: check.verdict,
+        ...(check.url ? { url: check.url } : {}),
+        ...(check.quote ? { quote: check.quote } : {}),
+      });
+      const rt = runtimes.get(a.agentId);
+      if (rt?.recordSourceCheck) {
+        writes.push(
+          guarded(`${a.agentId}.recordSourceCheck`, () => rt.recordSourceCheck!(question, verified, check), () => undefined, 10_000, log, signal),
+        );
+      }
+      await beat(0.4);
+    }
+    await Promise.all(writes);
+    say(round, factCheckSummary(checks));
+    await beat(1);
   }
 
   async function runVoting(round: number, topic: string): Promise<Vote[]> {

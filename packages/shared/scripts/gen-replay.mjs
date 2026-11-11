@@ -145,6 +145,21 @@ ROUNDS.forEach((R, ri) => {
     emit({ type: 'disk_updated', agentId: a.id, path: 'answers.md' }, 30);
   }
 
+  // referee fact-check (Keenable Fetch): invented URLs are NOT_FOUND, real crew sources SUPPORTED
+  if (order.some((a) => drafts[a.id].sourceUrl)) say(round, REF, 'announcement', 'Checking every cited source before the vote...', 500);
+  const counts = { supported: 0, not_found: 0, no_source: 0 };
+  for (const a of order) {
+    const d = drafts[a.id];
+    const verdict = !d.sourceUrl ? 'no_source' : roles[a.id] === 'impostor' && !d.copiedFrom ? 'not_found' : 'supported';
+    counts[verdict]++;
+    const quote = verdict === 'supported' ? d.text.slice(0, 80) : verdict === 'not_found' ? 'No page at this URL (HTTP 404).' : undefined;
+    emit({ type: 'answer_verified', answerId: `${question.id}-${a.id}`, agentId: a.id, round, verdict, ...(d.sourceUrl ? { url: d.sourceUrl } : {}), ...(quote ? { quote } : {}) }, 280);
+    const block = `### Referee fact-check (${question.id})\n- Source: ${d.sourceUrl ?? '(none cited)'}\n- Verdict: **${verdict.toUpperCase()}**`;
+    disks[a.id].sources[round] = disks[a.id].sources[round] ? `${disks[a.id].sources[round]}\n\n${block}` : block;
+    emit({ type: 'disk_updated', agentId: a.id, path: `sources/r${round}.md` }, 20);
+  }
+  say(round, REF, 'announcement', `Fact-check done: ${counts.supported} verified, ${counts.not_found} unsupported${counts.no_source ? `, ${counts.no_source} without a source` : ''}.`, 500);
+
   // voting: walk to council, live votes
   emit({ type: 'phase_changed', round, phase: 'voting', endsAt: null }, 900);
   say(round, REF, 'announcement', 'Answers are in. To the council — vote for who you think is the impostor.', 300);

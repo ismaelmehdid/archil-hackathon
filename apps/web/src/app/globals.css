@@ -119,6 +119,9 @@ button.primary:disabled { opacity: 0.6; }
 .tag { font-size: 10px; font-weight: 800; padding: 1px 7px; border-radius: 999px; }
 .tag.red { background: #ffe1e9; color: #d42c55; }
 .tag.amber { background: #fff1cc; color: #9a6200; }
+.tag.green { background: #dcf7ea; color: #1a8a5a; }
+.tag.grey { background: #eeecf3; color: #6d6782; }
+.verify-quote { font-size: 11px; font-style: italic; margin-top: 2px; }
 
 ul { list-style: none; margin: 0; padding: 0; }
 .row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }

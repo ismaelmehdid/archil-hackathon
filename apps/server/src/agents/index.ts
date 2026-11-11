@@ -5,18 +5,23 @@ import {
   type AgentFactory,
   type AgentFactoryInput,
   type AgentRuntime,
+  type Answer,
   type AnswerContext,
   type AnswerDraft,
   type CouncilRuntime,
   type DiskSnapshot,
   type ModeInfo,
   type RefereeContext,
+  type RefereeQuestion,
   type RefereeQuestionDraft,
   type RefereeRuntime,
   type Role,
+  type SourceCheck,
+  type VerifyContext,
   type VoteContext,
   type VoteDecision,
 } from '@susagent/shared';
+import { fetchVerify, mockVerify, sourceCheckMarkdown } from './factcheck';
 import { MemoryDisk, type AgentDisk } from './disk';
 import { AgentEnv, toolsFor } from './env';
 import { heuristicCrewAnswer, heuristicImpostorAnswer, heuristicQuestion, heuristicVote } from './heuristic';
@@ -84,6 +89,11 @@ class PlayerRuntime implements AgentRuntime {
   dispose(): Promise<void> {
     return this.env.disk.dispose();
   }
+  /** Appends the referee's verdict on my cited source to sources/r<N>.md (env.update never throws). */
+  recordSourceCheck(question: RefereeQuestion, answer: Answer, check: SourceCheck): Promise<void> {
+    const path = `${DISK_PATHS.sourcesDir}/r${question.round}.md`;
+    return this.env.update(path, (prev) => (prev ?? `# Round ${question.round} sources\n\n`) + sourceCheckMarkdown(question, answer, check));
+  }
 }
 
 class RefereeRuntimeImpl implements RefereeRuntime {
@@ -98,6 +108,15 @@ class RefereeRuntimeImpl implements RefereeRuntime {
     } catch (err) {
       this.env.log('warn', `question failed, using heuristic: ${(err as Error).message}`);
       return heuristicBrain.question(this.env, ctx);
+    }
+  }
+  /** Keenable Fetch fact-check of the cited URL (canned verdicts in mock mode). Never throws. */
+  async verifyAnswer(ctx: VerifyContext): Promise<SourceCheck> {
+    try {
+      return this.env.opts.mockSearch ? mockVerify(ctx.question, ctx.answer) : await fetchVerify(ctx.question, ctx.answer);
+    } catch (err) {
+      this.env.log('warn', `fact-check of ${ctx.answer.agentId} failed: ${(err as Error).message}`);
+      return { verdict: 'unknown', url: ctx.answer.sourceUrl };
     }
   }
   readDisk(): Promise<DiskSnapshot> {

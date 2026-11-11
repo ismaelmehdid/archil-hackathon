@@ -126,6 +126,11 @@ export function reduce(s: Data, e: GameEvent): Partial<Data> {
       g.answers = [...g.answers, e.answer];
       out.speech = { ...s.speech, [e.answer.agentId]: { id: e.answer.id, text: e.answer.text, at } };
       break;
+    case 'answer_verified': {
+      const v = { verdict: e.verdict, ...(e.url ? { url: e.url } : {}), ...(e.quote ? { quote: e.quote } : {}) };
+      g.answers = g.answers.map((a) => (a.id === e.answerId ? { ...a, verification: v } : a));
+      break;
+    }
     case 'agent_thought': {
       const t = [...s.thoughts, e];
       out.thoughts = t.length > 200 ? t.slice(t.length - 200) : t;
