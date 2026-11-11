@@ -207,6 +207,22 @@ export interface Answer {
   copiedFrom?: AgentId;
 }
 
+/**
+ * Archil grep copy detector: answer `agentId` shares a distinctive phrase with `fromAgentId`'s
+ * EARLIER-revealed answer this round (and with no other answer). Public evidence for voting.
+ */
+export interface CopySuspicion {
+  round: number;
+  /** Suspected copier (revealed later). */
+  agentId: AgentId;
+  /** Agent whose earlier answer contains the same phrase. */
+  fromAgentId: AgentId;
+  /** The shared phrase (lowercased n-gram). */
+  phrase: string;
+  /** 'archil-grep' = disk.grep on the council disk; 'regex' = in-memory scan (mock / grep fallback). */
+  via: 'archil-grep' | 'regex';
+}
+
 export interface SearchResult {
   title: string;
   url: string;
@@ -320,6 +336,8 @@ export interface GameSnapshot {
   messages: Message[];
   /** Public aggregate suspicion 0..1 per alive agent. */
   suspicion: Record<AgentId, number>;
+  /** Archil grep copy flags (all rounds). Optional: absent in older replays. */
+  copySuspicions?: CopySuspicion[];
   eliminated: { agentId: AgentId; role: Role; round: number }[];
   winner: Winner | null;
   winReason: string | null;
@@ -371,6 +389,8 @@ export type GameEventPayload =
    * 3D: draw a beam voter -> target in the voter's color; UI: update the live who-votes-whom table.
    */
   | { type: 'vote_cast'; vote: Vote; tally: Tally }
+  /** Referee's Archil grep over the shared council disk (r<N>/) flagged a likely copy. After answering, before voting. */
+  | ({ type: 'copy_suspected' } & CopySuspicion)
   /** Public aggregate suspicion 0..1 (mean of alive agents' suspects.json scores). 3D ring color. */
   | { type: 'suspicion_updated'; scores: Record<AgentId, number> }
   /** A file on agentId's disk changed — UI may refetch GET .../disk. */
@@ -495,6 +515,8 @@ export interface VoteContext extends AgentContext {
   /** Votes already cast this round (live, visible to later voters). */
   votesSoFar: Vote[];
   // Crew may spend leftover search budget (tracked by the agent layer) to verify claims/sources.
+  /** This round's copy flags from the referee's Archil grep (evidence). */
+  copySuspicions: CopySuspicion[];
 }
 
 export interface AnswerDraft {
@@ -564,10 +586,27 @@ export interface AgentFactoryInput {
   hooks: AgentHooks;
 }
 
+/**
+ * Shared per-game "council" disk (Archil: susagent-<gameId>-council, mounted conditional at /mnt/council
+ * in every sandbox; memory in mock). Each agent's answers go to r<N>/<agentId>.md.
+ */
+export interface CouncilRuntime {
+  readonly backend: 'archil' | 'memory';
+  readonly diskId?: string;
+  /** Writes/updates r<round>/<agentId>.md with this answer (appends for multi-question rounds). */
+  writeAnswer(answer: Answer): Promise<void>;
+  /** Scans r<round>/ for distinctive phrases shared by exactly two agents. `answers` = this round, reveal order. */
+  detectCopies(round: number, answers: Answer[], questionText: string): Promise<CopySuspicion[]>;
+  /** Called AFTER every sandbox is stopped/deleted (they mount this disk). Throws on failure. */
+  dispose(): Promise<void>;
+}
+
 /** Provisions referee + all N agents IN PARALLEL. Engine uses a fake factory in tests. */
 export interface AgentFactory {
   readonly mode: ModeInfo;
-  createAll(input: AgentFactoryInput): Promise<{ referee: RefereeRuntime; agents: AgentRuntime[] }>;
+  createAll(
+    input: AgentFactoryInput,
+  ): Promise<{ referee: RefereeRuntime; agents: AgentRuntime[]; council?: CouncilRuntime }>;
 }
 
 /* ------------------------------------------------------------------ */

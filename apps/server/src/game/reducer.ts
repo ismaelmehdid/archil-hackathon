@@ -82,6 +82,11 @@ export function reduceEvent(prev: GameSnapshot | null, e: GameEvent): GameSnapsh
     case 'suspicion_updated':
       s.suspicion = { ...e.scores };
       break;
+    case 'copy_suspected': {
+      const { type: _t, seq: _s, ts: _ts, gameId: _g, ...flag } = e;
+      s.copySuspicions = [...(s.copySuspicions ?? []), flag];
+      break;
+    }
     case 'agent_eliminated':
       s.agents = s.agents.map((a) => (a.id === e.agentId ? { ...a, alive: false, revealedRole: e.role } : a));
       s.rooms = s.rooms.map((r) => ({ ...r, agentIds: r.agentIds.filter((id) => id !== e.agentId) }));

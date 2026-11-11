@@ -5,6 +5,7 @@ import {
   type AgentRuntime,
   type AnswerContext,
   type AnswerDraft,
+  type CouncilRuntime,
   type DiskSnapshot,
   type ModeInfo,
   type RefereeContext,
@@ -19,7 +20,8 @@ import { AgentEnv, toolsFor } from './env';
 import { heuristicCrewAnswer, heuristicImpostorAnswer, heuristicQuestion, heuristicVote } from './heuristic';
 import { searchProvider } from './search';
 import { llmAnswer, llmQuestion, llmVote } from './llm';
-import { ArchilDisk, createAgentSandbox, createArchilDisk, sandboxFetcher } from './archil';
+import { ArchilDisk, createAgentSandbox, createArchilDisk, createCouncilDisk, sandboxFetcher } from './archil';
+import { MemoryCouncil } from './council';
 
 export { toolsFor } from './env';
 export { searchWeb, searchProvider } from './search';
@@ -158,68 +160,86 @@ export function createAgentFactory(opts: FactoryOptions = {}): AgentFactory {
       const actors = [{ id: REFEREE_ID, name: 'Referee' }, ...agents.map((a) => ({ id: a.id, name: a.name }))];
       let archilFailures = 0;
 
-      // 1) Disks, in parallel.
-      const envs = await mapLimit(actors, 10, async (actor) => {
-        let disk: AgentDisk;
-        if (mode.disks === 'archil') {
-          try {
-            disk = await createArchilDisk(gameId, actor.id);
-          } catch (err) {
-            archilFailures++;
-            log('warn', `Archil disk for ${actor.id} failed (${(err as Error).message.slice(0, 120)}); using memory disk`);
-            disk = new MemoryDisk(actor.id);
-          }
-        } else disk = new MemoryDisk(actor.id);
-        const secret = roleOf.get(actor.id);
-        const role = actor.id === REFEREE_ID ? ('referee' as const) : (secret?.role ?? 'crew');
-        const model =
-          role === 'referee' ? config.models.referee : (secret?.model ?? (role === 'impostor' ? config.models.impostor : config.models.crew));
-        const env = new AgentEnv(actor.id, role, actor.name, model, disk, hooks, config, {
-          mockSearch,
-          gameId,
-          gameStartIso,
-          fellowImpostors: role === 'impostor' ? impostors.filter((x) => x !== actor.id) : [],
-        });
-        await env.appendNote(
-          role === 'impostor'
-            ? `I am an IMPOSTOR. Fellow impostors: ${impostors.filter((x) => x !== actor.id).join(', ') || 'none'}. No web_search tool — blend in.`
-            : role === 'referee'
-              ? 'I am the referee. I ask one checkable recent-news question per round.'
-              : 'I am crew. Search, answer truthfully, find the impostors.',
-        );
-        hooks.emit({ type: 'agent_ready', agentId: actor.id, backend: disk.backend, diskId: disk.diskId });
-        return env;
-      });
-      if (mode.disks === 'archil' && archilFailures === actors.length) mode.disks = 'memory';
+      // 0) Shared council disk (one per game), in parallel with the agent disks.
+      const councilP: Promise<CouncilRuntime> =
+        mode.disks === 'archil'
+          ? createCouncilDisk(gameId).catch((err) => {
+              log('warn', `Archil council disk failed (${(err as Error).message.slice(0, 120)}); using in-memory council`);
+              return new MemoryCouncil();
+            })
+          : Promise.resolve(new MemoryCouncil());
 
-      // 2) Sandboxes with per-role egress firewall (best effort, bounded by a global deadline).
-      const archilEnvs = envs.filter((e) => e.disk instanceof ArchilDisk);
-      if (archilEnvs.length && process.env.SUSAGENT_SANDBOXES !== '0') {
-        let planRequired = false;
-        const verified = new Set<string>();
-        const outcomes = await mapLimit(archilEnvs, 10, async (env) => {
-          const remaining = PROVISION_DEADLINE_MS - (Date.now() - t0);
-          if (planRequired || remaining < 5000) return null;
-          const out = await createAgentSandbox(gameId, env.id, env.role, env.disk as ArchilDisk);
-          if (out.planRequired) planRequired = true;
-          if (out.sandbox && out.firewall) {
-            verified.add(env.id);
-            if (env.hasWebSearch && process.env.KEENABLE_API_KEY) env.opts.sandboxFetch = sandboxFetcher(out.sandbox);
-          }
-          if (out.error && !out.planRequired) log('warn', `sandbox for ${env.id} failed: ${out.error}`);
-          return out;
+      try {
+        // 1) Disks, in parallel.
+        const envs = await mapLimit(actors, 10, async (actor) => {
+          let disk: AgentDisk;
+          if (mode.disks === 'archil') {
+            try {
+              disk = await createArchilDisk(gameId, actor.id);
+            } catch (err) {
+              archilFailures++;
+              log('warn', `Archil disk for ${actor.id} failed (${(err as Error).message.slice(0, 120)}); using memory disk`);
+              disk = new MemoryDisk(actor.id);
+            }
+          } else disk = new MemoryDisk(actor.id);
+          const secret = roleOf.get(actor.id);
+          const role = actor.id === REFEREE_ID ? ('referee' as const) : (secret?.role ?? 'crew');
+          const model =
+            role === 'referee' ? config.models.referee : (secret?.model ?? (role === 'impostor' ? config.models.impostor : config.models.crew));
+          const env = new AgentEnv(actor.id, role, actor.name, model, disk, hooks, config, {
+            mockSearch,
+            gameId,
+            gameStartIso,
+            fellowImpostors: role === 'impostor' ? impostors.filter((x) => x !== actor.id) : [],
+          });
+          await env.appendNote(
+            role === 'impostor'
+              ? `I am an IMPOSTOR. Fellow impostors: ${impostors.filter((x) => x !== actor.id).join(', ') || 'none'}. No web_search tool — blend in.`
+              : role === 'referee'
+                ? 'I am the referee. I ask one checkable recent-news question per round.'
+                : 'I am crew. Search, answer truthfully, find the impostors.',
+          );
+          hooks.emit({ type: 'agent_ready', agentId: actor.id, backend: disk.backend, diskId: disk.diskId });
+          return env;
         });
-        if (planRequired) log('warn', 'Archil plan lacks sandbox networking (sandbox_network_plan_required): web_search removed server-side for impostors only, no firewall.');
-        const sandboxes = outcomes.filter((o) => o?.sandbox).length;
-        mode.impostorEgressBlocked = impostors.length > 0 && impostors.every((id) => verified.has(id));
-        log('info', `sandboxes: ${sandboxes}/${archilEnvs.length}, firewall verified on ${verified.size}, impostorEgressBlocked=${mode.impostorEgressBlocked}`);
+        if (mode.disks === 'archil' && archilFailures === actors.length) mode.disks = 'memory';
+        const council = await councilP;
+        log('info', `council disk: ${council.backend}${council.diskId ? ` ${council.diskId}` : ''} (r<N>/<agentId>.md, mounted at /mnt/council)`);
+
+        // 2) Sandboxes with per-role egress firewall (best effort, bounded by a global deadline).
+        const archilEnvs = envs.filter((e) => e.disk instanceof ArchilDisk);
+        if (archilEnvs.length && process.env.SUSAGENT_SANDBOXES !== '0') {
+          let planRequired = false;
+          const verified = new Set<string>();
+          const outcomes = await mapLimit(archilEnvs, 10, async (env) => {
+            const remaining = PROVISION_DEADLINE_MS - (Date.now() - t0);
+            if (planRequired || remaining < 5000) return null;
+            const out = await createAgentSandbox(gameId, env.id, env.role, env.disk as ArchilDisk, council.diskId);
+            if (out.planRequired) planRequired = true;
+            if (out.sandbox && out.firewall) {
+              verified.add(env.id);
+              if (env.hasWebSearch && process.env.KEENABLE_API_KEY) env.opts.sandboxFetch = sandboxFetcher(out.sandbox);
+            }
+            if (out.error && !out.planRequired) log('warn', `sandbox for ${env.id} failed: ${out.error}`);
+            return out;
+          });
+          if (planRequired) log('warn', 'Archil plan lacks sandbox networking (sandbox_network_plan_required): web_search removed server-side for impostors only, no firewall.');
+          const sandboxes = outcomes.filter((o) => o?.sandbox).length;
+          mode.impostorEgressBlocked = impostors.length > 0 && impostors.every((id) => verified.has(id));
+          log('info', `sandboxes: ${sandboxes}/${archilEnvs.length}, firewall verified on ${verified.size}, impostorEgressBlocked=${mode.impostorEgressBlocked}`);
+        }
+
+        const [refEnv, ...playerEnvs] = envs;
+        return {
+          referee: new RefereeRuntimeImpl(refEnv!, brain),
+          agents: playerEnvs.map((e) => new PlayerRuntime(e, brain)),
+          council,
+        };
+      } catch (err) {
+        // Don't leak the council disk if provisioning blew up after creating it.
+        void councilP.then((c) => c.dispose()).catch((e) => log('warn', `council dispose after failed createAll: ${(e as Error).message}`));
+        throw err;
       }
-
-      const [refEnv, ...playerEnvs] = envs;
-      return {
-        referee: new RefereeRuntimeImpl(refEnv!, brain),
-        agents: playerEnvs.map((e) => new PlayerRuntime(e, brain)),
-      };
     },
   };
 }

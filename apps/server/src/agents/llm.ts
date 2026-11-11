@@ -258,7 +258,10 @@ export async function llmVote(env: AgentEnv, ctx: VoteContext): Promise<VoteDeci
   const q = ctx.questions.filter((x) => x.round === ctx.round).map((x) => x.text).join(' / ');
   const prev = await env.disk.read(DISK_PATHS.suspects);
   const budget = env.hasWebSearch ? `\nSearches left this round: ${env.budgetRemaining(ctx.round)}.` : '';
-  const user = `Question this round: ${q}\nAnswers this round:\n${thisRound}\n\nVotes so far this round: ${ctx.votesSoFar.map((v) => `${v.voterId}->${v.targetId} ("${v.reason}")`).join('; ') || 'none'}\n\nEarlier:\n${history(ctx)}\n\nYour previous suspects.json: ${prev ? prev.slice(0, 800) : '(none)'}${budget}\n\nCandidates: ${ctx.candidates.join(', ')}. Call cast_vote with one target_id from the candidates.`;
+  const copies = (ctx.copySuspicions ?? [])
+    .map((f) => `  ${f.agentId} (${names.get(f.agentId) ?? f.agentId}) looks copied from ${f.fromAgentId} (${names.get(f.fromAgentId) ?? f.fromAgentId}): shared phrase "${f.phrase}"`)
+    .join('\n');
+  const user = `Question this round: ${q}\nAnswers this round:\n${thisRound}\n\nReferee's Archil grep over the shared council disk (copy detector):\n${copies || '  no copies flagged'}\n\nVotes so far this round: ${ctx.votesSoFar.map((v) => `${v.voterId}->${v.targetId} ("${v.reason}")`).join('; ') || 'none'}\n\nEarlier:\n${history(ctx)}\n\nYour previous suspects.json: ${prev ? prev.slice(0, 800) : '(none)'}${budget}\n\nCandidates: ${ctx.candidates.join(', ')}. Call cast_vote with one target_id from the candidates.`;
   const input = await runLoop(env, ctx.round, ctx.topic, systemFor(env, ctx), user, 'cast_vote', { candidates: ctx.candidates });
   const targetId = String(input.target_id ?? '');
   if (!ctx.candidates.includes(targetId)) throw new Error(`invalid vote target ${targetId}`);

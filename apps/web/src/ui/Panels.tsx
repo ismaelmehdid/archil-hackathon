@@ -84,6 +84,7 @@ export function AnswersPanel() {
   const godMode = useViewerStore((s) => s.godMode);
   const agents = useAgents();
   const answers = game?.answers.filter((a) => a.round === game.round) ?? [];
+  const copies = game?.copySuspicions?.filter((c) => c.round === game.round) ?? [];
   return (
     <Section title="Answers" right={<span className="muted">{answers.length}</span>}>
       {answers.length === 0 && <p className="muted">Waiting for answers...</p>}
@@ -109,6 +110,13 @@ export function AnswersPanel() {
           </li>
         ))}
       </ul>
+      {copies.map((c) => (
+        <p key={`${c.agentId}-${c.fromAgentId}`} className="copy-flag fade-in">
+          <span className="tag amber">{c.via === 'archil-grep' ? 'Archil grep' : 'grep'}: copy suspected</span>{' '}
+          <AgentName id={c.agentId} /> looks copied from <AgentName id={c.fromAgentId} />{' '}
+          <span className="muted">"{c.phrase}"</span>
+        </p>
+      ))}
     </Section>
   );
 }

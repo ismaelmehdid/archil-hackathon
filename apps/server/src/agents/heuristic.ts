@@ -220,6 +220,12 @@ export async function heuristicVote(env: AgentEnv, ctx: VoteContext): Promise<Vo
       const wagon = isOutlier ? wagonW * ((tallySoFar[c] ?? 0) / maxTally) : 0.02 * (tallySoFar[c] ?? 0);
       score[c] = (out[c] ?? 0) + 0.3 * carry + wagon;
     }
+    // Evidence from the referee's Archil grep over the council disk: flagged copiers get a bump.
+    const copied = new Map((ctx.copySuspicions ?? []).filter((f) => f.agentId !== ctx.self.id).map((f) => [f.agentId, f]));
+    for (const c of ctx.candidates) if (copied.has(c)) score[c] = (score[c] ?? 0) + 0.35;
+    // The "source" side of a flagged pair is weaker evidence (direction is inferred, not known).
+    const sources = new Set([...copied.values()].map((f) => f.fromAgentId));
+    for (const c of ctx.candidates) if (sources.has(c) && !copied.has(c)) score[c] = (score[c] ?? 0) + 0.1;
     // Verify the 1-2 most suspicious claims with leftover search budget: a cited source that never shows up
     // when searching the claim is a strong tell; a source that checks out clears the suspect a bit.
     const ranked = [...ctx.candidates].sort((a, b) => (score[b] ?? 0) - (score[a] ?? 0)).slice(0, 2);
@@ -238,7 +244,10 @@ export async function heuristicVote(env: AgentEnv, ctx: VoteContext): Promise<Vo
     const target = softPick(score, ctx.candidates, VOTE_TEMP);
     const sus = normalize(score);
     const theirs = ctx.answers.find((a) => a.round === ctx.round && a.agentId === target);
-    const reason = theirs
+    const flag = copied.get(target);
+    const reason = flag
+      ? `Archil grep: ${nameOf(ctx, target)}'s answer copies ${nameOf(ctx, flag.fromAgentId)} ("${clip(flag.phrase, 40)}").`
+      : theirs
       ? `${nameOf(ctx, target)}'s answer "${clip(core(theirs.text), 50)}" doesn't match what the sources say.`
       : `${nameOf(ctx, target)} has been the odd one out.`;
     env.thought(ctx.round, 'voting', `Biggest outlier vs. the majority (and my own sources): ${nameOf(ctx, target)}.`);
