@@ -72,19 +72,19 @@ const lit = (color: string, extra: THREE.MeshStandardMaterialParameters = {}) =>
 
 const M = {
   ground: lit('#ffffff', { vertexColors: true, roughness: 1 }),
-  water: lit('#b3d9ee', { roughness: 0.6 }),
+  water: lit('#c4e6f7', { roughness: 0.6 }),
   trunk: lit('#b07a54'),
   foliage: lit('#ffffff'), // tinted per instance
   rock: lit('#ffffff'),
 };
 
-const GREENS = ['#8cc79a', '#7dbb8f', '#9fcf96', '#86c2a0', '#94c98c', '#7fb995'].map((c) => new THREE.Color(c));
+const GREENS = ['#a3dbad', '#95d0a3', '#b4e3a9', '#9dd6b5', '#a8dc9f', '#97cfa8'].map((c) => new THREE.Color(c));
 const ROCKS = ['#c9c3d1', '#d6d1dc', '#bdb7c6'].map((c) => new THREE.Color(c));
 
-const SAND = new THREE.Color('#eadfc0');
-const MEADOW = new THREE.Color('#c3e2b0');
-const FOREST_FLOOR = new THREE.Color('#a3cf9f');
-const HILL = new THREE.Color('#b5d6a6');
+const SAND = new THREE.Color('#f5ead0');
+const MEADOW = new THREE.Color('#d6f0c4');
+const FOREST_FLOOR = new THREE.Color('#bde3b2');
+const HILL = new THREE.Color('#cbe9b9');
 
 /* ------------------------------ terrain ------------------------------ */
 

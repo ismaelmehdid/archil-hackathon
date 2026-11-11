@@ -240,9 +240,9 @@ export default function Arena() {
         gl={{ antialias: true, alpha: true }}
         flat
       >
-        <hemisphereLight args={['#ffffff', '#c7b6e8', 0.85]} />
-        <ambientLight intensity={0.2} />
-        <directionalLight position={[20, 35, 15]} intensity={0.95} color="#fff4e0" />
+        <hemisphereLight args={['#ffffff', '#d9cdf0', 1.15]} />
+        <ambientLight intensity={0.38} />
+        <directionalLight position={[20, 35, 15]} intensity={1.15} color="#fff8ec" />
         <World />
         <LabelProjector />
         <R3fHandle />

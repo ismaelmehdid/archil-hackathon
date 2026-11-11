@@ -47,7 +47,7 @@ export const GEO = {
 
 export const PALETTE = {
   /** Fog/horizon tint (the sky itself is a CSS gradient behind a transparent canvas). */
-  fog: '#e3ebf1',
+  fog: '#f2f7fb',
   gold: '#ffc94d',
   ink: '#2d2a3e',
 };
