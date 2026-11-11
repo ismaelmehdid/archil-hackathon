@@ -70,6 +70,11 @@ export function reduceEvent(prev: GameSnapshot | null, e: GameEvent): GameSnapsh
     case 'answer_submitted':
       s.answers = [...s.answers, e.answer];
       break;
+    case 'answer_verified': {
+      const v = { verdict: e.verdict, ...(e.url ? { url: e.url } : {}), ...(e.quote ? { quote: e.quote } : {}) };
+      s.answers = s.answers.map((a) => (a.id === e.answerId ? { ...a, verification: v } : a));
+      break;
+    }
     case 'message_posted':
       s.messages = [...s.messages, e.message];
       break;

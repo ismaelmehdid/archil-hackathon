@@ -81,29 +81,71 @@ export class HttpError extends Error {
   }
 }
 
-async function postJson(url: string, headers: Record<string, string>, body: unknown, retried = false): Promise<any> {
+/** JSON request with one 429 retry (Retry-After, capped at 5 s so a game never stalls). Throws HttpError. */
+async function requestJson(
+  url: string,
+  init: { method: 'GET' | 'POST'; headers: Record<string, string>; body?: unknown },
+  timeoutMs = TIMEOUT_MS,
+  retried = false,
+): Promise<any> {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   let res: Response;
   try {
     res = await fetch(url, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', ...headers },
-      body: JSON.stringify(body),
+      method: init.method,
+      headers: init.body === undefined ? init.headers : { 'content-type': 'application/json', ...init.headers },
+      body: init.body === undefined ? undefined : JSON.stringify(init.body),
       signal: ctrl.signal,
     });
     if (res.ok) return await res.json();
   } finally {
     clearTimeout(timer);
   }
-  // 429: honour Retry-After once (capped at 5 s so a game never stalls). 402 and others: no retry.
+  // 429: honour Retry-After once. 402 and others: no retry.
   if (res.status === 429 && !retried) {
     const ra = res.headers.get('retry-after');
     const ms = ra ? (Number.isFinite(Number(ra)) ? Number(ra) * 1000 : Date.parse(ra) - Date.now()) : 1000;
     await new Promise((r) => setTimeout(r, Math.max(0, Math.min(ms || 1000, 5000))));
-    return postJson(url, headers, body, true);
+    return requestJson(url, init, timeoutMs, true);
   }
   throw new HttpError(res.status);
+}
+
+const postJson = (url: string, headers: Record<string, string>, body: unknown) =>
+  requestJson(url, { method: 'POST', headers, body });
+
+export interface FetchedPage {
+  url: string;
+  title: string;
+  /** With a prompt: only the reader model's answer. */
+  content: string;
+  publishedAt?: string;
+}
+
+/**
+ * Keenable Fetch: GET /v1/fetch (keyed) or /v1/fetch/public (keyless). With `prompt`, a model reads the
+ * page and `content` holds only its answer. Throws HttpError (404 = no page at that URL, 400 = bad URL).
+ */
+export async function keenableFetch(
+  url: string,
+  o: { prompt?: string; maxChars?: number; live?: boolean; timeoutMs?: number } = {},
+): Promise<FetchedPage> {
+  const keyed = !!process.env.KEENABLE_API_KEY;
+  const qs = new URLSearchParams({ url });
+  if (o.prompt) qs.set('prompt', o.prompt.slice(0, 2000));
+  if (o.maxChars) qs.set('max_chars', String(o.maxChars));
+  if (o.live !== undefined) qs.set('live', String(o.live));
+  const headers: Record<string, string> = keyed
+    ? { 'x-api-key': String(process.env.KEENABLE_API_KEY) }
+    : { 'x-keenable-title': 'SusAgent' };
+  const data = await requestJson(`${KEENABLE}/fetch${keyed ? '' : '/public'}?${qs}`, { method: 'GET', headers }, o.timeoutMs ?? 12_000);
+  return {
+    url: String(data?.url ?? url),
+    title: String(data?.title ?? ''),
+    content: String(data?.content ?? ''),
+    publishedAt: data?.published_at ? String(data.published_at) : undefined,
+  };
 }
 
 function keenableBody(query: string, o: SearchOptions) {

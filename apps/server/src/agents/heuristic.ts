@@ -6,6 +6,7 @@ import type {
   RefereeContext,
   RefereeQuestionDraft,
   SearchResult,
+  SourceVerdict,
   VoteContext,
   VoteDecision,
 } from '@susagent/shared';
@@ -153,6 +154,33 @@ export function outlierScores(ctx: VoteContext, anchorText?: string): Record<Age
   return scores;
 }
 
+/**
+ * Suspicion bonus from the referee's public fact-check of this round's cited sources.
+ * A missing page (invented URL) is the strongest signal; a verified source clears a little suspicion.
+ */
+export const VERDICT_WEIGHT: Record<SourceVerdict, number> = {
+  not_found: 0.6,
+  contradicted: 0.35,
+  no_source: 0.15,
+  unknown: 0,
+  supported: -0.15,
+};
+
+export function verdictScores(ctx: VoteContext): Record<AgentId, number> {
+  const out: Record<AgentId, number> = {};
+  for (const a of ctx.answers) {
+    if (a.round !== ctx.round || !a.verification) continue;
+    out[a.agentId] = (out[a.agentId] ?? 0) + (VERDICT_WEIGHT[a.verification.verdict] ?? 0);
+  }
+  return out;
+}
+
+const VERDICT_REASON: Partial<Record<SourceVerdict, string>> = {
+  not_found: 'cited a page that does not exist',
+  contradicted: "cited a source that doesn't back the answer",
+  no_source: 'cited no source at all',
+};
+
 function normalize(raw: Record<AgentId, number>): Record<AgentId, number> {
   const vals = Object.values(raw);
   const max = Math.max(...vals, 1e-9);
@@ -196,7 +224,8 @@ export async function heuristicVote(env: AgentEnv, ctx: VoteContext): Promise<Vo
     const out = outlierScores(ctx);
     const withVotes = pool.filter((c) => (tallySoFar[c] ?? 0) > 0);
     const score: Record<AgentId, number> = {};
-    for (const c of pool) score[c] = (tallySoFar[c] ?? 0) * 2 + (out[c] ?? 0);
+    const ev = verdictScores(ctx);
+    for (const c of pool) score[c] = (tallySoFar[c] ?? 0) * 2 + (out[c] ?? 0) + Math.max(0, ev[c] ?? 0);
     const target = argmax(score, withVotes.length ? withVotes : pool);
     const sus = normalize(Object.fromEntries(pool.map((c) => [c, score[c] ?? 0])));
     for (const f of ctx.fellowImpostors) if (ctx.candidates.includes(f)) sus[f] = 0.05;
@@ -212,13 +241,14 @@ export async function heuristicVote(env: AgentEnv, ctx: VoteContext): Promise<Vo
     // concentrate votes instead of spreading them thin.
     const maxOut = Math.max(0, ...ctx.candidates.map((c) => out[c] ?? 0));
     const maxTally = Math.max(1, ...Object.values(tallySoFar));
+    const ev = verdictScores(ctx);
     // Bandwagon grows with game size (0.25 at 12 alive -> 0.5 at 50) so big games converge on the leading suspect.
     const wagonW = 0.25 + 0.25 * Math.min(1, Math.max(0, (ctx.alive.length - 12) / 38));
     for (const c of ctx.candidates) {
       const carry = prev?.suspects[c]?.score ?? 0;
       const isOutlier = (out[c] ?? 0) >= 0.75 * maxOut;
       const wagon = isOutlier ? wagonW * ((tallySoFar[c] ?? 0) / maxTally) : 0.02 * (tallySoFar[c] ?? 0);
-      score[c] = (out[c] ?? 0) + 0.3 * carry + wagon;
+      score[c] = (out[c] ?? 0) + 0.3 * carry + wagon + (ev[c] ?? 0);
     }
     // Verify the 1-2 most suspicious claims with leftover search budget: a cited source that never shows up
     // when searching the claim is a strong tell; a source that checks out clears the suspect a bit.
@@ -238,10 +268,19 @@ export async function heuristicVote(env: AgentEnv, ctx: VoteContext): Promise<Vo
     const target = softPick(score, ctx.candidates, VOTE_TEMP);
     const sus = normalize(score);
     const theirs = ctx.answers.find((a) => a.round === ctx.round && a.agentId === target);
-    const reason = theirs
-      ? `${nameOf(ctx, target)}'s answer "${clip(core(theirs.text), 50)}" doesn't match what the sources say.`
-      : `${nameOf(ctx, target)} has been the odd one out.`;
-    env.thought(ctx.round, 'voting', `Biggest outlier vs. the majority (and my own sources): ${nameOf(ctx, target)}.`);
+    const why = theirs?.verification ? VERDICT_REASON[theirs.verification.verdict] : undefined;
+    const reason = why
+      ? `${nameOf(ctx, target)} ${why}, per the referee's check.`
+      : theirs
+        ? `${nameOf(ctx, target)}'s answer "${clip(core(theirs.text), 50)}" doesn't match what the sources say.`
+        : `${nameOf(ctx, target)} has been the odd one out.`;
+    env.thought(
+      ctx.round,
+      'voting',
+      why
+        ? `Referee fact-check flagged ${nameOf(ctx, target)} (${theirs!.verification!.verdict}); that plus answer consistency decides it.`
+        : `Biggest outlier vs. the majority (and my own sources): ${nameOf(ctx, target)}.`,
+    );
     decision = { targetId: target, reason, suspicion: sus };
   }
   const reasons: Record<AgentId, string> = {};

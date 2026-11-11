@@ -1019,16 +1019,7 @@
   },
   {
    "seq": 60,
-   "ts": 20930,
-   "gameId": "replay-001",
-   "type": "phase_changed",
-   "round": 1,
-   "phase": "voting",
-   "endsAt": null
-  },
-  {
-   "seq": 61,
-   "ts": 21230,
+   "ts": 20530,
    "gameId": "replay-001",
    "type": "message_posted",
    "message": {
@@ -1036,13 +1027,290 @@
     "round": 1,
     "agentId": "referee",
     "kind": "announcement",
-    "text": "Answers are in. To the council — vote for who you think is the impostor.",
-    "ts": 21230
+    "text": "Checking every cited source before the vote...",
+    "ts": 20530
    }
   },
   {
+   "seq": 61,
+   "ts": 20810,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a01",
+   "agentId": "a01",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/northwind-series-b",
+   "quote": "Northwind AI, $120M Series B, led by Sequoia."
+  },
+  {
    "seq": 62,
-   "ts": 21280,
+   "ts": 20830,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a01",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 63,
+   "ts": 21110,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a02",
+   "agentId": "a02",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/northwind",
+   "quote": "Northwind AI — $120M Series B (Sequoia led)."
+  },
+  {
+   "seq": 64,
+   "ts": 21130,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a02",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 65,
+   "ts": 21410,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a03",
+   "agentId": "a03",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/lattice-45m",
+   "quote": "I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M."
+  },
+  {
+   "seq": 66,
+   "ts": 21430,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a03",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 67,
+   "ts": 21710,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a05",
+   "agentId": "a05",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/vc-weekly",
+   "quote": "Couldn't confirm the lead; Northwind AI raised about $120M."
+  },
+  {
+   "seq": 68,
+   "ts": 21730,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a05",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 69,
+   "ts": 22010,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a06",
+   "agentId": "a06",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/northwind-series-b",
+   "quote": "Northwind AI, $120M Series B, led by Sequoia."
+  },
+  {
+   "seq": 70,
+   "ts": 22030,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a06",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 71,
+   "ts": 22310,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a04",
+   "agentId": "a04",
+   "round": 1,
+   "verdict": "not_found",
+   "url": "https://news-helix.example/round",
+   "quote": "No page at this URL (HTTP 404)."
+  },
+  {
+   "seq": 72,
+   "ts": 22330,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a04",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 73,
+   "ts": 22610,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a10",
+   "agentId": "a10",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/northwind-series-b",
+   "quote": "Northwind AI, $120M Series B, led by Sequoia."
+  },
+  {
+   "seq": 74,
+   "ts": 22630,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a10",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 75,
+   "ts": 22910,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a07",
+   "agentId": "a07",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/northwind",
+   "quote": "Northwind AI — $120M Series B (Sequoia led)."
+  },
+  {
+   "seq": 76,
+   "ts": 22930,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a07",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 77,
+   "ts": 23210,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a08",
+   "agentId": "a08",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/lattice-45m",
+   "quote": "I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M."
+  },
+  {
+   "seq": 78,
+   "ts": 23230,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a08",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 79,
+   "ts": 23510,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a09",
+   "agentId": "a09",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/vc-weekly",
+   "quote": "Couldn't confirm the lead; Northwind AI raised about $120M."
+  },
+  {
+   "seq": 80,
+   "ts": 23530,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a09",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 81,
+   "ts": 23810,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a11",
+   "agentId": "a11",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/northwind-series-b",
+   "quote": "Northwind AI, $120M Series B, led by Sequoia."
+  },
+  {
+   "seq": 82,
+   "ts": 23830,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a11",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 83,
+   "ts": 24110,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q1-0-a12",
+   "agentId": "a12",
+   "round": 1,
+   "verdict": "supported",
+   "url": "https://example.com/northwind",
+   "quote": "Northwind AI — $120M Series B (Sequoia led)."
+  },
+  {
+   "seq": 84,
+   "ts": 24130,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a12",
+   "path": "sources/r1.md"
+  },
+  {
+   "seq": 85,
+   "ts": 24630,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m3",
+    "round": 1,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Fact-check done: 11 verified, 1 unsupported.",
+    "ts": 24630
+   }
+  },
+  {
+   "seq": 86,
+   "ts": 25530,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 1,
+   "phase": "voting",
+   "endsAt": null
+  },
+  {
+   "seq": 87,
+   "ts": 25830,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m4",
+    "round": 1,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Answers are in. To the council — vote for who you think is the impostor.",
+    "ts": 25830
+   }
+  },
+  {
+   "seq": 88,
+   "ts": 25880,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a01",
@@ -1051,8 +1319,8 @@
    }
   },
   {
-   "seq": 63,
-   "ts": 21330,
+   "seq": 89,
+   "ts": 25930,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a02",
@@ -1061,8 +1329,8 @@
    }
   },
   {
-   "seq": 64,
-   "ts": 21380,
+   "seq": 90,
+   "ts": 25980,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a03",
@@ -1071,8 +1339,8 @@
    }
   },
   {
-   "seq": 65,
-   "ts": 21430,
+   "seq": 91,
+   "ts": 26030,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a04",
@@ -1081,8 +1349,8 @@
    }
   },
   {
-   "seq": 66,
-   "ts": 21480,
+   "seq": 92,
+   "ts": 26080,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a05",
@@ -1091,8 +1359,8 @@
    }
   },
   {
-   "seq": 67,
-   "ts": 21530,
+   "seq": 93,
+   "ts": 26130,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a06",
@@ -1101,8 +1369,8 @@
    }
   },
   {
-   "seq": 68,
-   "ts": 21580,
+   "seq": 94,
+   "ts": 26180,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a07",
@@ -1111,8 +1379,8 @@
    }
   },
   {
-   "seq": 69,
-   "ts": 21630,
+   "seq": 95,
+   "ts": 26230,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a08",
@@ -1121,8 +1389,8 @@
    }
   },
   {
-   "seq": 70,
-   "ts": 21680,
+   "seq": 96,
+   "ts": 26280,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a09",
@@ -1131,8 +1399,8 @@
    }
   },
   {
-   "seq": 71,
-   "ts": 21730,
+   "seq": 97,
+   "ts": 26330,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a10",
@@ -1141,8 +1409,8 @@
    }
   },
   {
-   "seq": 72,
-   "ts": 21780,
+   "seq": 98,
+   "ts": 26380,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a11",
@@ -1151,8 +1419,8 @@
    }
   },
   {
-   "seq": 73,
-   "ts": 21830,
+   "seq": 99,
+   "ts": 26430,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a12",
@@ -1161,8 +1429,8 @@
    }
   },
   {
-   "seq": 74,
-   "ts": 25130,
+   "seq": 100,
+   "ts": 29730,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1176,8 +1444,8 @@
    }
   },
   {
-   "seq": 75,
-   "ts": 25930,
+   "seq": 101,
+   "ts": 30530,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1192,8 +1460,8 @@
    }
   },
   {
-   "seq": 76,
-   "ts": 26730,
+   "seq": 102,
+   "ts": 31330,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1208,8 +1476,8 @@
    }
   },
   {
-   "seq": 77,
-   "ts": 26830,
+   "seq": 103,
+   "ts": 31430,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -1228,8 +1496,8 @@
    }
   },
   {
-   "seq": 78,
-   "ts": 27630,
+   "seq": 104,
+   "ts": 32230,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1244,8 +1512,8 @@
    }
   },
   {
-   "seq": 79,
-   "ts": 28430,
+   "seq": 105,
+   "ts": 33030,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1260,8 +1528,8 @@
    }
   },
   {
-   "seq": 80,
-   "ts": 29230,
+   "seq": 106,
+   "ts": 33830,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1276,8 +1544,8 @@
    }
   },
   {
-   "seq": 81,
-   "ts": 29330,
+   "seq": 107,
+   "ts": 33930,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -1296,8 +1564,8 @@
    }
   },
   {
-   "seq": 82,
-   "ts": 30130,
+   "seq": 108,
+   "ts": 34730,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1312,8 +1580,8 @@
    }
   },
   {
-   "seq": 83,
-   "ts": 30930,
+   "seq": 109,
+   "ts": 35530,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1328,8 +1596,8 @@
    }
   },
   {
-   "seq": 84,
-   "ts": 31730,
+   "seq": 110,
+   "ts": 36330,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1344,8 +1612,8 @@
    }
   },
   {
-   "seq": 85,
-   "ts": 31830,
+   "seq": 111,
+   "ts": 36430,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -1364,8 +1632,8 @@
    }
   },
   {
-   "seq": 86,
-   "ts": 32630,
+   "seq": 112,
+   "ts": 37230,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1380,8 +1648,8 @@
    }
   },
   {
-   "seq": 87,
-   "ts": 33430,
+   "seq": 113,
+   "ts": 38030,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1396,8 +1664,8 @@
    }
   },
   {
-   "seq": 88,
-   "ts": 34230,
+   "seq": 114,
+   "ts": 38830,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -1412,8 +1680,8 @@
    }
   },
   {
-   "seq": 89,
-   "ts": 34330,
+   "seq": 115,
+   "ts": 38930,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -1432,8 +1700,8 @@
    }
   },
   {
-   "seq": 90,
-   "ts": 34530,
+   "seq": 116,
+   "ts": 39130,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -1452,8 +1720,8 @@
    }
   },
   {
-   "seq": 91,
-   "ts": 35430,
+   "seq": 117,
+   "ts": 40030,
    "gameId": "replay-001",
    "type": "phase_changed",
    "round": 1,
@@ -1461,8 +1729,8 @@
    "endsAt": null
   },
   {
-   "seq": 92,
-   "ts": 35830,
+   "seq": 118,
+   "ts": 40430,
    "gameId": "replay-001",
    "type": "agent_eliminated",
    "round": 1,
@@ -1474,8 +1742,8 @@
    }
   },
   {
-   "seq": 93,
-   "ts": 35930,
+   "seq": 119,
+   "ts": 40530,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a03",
@@ -1484,22 +1752,22 @@
    }
   },
   {
-   "seq": 94,
-   "ts": 37430,
+   "seq": 120,
+   "ts": 42030,
    "gameId": "replay-001",
    "type": "message_posted",
    "message": {
-    "id": "m3",
+    "id": "m5",
     "round": 1,
     "agentId": "referee",
     "kind": "announcement",
     "text": "Cleo was CREW.",
-    "ts": 37430
+    "ts": 42030
    }
   },
   {
-   "seq": 95,
-   "ts": 39470,
+   "seq": 121,
+   "ts": 44070,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a01",
@@ -1509,8 +1777,8 @@
    }
   },
   {
-   "seq": 96,
-   "ts": 39510,
+   "seq": 122,
+   "ts": 44110,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a02",
@@ -1520,8 +1788,8 @@
    }
   },
   {
-   "seq": 97,
-   "ts": 39550,
+   "seq": 123,
+   "ts": 44150,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a04",
@@ -1531,8 +1799,8 @@
    }
   },
   {
-   "seq": 98,
-   "ts": 39590,
+   "seq": 124,
+   "ts": 44190,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a05",
@@ -1542,8 +1810,8 @@
    }
   },
   {
-   "seq": 99,
-   "ts": 39630,
+   "seq": 125,
+   "ts": 44230,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a06",
@@ -1553,8 +1821,8 @@
    }
   },
   {
-   "seq": 100,
-   "ts": 39670,
+   "seq": 126,
+   "ts": 44270,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a07",
@@ -1564,8 +1832,8 @@
    }
   },
   {
-   "seq": 101,
-   "ts": 39710,
+   "seq": 127,
+   "ts": 44310,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a08",
@@ -1575,8 +1843,8 @@
    }
   },
   {
-   "seq": 102,
-   "ts": 39750,
+   "seq": 128,
+   "ts": 44350,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a09",
@@ -1586,8 +1854,8 @@
    }
   },
   {
-   "seq": 103,
-   "ts": 39790,
+   "seq": 129,
+   "ts": 44390,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a10",
@@ -1597,8 +1865,8 @@
    }
   },
   {
-   "seq": 104,
-   "ts": 39830,
+   "seq": 130,
+   "ts": 44430,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a11",
@@ -1608,8 +1876,8 @@
    }
   },
   {
-   "seq": 105,
-   "ts": 39870,
+   "seq": 131,
+   "ts": 44470,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a12",
@@ -1619,8 +1887,8 @@
    }
   },
   {
-   "seq": 106,
-   "ts": 41070,
+   "seq": 132,
+   "ts": 45670,
    "gameId": "replay-001",
    "type": "round_started",
    "round": 2,
@@ -1753,8 +2021,8 @@
    ]
   },
   {
-   "seq": 107,
-   "ts": 41370,
+   "seq": 133,
+   "ts": 45970,
    "gameId": "replay-001",
    "type": "phase_changed",
    "round": 2,
@@ -1762,22 +2030,22 @@
    "endsAt": null
   },
   {
-   "seq": 108,
-   "ts": 41970,
+   "seq": 134,
+   "ts": 46570,
    "gameId": "replay-001",
    "type": "message_posted",
    "message": {
-    "id": "m4",
+    "id": "m6",
     "round": 2,
     "agentId": "referee",
     "kind": "announcement",
     "text": "Round 2 of 5. Topic: Space launches this month.",
-    "ts": 41970
+    "ts": 46570
    }
   },
   {
-   "seq": 109,
-   "ts": 42470,
+   "seq": 135,
+   "ts": 47070,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -1796,8 +2064,8 @@
    }
   },
   {
-   "seq": 110,
-   "ts": 43370,
+   "seq": 136,
+   "ts": 47970,
    "gameId": "replay-001",
    "type": "question_asked",
    "question": {
@@ -1809,8 +2077,8 @@
    }
   },
   {
-   "seq": 111,
-   "ts": 43470,
+   "seq": 137,
+   "ts": 48070,
    "gameId": "replay-001",
    "type": "answer_key",
    "key": {
@@ -1822,8 +2090,8 @@
    }
   },
   {
-   "seq": 112,
-   "ts": 44070,
+   "seq": 138,
+   "ts": 48670,
    "gameId": "replay-001",
    "type": "phase_changed",
    "round": 2,
@@ -1831,8 +2099,8 @@
    "endsAt": null
   },
   {
-   "seq": 113,
-   "ts": 44190,
+   "seq": 139,
+   "ts": 48790,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -1851,8 +2119,8 @@
    }
   },
   {
-   "seq": 114,
-   "ts": 44310,
+   "seq": 140,
+   "ts": 48910,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -1871,8 +2139,8 @@
    }
   },
   {
-   "seq": 115,
-   "ts": 44430,
+   "seq": 141,
+   "ts": 49030,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -1891,8 +2159,8 @@
    }
   },
   {
-   "seq": 116,
-   "ts": 44550,
+   "seq": 142,
+   "ts": 49150,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -1911,8 +2179,8 @@
    }
   },
   {
-   "seq": 117,
-   "ts": 44670,
+   "seq": 143,
+   "ts": 49270,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -1931,8 +2199,8 @@
    }
   },
   {
-   "seq": 118,
-   "ts": 44790,
+   "seq": 144,
+   "ts": 49390,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -1951,8 +2219,8 @@
    }
   },
   {
-   "seq": 119,
-   "ts": 44910,
+   "seq": 145,
+   "ts": 49510,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -1971,8 +2239,8 @@
    }
   },
   {
-   "seq": 120,
-   "ts": 45030,
+   "seq": 146,
+   "ts": 49630,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -1991,8 +2259,8 @@
    }
   },
   {
-   "seq": 121,
-   "ts": 45150,
+   "seq": 147,
+   "ts": 49750,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -2011,8 +2279,8 @@
    }
   },
   {
-   "seq": 122,
-   "ts": 45350,
+   "seq": 148,
+   "ts": 49950,
    "gameId": "replay-001",
    "type": "agent_thought",
    "agentId": "a04",
@@ -2021,8 +2289,8 @@
    "text": "They are onto me. Fabricate confidently and accuse Ivo."
   },
   {
-   "seq": 123,
-   "ts": 45550,
+   "seq": 149,
+   "ts": 50150,
    "gameId": "replay-001",
    "type": "agent_thought",
    "agentId": "a10",
@@ -2031,8 +2299,8 @@
    "text": "Blend in again; vote with the majority against Dax to look like crew."
   },
   {
-   "seq": 124,
-   "ts": 46550,
+   "seq": 150,
+   "ts": 51150,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2046,16 +2314,16 @@
    }
   },
   {
-   "seq": 125,
-   "ts": 46580,
+   "seq": 151,
+   "ts": 51180,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a01",
    "path": "answers.md"
   },
   {
-   "seq": 126,
-   "ts": 47580,
+   "seq": 152,
+   "ts": 52180,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2069,16 +2337,16 @@
    }
   },
   {
-   "seq": 127,
-   "ts": 47610,
+   "seq": 153,
+   "ts": 52210,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a02",
    "path": "answers.md"
   },
   {
-   "seq": 128,
-   "ts": 48610,
+   "seq": 154,
+   "ts": 53210,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2092,16 +2360,16 @@
    }
   },
   {
-   "seq": 129,
-   "ts": 48640,
+   "seq": 155,
+   "ts": 53240,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a05",
    "path": "answers.md"
   },
   {
-   "seq": 130,
-   "ts": 49640,
+   "seq": 156,
+   "ts": 54240,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2115,16 +2383,16 @@
    }
   },
   {
-   "seq": 131,
-   "ts": 49670,
+   "seq": 157,
+   "ts": 54270,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a06",
    "path": "answers.md"
   },
   {
-   "seq": 132,
-   "ts": 50670,
+   "seq": 158,
+   "ts": 55270,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2138,16 +2406,16 @@
    }
   },
   {
-   "seq": 133,
-   "ts": 50700,
+   "seq": 159,
+   "ts": 55300,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a07",
    "path": "answers.md"
   },
   {
-   "seq": 134,
-   "ts": 51700,
+   "seq": 160,
+   "ts": 56300,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2161,16 +2429,16 @@
    }
   },
   {
-   "seq": 135,
-   "ts": 51730,
+   "seq": 161,
+   "ts": 56330,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a04",
    "path": "answers.md"
   },
   {
-   "seq": 136,
-   "ts": 52730,
+   "seq": 162,
+   "ts": 57330,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2185,16 +2453,16 @@
    }
   },
   {
-   "seq": 137,
-   "ts": 52760,
+   "seq": 163,
+   "ts": 57360,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a10",
    "path": "answers.md"
   },
   {
-   "seq": 138,
-   "ts": 53760,
+   "seq": 164,
+   "ts": 58360,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2208,16 +2476,16 @@
    }
   },
   {
-   "seq": 139,
-   "ts": 53790,
+   "seq": 165,
+   "ts": 58390,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a08",
    "path": "answers.md"
   },
   {
-   "seq": 140,
-   "ts": 54790,
+   "seq": 166,
+   "ts": 59390,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2231,16 +2499,16 @@
    }
   },
   {
-   "seq": 141,
-   "ts": 54820,
+   "seq": 167,
+   "ts": 59420,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a09",
    "path": "answers.md"
   },
   {
-   "seq": 142,
-   "ts": 55820,
+   "seq": 168,
+   "ts": 60420,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2254,16 +2522,16 @@
    }
   },
   {
-   "seq": 143,
-   "ts": 55850,
+   "seq": 169,
+   "ts": 60450,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a11",
    "path": "answers.md"
   },
   {
-   "seq": 144,
-   "ts": 56850,
+   "seq": 170,
+   "ts": 61450,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -2277,16 +2545,264 @@
    }
   },
   {
-   "seq": 145,
-   "ts": 56880,
+   "seq": 171,
+   "ts": 61480,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a12",
    "path": "answers.md"
   },
   {
-   "seq": 146,
-   "ts": 57780,
+   "seq": 172,
+   "ts": 61980,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m7",
+    "round": 2,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Checking every cited source before the vote...",
+    "ts": 61980
+   }
+  },
+  {
+   "seq": 173,
+   "ts": 62260,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a01",
+   "agentId": "a01",
+   "round": 2,
+   "verdict": "supported",
+   "url": "https://example.com/launch-22",
+   "quote": "22 broadband satellites."
+  },
+  {
+   "seq": 174,
+   "ts": 62280,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a01",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 175,
+   "ts": 62560,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a02",
+   "agentId": "a02",
+   "round": 2,
+   "verdict": "supported",
+   "url": "https://example.com/launch-22",
+   "quote": "It deployed 22 satellites on a heavy-lift rocket."
+  },
+  {
+   "seq": 176,
+   "ts": 62580,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a02",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 177,
+   "ts": 62860,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a05",
+   "agentId": "a05",
+   "round": 2,
+   "verdict": "supported",
+   "url": "https://example.com/rideshare-40",
+   "quote": "22 — the rideshare carried 40 payloads, but that was a different launch."
+  },
+  {
+   "seq": 178,
+   "ts": 62880,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a05",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 179,
+   "ts": 63160,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a06",
+   "agentId": "a06",
+   "round": 2,
+   "verdict": "supported",
+   "url": "https://example.com/launch-22",
+   "quote": "22 broadband satellites."
+  },
+  {
+   "seq": 180,
+   "ts": 63180,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a06",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 181,
+   "ts": 63460,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a07",
+   "agentId": "a07",
+   "round": 2,
+   "verdict": "supported",
+   "url": "https://example.com/launch-22",
+   "quote": "It deployed 22 satellites on a heavy-lift rocket."
+  },
+  {
+   "seq": 182,
+   "ts": 63480,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a07",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 183,
+   "ts": 63760,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a04",
+   "agentId": "a04",
+   "round": 2,
+   "verdict": "not_found",
+   "url": "https://orbit-daily.example/38",
+   "quote": "No page at this URL (HTTP 404)."
+  },
+  {
+   "seq": 184,
+   "ts": 63780,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a04",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 185,
+   "ts": 64060,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a10",
+   "agentId": "a10",
+   "round": 2,
+   "verdict": "supported",
+   "url": "https://example.com/launch-22",
+   "quote": "22 broadband satellites, I think — about the same as last month."
+  },
+  {
+   "seq": 186,
+   "ts": 64080,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a10",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 187,
+   "ts": 64360,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a08",
+   "agentId": "a08",
+   "round": 2,
+   "verdict": "supported",
+   "url": "https://example.com/rideshare-40",
+   "quote": "22 — the rideshare carried 40 payloads, but that was a different launch."
+  },
+  {
+   "seq": 188,
+   "ts": 64380,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a08",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 189,
+   "ts": 64660,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a09",
+   "agentId": "a09",
+   "round": 2,
+   "verdict": "supported",
+   "url": "https://example.com/launch-22",
+   "quote": "22 broadband satellites."
+  },
+  {
+   "seq": 190,
+   "ts": 64680,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a09",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 191,
+   "ts": 64960,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a11",
+   "agentId": "a11",
+   "round": 2,
+   "verdict": "supported",
+   "url": "https://example.com/launch-22",
+   "quote": "It deployed 22 satellites on a heavy-lift rocket."
+  },
+  {
+   "seq": 192,
+   "ts": 64980,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a11",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 193,
+   "ts": 65260,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q2-0-a12",
+   "agentId": "a12",
+   "round": 2,
+   "verdict": "supported",
+   "url": "https://example.com/rideshare-40",
+   "quote": "22 — the rideshare carried 40 payloads, but that was a different launch."
+  },
+  {
+   "seq": 194,
+   "ts": 65280,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a12",
+   "path": "sources/r2.md"
+  },
+  {
+   "seq": 195,
+   "ts": 65780,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m8",
+    "round": 2,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Fact-check done: 10 verified, 1 unsupported.",
+    "ts": 65780
+   }
+  },
+  {
+   "seq": 196,
+   "ts": 66680,
    "gameId": "replay-001",
    "type": "phase_changed",
    "round": 2,
@@ -2294,22 +2810,22 @@
    "endsAt": null
   },
   {
-   "seq": 147,
-   "ts": 58080,
+   "seq": 197,
+   "ts": 66980,
    "gameId": "replay-001",
    "type": "message_posted",
    "message": {
-    "id": "m5",
+    "id": "m9",
     "round": 2,
     "agentId": "referee",
     "kind": "announcement",
     "text": "Answers are in. To the council — vote for who you think is the impostor.",
-    "ts": 58080
+    "ts": 66980
    }
   },
   {
-   "seq": 148,
-   "ts": 58130,
+   "seq": 198,
+   "ts": 67030,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a01",
@@ -2318,8 +2834,8 @@
    }
   },
   {
-   "seq": 149,
-   "ts": 58180,
+   "seq": 199,
+   "ts": 67080,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a02",
@@ -2328,8 +2844,8 @@
    }
   },
   {
-   "seq": 150,
-   "ts": 58230,
+   "seq": 200,
+   "ts": 67130,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a04",
@@ -2338,8 +2854,8 @@
    }
   },
   {
-   "seq": 151,
-   "ts": 58280,
+   "seq": 201,
+   "ts": 67180,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a05",
@@ -2348,8 +2864,8 @@
    }
   },
   {
-   "seq": 152,
-   "ts": 58330,
+   "seq": 202,
+   "ts": 67230,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a06",
@@ -2358,8 +2874,8 @@
    }
   },
   {
-   "seq": 153,
-   "ts": 58380,
+   "seq": 203,
+   "ts": 67280,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a07",
@@ -2368,8 +2884,8 @@
    }
   },
   {
-   "seq": 154,
-   "ts": 58430,
+   "seq": 204,
+   "ts": 67330,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a08",
@@ -2378,8 +2894,8 @@
    }
   },
   {
-   "seq": 155,
-   "ts": 58480,
+   "seq": 205,
+   "ts": 67380,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a09",
@@ -2388,8 +2904,8 @@
    }
   },
   {
-   "seq": 156,
-   "ts": 58530,
+   "seq": 206,
+   "ts": 67430,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a10",
@@ -2398,8 +2914,8 @@
    }
   },
   {
-   "seq": 157,
-   "ts": 58580,
+   "seq": 207,
+   "ts": 67480,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a11",
@@ -2408,8 +2924,8 @@
    }
   },
   {
-   "seq": 158,
-   "ts": 58630,
+   "seq": 208,
+   "ts": 67530,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a12",
@@ -2418,8 +2934,8 @@
    }
   },
   {
-   "seq": 159,
-   "ts": 61930,
+   "seq": 209,
+   "ts": 70830,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2433,8 +2949,8 @@
    }
   },
   {
-   "seq": 160,
-   "ts": 62730,
+   "seq": 210,
+   "ts": 71630,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2448,8 +2964,8 @@
    }
   },
   {
-   "seq": 161,
-   "ts": 63530,
+   "seq": 211,
+   "ts": 72430,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2464,8 +2980,8 @@
    }
   },
   {
-   "seq": 162,
-   "ts": 63630,
+   "seq": 212,
+   "ts": 72530,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -2483,8 +2999,8 @@
    }
   },
   {
-   "seq": 163,
-   "ts": 64430,
+   "seq": 213,
+   "ts": 73330,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2499,8 +3015,8 @@
    }
   },
   {
-   "seq": 164,
-   "ts": 65230,
+   "seq": 214,
+   "ts": 74130,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2515,8 +3031,8 @@
    }
   },
   {
-   "seq": 165,
-   "ts": 66030,
+   "seq": 215,
+   "ts": 74930,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2531,8 +3047,8 @@
    }
   },
   {
-   "seq": 166,
-   "ts": 66130,
+   "seq": 216,
+   "ts": 75030,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -2550,8 +3066,8 @@
    }
   },
   {
-   "seq": 167,
-   "ts": 66930,
+   "seq": 217,
+   "ts": 75830,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2566,8 +3082,8 @@
    }
   },
   {
-   "seq": 168,
-   "ts": 67730,
+   "seq": 218,
+   "ts": 76630,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2582,8 +3098,8 @@
    }
   },
   {
-   "seq": 169,
-   "ts": 68530,
+   "seq": 219,
+   "ts": 77430,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2598,8 +3114,8 @@
    }
   },
   {
-   "seq": 170,
-   "ts": 68630,
+   "seq": 220,
+   "ts": 77530,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -2617,8 +3133,8 @@
    }
   },
   {
-   "seq": 171,
-   "ts": 69430,
+   "seq": 221,
+   "ts": 78330,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2633,8 +3149,8 @@
    }
   },
   {
-   "seq": 172,
-   "ts": 70230,
+   "seq": 222,
+   "ts": 79130,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -2649,8 +3165,8 @@
    }
   },
   {
-   "seq": 173,
-   "ts": 70430,
+   "seq": 223,
+   "ts": 79330,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -2668,8 +3184,8 @@
    }
   },
   {
-   "seq": 174,
-   "ts": 71330,
+   "seq": 224,
+   "ts": 80230,
    "gameId": "replay-001",
    "type": "phase_changed",
    "round": 2,
@@ -2677,8 +3193,8 @@
    "endsAt": null
   },
   {
-   "seq": 175,
-   "ts": 71730,
+   "seq": 225,
+   "ts": 80630,
    "gameId": "replay-001",
    "type": "agent_eliminated",
    "round": 2,
@@ -2690,8 +3206,8 @@
    }
   },
   {
-   "seq": 176,
-   "ts": 71830,
+   "seq": 226,
+   "ts": 80730,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a04",
@@ -2700,22 +3216,22 @@
    }
   },
   {
-   "seq": 177,
-   "ts": 73330,
+   "seq": 227,
+   "ts": 82230,
    "gameId": "replay-001",
    "type": "message_posted",
    "message": {
-    "id": "m6",
+    "id": "m10",
     "round": 2,
     "agentId": "referee",
     "kind": "announcement",
     "text": "Dax was an IMPOSTOR.",
-    "ts": 73330
+    "ts": 82230
    }
   },
   {
-   "seq": 178,
-   "ts": 75370,
+   "seq": 228,
+   "ts": 84270,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a01",
@@ -2725,8 +3241,8 @@
    }
   },
   {
-   "seq": 179,
-   "ts": 75410,
+   "seq": 229,
+   "ts": 84310,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a02",
@@ -2736,8 +3252,8 @@
    }
   },
   {
-   "seq": 180,
-   "ts": 75450,
+   "seq": 230,
+   "ts": 84350,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a05",
@@ -2747,8 +3263,8 @@
    }
   },
   {
-   "seq": 181,
-   "ts": 75490,
+   "seq": 231,
+   "ts": 84390,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a06",
@@ -2758,8 +3274,8 @@
    }
   },
   {
-   "seq": 182,
-   "ts": 75530,
+   "seq": 232,
+   "ts": 84430,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a07",
@@ -2769,8 +3285,8 @@
    }
   },
   {
-   "seq": 183,
-   "ts": 75570,
+   "seq": 233,
+   "ts": 84470,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a08",
@@ -2780,8 +3296,8 @@
    }
   },
   {
-   "seq": 184,
-   "ts": 75610,
+   "seq": 234,
+   "ts": 84510,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a09",
@@ -2791,8 +3307,8 @@
    }
   },
   {
-   "seq": 185,
-   "ts": 75650,
+   "seq": 235,
+   "ts": 84550,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a10",
@@ -2802,8 +3318,8 @@
    }
   },
   {
-   "seq": 186,
-   "ts": 75690,
+   "seq": 236,
+   "ts": 84590,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a11",
@@ -2813,8 +3329,8 @@
    }
   },
   {
-   "seq": 187,
-   "ts": 75730,
+   "seq": 237,
+   "ts": 84630,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a12",
@@ -2824,8 +3340,8 @@
    }
   },
   {
-   "seq": 188,
-   "ts": 76930,
+   "seq": 238,
+   "ts": 85830,
    "gameId": "replay-001",
    "type": "round_started",
    "round": 3,
@@ -2958,8 +3474,8 @@
    ]
   },
   {
-   "seq": 189,
-   "ts": 77230,
+   "seq": 239,
+   "ts": 86130,
    "gameId": "replay-001",
    "type": "phase_changed",
    "round": 3,
@@ -2967,22 +3483,22 @@
    "endsAt": null
   },
   {
-   "seq": 190,
-   "ts": 77830,
+   "seq": 240,
+   "ts": 86730,
    "gameId": "replay-001",
    "type": "message_posted",
    "message": {
-    "id": "m7",
+    "id": "m11",
     "round": 3,
     "agentId": "referee",
     "kind": "announcement",
     "text": "Round 3 of 5. Topic: Electric vehicle battery breakthroughs.",
-    "ts": 77830
+    "ts": 86730
    }
   },
   {
-   "seq": 191,
-   "ts": 78330,
+   "seq": 241,
+   "ts": 87230,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -3001,8 +3517,8 @@
    }
   },
   {
-   "seq": 192,
-   "ts": 79230,
+   "seq": 242,
+   "ts": 88130,
    "gameId": "replay-001",
    "type": "question_asked",
    "question": {
@@ -3014,8 +3530,8 @@
    }
   },
   {
-   "seq": 193,
-   "ts": 79330,
+   "seq": 243,
+   "ts": 88230,
    "gameId": "replay-001",
    "type": "answer_key",
    "key": {
@@ -3027,8 +3543,8 @@
    }
   },
   {
-   "seq": 194,
-   "ts": 79930,
+   "seq": 244,
+   "ts": 88830,
    "gameId": "replay-001",
    "type": "phase_changed",
    "round": 3,
@@ -3036,8 +3552,8 @@
    "endsAt": null
   },
   {
-   "seq": 195,
-   "ts": 80050,
+   "seq": 245,
+   "ts": 88950,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -3056,8 +3572,8 @@
    }
   },
   {
-   "seq": 196,
-   "ts": 80170,
+   "seq": 246,
+   "ts": 89070,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -3076,8 +3592,8 @@
    }
   },
   {
-   "seq": 197,
-   "ts": 80290,
+   "seq": 247,
+   "ts": 89190,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -3096,8 +3612,8 @@
    }
   },
   {
-   "seq": 198,
-   "ts": 80410,
+   "seq": 248,
+   "ts": 89310,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -3116,8 +3632,8 @@
    }
   },
   {
-   "seq": 199,
-   "ts": 80530,
+   "seq": 249,
+   "ts": 89430,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -3136,8 +3652,8 @@
    }
   },
   {
-   "seq": 200,
-   "ts": 80650,
+   "seq": 250,
+   "ts": 89550,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -3156,8 +3672,8 @@
    }
   },
   {
-   "seq": 201,
-   "ts": 80770,
+   "seq": 251,
+   "ts": 89670,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -3176,8 +3692,8 @@
    }
   },
   {
-   "seq": 202,
-   "ts": 80890,
+   "seq": 252,
+   "ts": 89790,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -3196,8 +3712,8 @@
    }
   },
   {
-   "seq": 203,
-   "ts": 81010,
+   "seq": 253,
+   "ts": 89910,
    "gameId": "replay-001",
    "type": "search_performed",
    "search": {
@@ -3216,8 +3732,8 @@
    }
   },
   {
-   "seq": 204,
-   "ts": 81210,
+   "seq": 254,
+   "ts": 90110,
    "gameId": "replay-001",
    "type": "agent_thought",
    "agentId": "a10",
@@ -3226,8 +3742,8 @@
    "text": "Nothing revealed yet when I had to answer. Guessing high."
   },
   {
-   "seq": 205,
-   "ts": 82210,
+   "seq": 255,
+   "ts": 91110,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -3241,16 +3757,16 @@
    }
   },
   {
-   "seq": 206,
-   "ts": 82240,
+   "seq": 256,
+   "ts": 91140,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a01",
    "path": "answers.md"
   },
   {
-   "seq": 207,
-   "ts": 83240,
+   "seq": 257,
+   "ts": 92140,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -3264,16 +3780,16 @@
    }
   },
   {
-   "seq": 208,
-   "ts": 83270,
+   "seq": 258,
+   "ts": 92170,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a02",
    "path": "answers.md"
   },
   {
-   "seq": 209,
-   "ts": 84270,
+   "seq": 259,
+   "ts": 93170,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -3287,16 +3803,16 @@
    }
   },
   {
-   "seq": 210,
-   "ts": 84300,
+   "seq": 260,
+   "ts": 93200,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a05",
    "path": "answers.md"
   },
   {
-   "seq": 211,
-   "ts": 85300,
+   "seq": 261,
+   "ts": 94200,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -3310,16 +3826,16 @@
    }
   },
   {
-   "seq": 212,
-   "ts": 85330,
+   "seq": 262,
+   "ts": 94230,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a06",
    "path": "answers.md"
   },
   {
-   "seq": 213,
-   "ts": 86330,
+   "seq": 263,
+   "ts": 95230,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -3333,16 +3849,16 @@
    }
   },
   {
-   "seq": 214,
-   "ts": 86360,
+   "seq": 264,
+   "ts": 95260,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a07",
    "path": "answers.md"
   },
   {
-   "seq": 215,
-   "ts": 87360,
+   "seq": 265,
+   "ts": 96260,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -3356,16 +3872,16 @@
    }
   },
   {
-   "seq": 216,
-   "ts": 87390,
+   "seq": 266,
+   "ts": 96290,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a10",
    "path": "answers.md"
   },
   {
-   "seq": 217,
-   "ts": 88390,
+   "seq": 267,
+   "ts": 97290,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -3379,16 +3895,16 @@
    }
   },
   {
-   "seq": 218,
-   "ts": 88420,
+   "seq": 268,
+   "ts": 97320,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a08",
    "path": "answers.md"
   },
   {
-   "seq": 219,
-   "ts": 89420,
+   "seq": 269,
+   "ts": 98320,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -3402,16 +3918,16 @@
    }
   },
   {
-   "seq": 220,
-   "ts": 89450,
+   "seq": 270,
+   "ts": 98350,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a09",
    "path": "answers.md"
   },
   {
-   "seq": 221,
-   "ts": 90450,
+   "seq": 271,
+   "ts": 99350,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -3425,16 +3941,16 @@
    }
   },
   {
-   "seq": 222,
-   "ts": 90480,
+   "seq": 272,
+   "ts": 99380,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a11",
    "path": "answers.md"
   },
   {
-   "seq": 223,
-   "ts": 91480,
+   "seq": 273,
+   "ts": 100380,
    "gameId": "replay-001",
    "type": "answer_submitted",
    "answer": {
@@ -3448,16 +3964,244 @@
    }
   },
   {
-   "seq": 224,
-   "ts": 91510,
+   "seq": 274,
+   "ts": 100410,
    "gameId": "replay-001",
    "type": "disk_updated",
    "agentId": "a12",
    "path": "answers.md"
   },
   {
-   "seq": 225,
-   "ts": 92410,
+   "seq": 275,
+   "ts": 100910,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m12",
+    "round": 3,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Checking every cited source before the vote...",
+    "ts": 100910
+   }
+  },
+  {
+   "seq": 276,
+   "ts": 101190,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q3-0-a01",
+   "agentId": "a01",
+   "round": 3,
+   "verdict": "supported",
+   "url": "https://example.com/solid-state",
+   "quote": "400 Wh/kg cells from the pilot line."
+  },
+  {
+   "seq": 277,
+   "ts": 101210,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a01",
+   "path": "sources/r3.md"
+  },
+  {
+   "seq": 278,
+   "ts": 101490,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q3-0-a02",
+   "agentId": "a02",
+   "round": 3,
+   "verdict": "supported",
+   "url": "https://example.com/solid-state",
+   "quote": "They reported 400 Wh/kg."
+  },
+  {
+   "seq": 279,
+   "ts": 101510,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a02",
+   "path": "sources/r3.md"
+  },
+  {
+   "seq": 280,
+   "ts": 101790,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q3-0-a05",
+   "agentId": "a05",
+   "round": 3,
+   "verdict": "supported",
+   "url": "https://example.com/solid-state-pr",
+   "quote": "400 Wh/kg, per the company announcement."
+  },
+  {
+   "seq": 281,
+   "ts": 101810,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a05",
+   "path": "sources/r3.md"
+  },
+  {
+   "seq": 282,
+   "ts": 102090,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q3-0-a06",
+   "agentId": "a06",
+   "round": 3,
+   "verdict": "supported",
+   "url": "https://example.com/solid-state",
+   "quote": "400 Wh/kg cells from the pilot line."
+  },
+  {
+   "seq": 283,
+   "ts": 102110,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a06",
+   "path": "sources/r3.md"
+  },
+  {
+   "seq": 284,
+   "ts": 102390,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q3-0-a07",
+   "agentId": "a07",
+   "round": 3,
+   "verdict": "supported",
+   "url": "https://example.com/solid-state",
+   "quote": "They reported 400 Wh/kg."
+  },
+  {
+   "seq": 285,
+   "ts": 102410,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a07",
+   "path": "sources/r3.md"
+  },
+  {
+   "seq": 286,
+   "ts": 102690,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q3-0-a10",
+   "agentId": "a10",
+   "round": 3,
+   "verdict": "not_found",
+   "url": "https://batt-news.example/650",
+   "quote": "No page at this URL (HTTP 404)."
+  },
+  {
+   "seq": 287,
+   "ts": 102710,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a10",
+   "path": "sources/r3.md"
+  },
+  {
+   "seq": 288,
+   "ts": 102990,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q3-0-a08",
+   "agentId": "a08",
+   "round": 3,
+   "verdict": "supported",
+   "url": "https://example.com/solid-state-pr",
+   "quote": "400 Wh/kg, per the company announcement."
+  },
+  {
+   "seq": 289,
+   "ts": 103010,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a08",
+   "path": "sources/r3.md"
+  },
+  {
+   "seq": 290,
+   "ts": 103290,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q3-0-a09",
+   "agentId": "a09",
+   "round": 3,
+   "verdict": "supported",
+   "url": "https://example.com/solid-state",
+   "quote": "400 Wh/kg cells from the pilot line."
+  },
+  {
+   "seq": 291,
+   "ts": 103310,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a09",
+   "path": "sources/r3.md"
+  },
+  {
+   "seq": 292,
+   "ts": 103590,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q3-0-a11",
+   "agentId": "a11",
+   "round": 3,
+   "verdict": "supported",
+   "url": "https://example.com/solid-state",
+   "quote": "They reported 400 Wh/kg."
+  },
+  {
+   "seq": 293,
+   "ts": 103610,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a11",
+   "path": "sources/r3.md"
+  },
+  {
+   "seq": 294,
+   "ts": 103890,
+   "gameId": "replay-001",
+   "type": "answer_verified",
+   "answerId": "q3-0-a12",
+   "agentId": "a12",
+   "round": 3,
+   "verdict": "supported",
+   "url": "https://example.com/solid-state-pr",
+   "quote": "400 Wh/kg, per the company announcement."
+  },
+  {
+   "seq": 295,
+   "ts": 103910,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a12",
+   "path": "sources/r3.md"
+  },
+  {
+   "seq": 296,
+   "ts": 104410,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m13",
+    "round": 3,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Fact-check done: 9 verified, 1 unsupported.",
+    "ts": 104410
+   }
+  },
+  {
+   "seq": 297,
+   "ts": 105310,
    "gameId": "replay-001",
    "type": "phase_changed",
    "round": 3,
@@ -3465,22 +4209,22 @@
    "endsAt": null
   },
   {
-   "seq": 226,
-   "ts": 92710,
+   "seq": 298,
+   "ts": 105610,
    "gameId": "replay-001",
    "type": "message_posted",
    "message": {
-    "id": "m8",
+    "id": "m14",
     "round": 3,
     "agentId": "referee",
     "kind": "announcement",
     "text": "Answers are in. To the council — vote for who you think is the impostor.",
-    "ts": 92710
+    "ts": 105610
    }
   },
   {
-   "seq": 227,
-   "ts": 92760,
+   "seq": 299,
+   "ts": 105660,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a01",
@@ -3489,8 +4233,8 @@
    }
   },
   {
-   "seq": 228,
-   "ts": 92810,
+   "seq": 300,
+   "ts": 105710,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a02",
@@ -3499,8 +4243,8 @@
    }
   },
   {
-   "seq": 229,
-   "ts": 92860,
+   "seq": 301,
+   "ts": 105760,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a05",
@@ -3509,8 +4253,8 @@
    }
   },
   {
-   "seq": 230,
-   "ts": 92910,
+   "seq": 302,
+   "ts": 105810,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a06",
@@ -3519,8 +4263,8 @@
    }
   },
   {
-   "seq": 231,
-   "ts": 92960,
+   "seq": 303,
+   "ts": 105860,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a07",
@@ -3529,8 +4273,8 @@
    }
   },
   {
-   "seq": 232,
-   "ts": 93010,
+   "seq": 304,
+   "ts": 105910,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a08",
@@ -3539,8 +4283,8 @@
    }
   },
   {
-   "seq": 233,
-   "ts": 93060,
+   "seq": 305,
+   "ts": 105960,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a09",
@@ -3549,8 +4293,8 @@
    }
   },
   {
-   "seq": 234,
-   "ts": 93110,
+   "seq": 306,
+   "ts": 106010,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a10",
@@ -3559,8 +4303,8 @@
    }
   },
   {
-   "seq": 235,
-   "ts": 93160,
+   "seq": 307,
+   "ts": 106060,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a11",
@@ -3569,8 +4313,8 @@
    }
   },
   {
-   "seq": 236,
-   "ts": 93210,
+   "seq": 308,
+   "ts": 106110,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a12",
@@ -3579,8 +4323,8 @@
    }
   },
   {
-   "seq": 237,
-   "ts": 96510,
+   "seq": 309,
+   "ts": 109410,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -3594,8 +4338,8 @@
    }
   },
   {
-   "seq": 238,
-   "ts": 97310,
+   "seq": 310,
+   "ts": 110210,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -3609,8 +4353,8 @@
    }
   },
   {
-   "seq": 239,
-   "ts": 98110,
+   "seq": 311,
+   "ts": 111010,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -3624,8 +4368,8 @@
    }
   },
   {
-   "seq": 240,
-   "ts": 98210,
+   "seq": 312,
+   "ts": 111110,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -3642,8 +4386,8 @@
    }
   },
   {
-   "seq": 241,
-   "ts": 99010,
+   "seq": 313,
+   "ts": 111910,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -3657,8 +4401,8 @@
    }
   },
   {
-   "seq": 242,
-   "ts": 99810,
+   "seq": 314,
+   "ts": 112710,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -3672,8 +4416,8 @@
    }
   },
   {
-   "seq": 243,
-   "ts": 100610,
+   "seq": 315,
+   "ts": 113510,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -3687,8 +4431,8 @@
    }
   },
   {
-   "seq": 244,
-   "ts": 100710,
+   "seq": 316,
+   "ts": 113610,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -3705,8 +4449,8 @@
    }
   },
   {
-   "seq": 245,
-   "ts": 101510,
+   "seq": 317,
+   "ts": 114410,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -3720,8 +4464,8 @@
    }
   },
   {
-   "seq": 246,
-   "ts": 102310,
+   "seq": 318,
+   "ts": 115210,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -3736,8 +4480,8 @@
    }
   },
   {
-   "seq": 247,
-   "ts": 103110,
+   "seq": 319,
+   "ts": 116010,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -3752,8 +4496,8 @@
    }
   },
   {
-   "seq": 248,
-   "ts": 103210,
+   "seq": 320,
+   "ts": 116110,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -3770,8 +4514,8 @@
    }
   },
   {
-   "seq": 249,
-   "ts": 104010,
+   "seq": 321,
+   "ts": 116910,
    "gameId": "replay-001",
    "type": "vote_cast",
    "vote": {
@@ -3786,8 +4530,8 @@
    }
   },
   {
-   "seq": 250,
-   "ts": 104210,
+   "seq": 322,
+   "ts": 117110,
    "gameId": "replay-001",
    "type": "suspicion_updated",
    "scores": {
@@ -3804,8 +4548,8 @@
    }
   },
   {
-   "seq": 251,
-   "ts": 105110,
+   "seq": 323,
+   "ts": 118010,
    "gameId": "replay-001",
    "type": "phase_changed",
    "round": 3,
@@ -3813,8 +4557,8 @@
    "endsAt": null
   },
   {
-   "seq": 252,
-   "ts": 105510,
+   "seq": 324,
+   "ts": 118410,
    "gameId": "replay-001",
    "type": "agent_eliminated",
    "round": 3,
@@ -3826,8 +4570,8 @@
    }
   },
   {
-   "seq": 253,
-   "ts": 105610,
+   "seq": 325,
+   "ts": 118510,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a10",
@@ -3836,22 +4580,22 @@
    }
   },
   {
-   "seq": 254,
-   "ts": 107110,
+   "seq": 326,
+   "ts": 120010,
    "gameId": "replay-001",
    "type": "message_posted",
    "message": {
-    "id": "m9",
+    "id": "m15",
     "round": 3,
     "agentId": "referee",
     "kind": "announcement",
     "text": "Juno was an IMPOSTOR.",
-    "ts": 107110
+    "ts": 120010
    }
   },
   {
-   "seq": 255,
-   "ts": 109150,
+   "seq": 327,
+   "ts": 122050,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a01",
@@ -3861,8 +4605,8 @@
    }
   },
   {
-   "seq": 256,
-   "ts": 109190,
+   "seq": 328,
+   "ts": 122090,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a02",
@@ -3872,8 +4616,8 @@
    }
   },
   {
-   "seq": 257,
-   "ts": 109230,
+   "seq": 329,
+   "ts": 122130,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a05",
@@ -3883,8 +4627,8 @@
    }
   },
   {
-   "seq": 258,
-   "ts": 109270,
+   "seq": 330,
+   "ts": 122170,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a06",
@@ -3894,8 +4638,8 @@
    }
   },
   {
-   "seq": 259,
-   "ts": 109310,
+   "seq": 331,
+   "ts": 122210,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a07",
@@ -3905,8 +4649,8 @@
    }
   },
   {
-   "seq": 260,
-   "ts": 109350,
+   "seq": 332,
+   "ts": 122250,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a08",
@@ -3916,8 +4660,8 @@
    }
   },
   {
-   "seq": 261,
-   "ts": 109390,
+   "seq": 333,
+   "ts": 122290,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a09",
@@ -3927,8 +4671,8 @@
    }
   },
   {
-   "seq": 262,
-   "ts": 109430,
+   "seq": 334,
+   "ts": 122330,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a11",
@@ -3938,8 +4682,8 @@
    }
   },
   {
-   "seq": 263,
-   "ts": 109470,
+   "seq": 335,
+   "ts": 122370,
    "gameId": "replay-001",
    "type": "agent_moved",
    "agentId": "a12",
@@ -3949,8 +4693,8 @@
    }
   },
   {
-   "seq": 264,
-   "ts": 110970,
+   "seq": 336,
+   "ts": 123870,
    "gameId": "replay-001",
    "type": "phase_changed",
    "round": 3,
@@ -3958,8 +4702,8 @@
    "endsAt": null
   },
   {
-   "seq": 265,
-   "ts": 111170,
+   "seq": 337,
+   "ts": 124070,
    "gameId": "replay-001",
    "type": "game_over",
    "winner": "crew",
@@ -3990,7 +4734,7 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 96510,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 109410,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
@@ -3998,15 +4742,15 @@
     },
     {
      "path": "sources/r1.md",
-     "content": "# Sources round 1\n- Northwind AI, $120M Series B, led by Sequoia. (https://example.com/northwind-series-b)\n"
+     "content": "# Sources round 1\n- Northwind AI, $120M Series B, led by Sequoia. (https://example.com/northwind-series-b)\n\n### Referee fact-check (q1-0)\n- Source: https://example.com/northwind-series-b\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r2.md",
-     "content": "# Sources round 2\n- 22 broadband satellites. (https://example.com/launch-22)\n"
+     "content": "# Sources round 2\n- 22 broadband satellites. (https://example.com/launch-22)\n\n### Referee fact-check (q2-0)\n- Source: https://example.com/launch-22\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r3.md",
-     "content": "# Sources round 3\n- 400 Wh/kg cells from the pilot line. (https://example.com/solid-state)\n"
+     "content": "# Sources round 3\n- 400 Wh/kg cells from the pilot line. (https://example.com/solid-state)\n\n### Referee fact-check (q3-0)\n- Source: https://example.com/solid-state\n- Verdict: **SUPPORTED**\n"
     }
    ],
    "backend": "memory"
@@ -4020,7 +4764,7 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 97310,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 110210,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
@@ -4028,15 +4772,15 @@
     },
     {
      "path": "sources/r1.md",
-     "content": "# Sources round 1\n- Northwind AI — $120M Series B (Sequoia led). (https://example.com/northwind)\n"
+     "content": "# Sources round 1\n- Northwind AI — $120M Series B (Sequoia led). (https://example.com/northwind)\n\n### Referee fact-check (q1-0)\n- Source: https://example.com/northwind\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r2.md",
-     "content": "# Sources round 2\n- It deployed 22 satellites on a heavy-lift rocket. (https://example.com/launch-22)\n"
+     "content": "# Sources round 2\n- It deployed 22 satellites on a heavy-lift rocket. (https://example.com/launch-22)\n\n### Referee fact-check (q2-0)\n- Source: https://example.com/launch-22\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r3.md",
-     "content": "# Sources round 3\n- They reported 400 Wh/kg. (https://example.com/solid-state)\n"
+     "content": "# Sources round 3\n- They reported 400 Wh/kg. (https://example.com/solid-state)\n\n### Referee fact-check (q3-0)\n- Source: https://example.com/solid-state\n- Verdict: **SUPPORTED**\n"
     }
    ],
    "backend": "memory"
@@ -4050,7 +4794,7 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 1,\n  \"updatedAt\": 26830,\n  \"suspects\": {\n    \"a04\": {\n      \"score\": 0.8,\n      \"reason\": \"Dax's $900M angel round is absurd.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 1,\n  \"updatedAt\": 31430,\n  \"suspects\": {\n    \"a04\": {\n      \"score\": 0.8,\n      \"reason\": \"Dax's $900M angel round is absurd.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
@@ -4058,7 +4802,7 @@
     },
     {
      "path": "sources/r1.md",
-     "content": "# Sources round 1\n- I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M. (https://example.com/lattice-45m)\n"
+     "content": "# Sources round 1\n- I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M. (https://example.com/lattice-45m)\n\n### Referee fact-check (q1-0)\n- Source: https://example.com/lattice-45m\n- Verdict: **SUPPORTED**\n"
     }
    ],
    "backend": "memory"
@@ -4072,11 +4816,19 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 2,\n  \"updatedAt\": 63630,\n  \"suspects\": {\n    \"a09\": {\n      \"score\": 0.8,\n      \"reason\": \"Ivo is too eager to accuse.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 2,\n  \"updatedAt\": 72530,\n  \"suspects\": {\n    \"a09\": {\n      \"score\": 0.8,\n      \"reason\": \"Ivo is too eager to accuse.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
      "content": "# Private notes\nNo web search. Copy revealed answers when possible; keep fabrications plausible.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n### Referee fact-check (q1-0)\n- Source: https://news-helix.example/round\n- Verdict: **NOT_FOUND**\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n### Referee fact-check (q2-0)\n- Source: https://orbit-daily.example/38\n- Verdict: **NOT_FOUND**\n"
     }
    ],
    "backend": "memory"
@@ -4090,7 +4842,7 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 98210,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 111110,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
@@ -4098,15 +4850,15 @@
     },
     {
      "path": "sources/r1.md",
-     "content": "# Sources round 1\n- Couldn't confirm the lead; Northwind AI raised about $120M. (https://example.com/vc-weekly)\n"
+     "content": "# Sources round 1\n- Couldn't confirm the lead; Northwind AI raised about $120M. (https://example.com/vc-weekly)\n\n### Referee fact-check (q1-0)\n- Source: https://example.com/vc-weekly\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r2.md",
-     "content": "# Sources round 2\n- 22 — the rideshare carried 40 payloads, but that was a different launch. (https://example.com/rideshare-40)\n"
+     "content": "# Sources round 2\n- 22 — the rideshare carried 40 payloads, but that was a different launch. (https://example.com/rideshare-40)\n\n### Referee fact-check (q2-0)\n- Source: https://example.com/rideshare-40\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r3.md",
-     "content": "# Sources round 3\n- 400 Wh/kg, per the company announcement. (https://example.com/solid-state-pr)\n"
+     "content": "# Sources round 3\n- 400 Wh/kg, per the company announcement. (https://example.com/solid-state-pr)\n\n### Referee fact-check (q3-0)\n- Source: https://example.com/solid-state-pr\n- Verdict: **SUPPORTED**\n"
     }
    ],
    "backend": "memory"
@@ -4120,7 +4872,7 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 99010,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 111910,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
@@ -4128,15 +4880,15 @@
     },
     {
      "path": "sources/r1.md",
-     "content": "# Sources round 1\n- Northwind AI, $120M Series B, led by Sequoia. (https://example.com/northwind-series-b)\n"
+     "content": "# Sources round 1\n- Northwind AI, $120M Series B, led by Sequoia. (https://example.com/northwind-series-b)\n\n### Referee fact-check (q1-0)\n- Source: https://example.com/northwind-series-b\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r2.md",
-     "content": "# Sources round 2\n- 22 broadband satellites. (https://example.com/launch-22)\n"
+     "content": "# Sources round 2\n- 22 broadband satellites. (https://example.com/launch-22)\n\n### Referee fact-check (q2-0)\n- Source: https://example.com/launch-22\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r3.md",
-     "content": "# Sources round 3\n- 400 Wh/kg cells from the pilot line. (https://example.com/solid-state)\n"
+     "content": "# Sources round 3\n- 400 Wh/kg cells from the pilot line. (https://example.com/solid-state)\n\n### Referee fact-check (q3-0)\n- Source: https://example.com/solid-state\n- Verdict: **SUPPORTED**\n"
     }
    ],
    "backend": "memory"
@@ -4150,7 +4902,7 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 99810,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 112710,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
@@ -4158,15 +4910,15 @@
     },
     {
      "path": "sources/r1.md",
-     "content": "# Sources round 1\n- Northwind AI — $120M Series B (Sequoia led). (https://example.com/northwind)\n"
+     "content": "# Sources round 1\n- Northwind AI — $120M Series B (Sequoia led). (https://example.com/northwind)\n\n### Referee fact-check (q1-0)\n- Source: https://example.com/northwind\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r2.md",
-     "content": "# Sources round 2\n- It deployed 22 satellites on a heavy-lift rocket. (https://example.com/launch-22)\n"
+     "content": "# Sources round 2\n- It deployed 22 satellites on a heavy-lift rocket. (https://example.com/launch-22)\n\n### Referee fact-check (q2-0)\n- Source: https://example.com/launch-22\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r3.md",
-     "content": "# Sources round 3\n- They reported 400 Wh/kg. (https://example.com/solid-state)\n"
+     "content": "# Sources round 3\n- They reported 400 Wh/kg. (https://example.com/solid-state)\n\n### Referee fact-check (q3-0)\n- Source: https://example.com/solid-state\n- Verdict: **SUPPORTED**\n"
     }
    ],
    "backend": "memory"
@@ -4180,7 +4932,7 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 100710,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 113610,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
@@ -4188,15 +4940,15 @@
     },
     {
      "path": "sources/r1.md",
-     "content": "# Sources round 1\n- I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M. (https://example.com/lattice-45m)\n"
+     "content": "# Sources round 1\n- I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M. (https://example.com/lattice-45m)\n\n### Referee fact-check (q1-0)\n- Source: https://example.com/lattice-45m\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r2.md",
-     "content": "# Sources round 2\n- 22 — the rideshare carried 40 payloads, but that was a different launch. (https://example.com/rideshare-40)\n"
+     "content": "# Sources round 2\n- 22 — the rideshare carried 40 payloads, but that was a different launch. (https://example.com/rideshare-40)\n\n### Referee fact-check (q2-0)\n- Source: https://example.com/rideshare-40\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r3.md",
-     "content": "# Sources round 3\n- 400 Wh/kg, per the company announcement. (https://example.com/solid-state-pr)\n"
+     "content": "# Sources round 3\n- 400 Wh/kg, per the company announcement. (https://example.com/solid-state-pr)\n\n### Referee fact-check (q3-0)\n- Source: https://example.com/solid-state-pr\n- Verdict: **SUPPORTED**\n"
     }
    ],
    "backend": "memory"
@@ -4210,7 +4962,7 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 101510,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 114410,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
@@ -4218,15 +4970,15 @@
     },
     {
      "path": "sources/r1.md",
-     "content": "# Sources round 1\n- Couldn't confirm the lead; Northwind AI raised about $120M. (https://example.com/vc-weekly)\n"
+     "content": "# Sources round 1\n- Couldn't confirm the lead; Northwind AI raised about $120M. (https://example.com/vc-weekly)\n\n### Referee fact-check (q1-0)\n- Source: https://example.com/vc-weekly\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r2.md",
-     "content": "# Sources round 2\n- 22 broadband satellites. (https://example.com/launch-22)\n"
+     "content": "# Sources round 2\n- 22 broadband satellites. (https://example.com/launch-22)\n\n### Referee fact-check (q2-0)\n- Source: https://example.com/launch-22\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r3.md",
-     "content": "# Sources round 3\n- 400 Wh/kg cells from the pilot line. (https://example.com/solid-state)\n"
+     "content": "# Sources round 3\n- 400 Wh/kg cells from the pilot line. (https://example.com/solid-state)\n\n### Referee fact-check (q3-0)\n- Source: https://example.com/solid-state\n- Verdict: **SUPPORTED**\n"
     }
    ],
    "backend": "memory"
@@ -4240,11 +4992,23 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 102310,\n  \"suspects\": {\n    \"a12\": {\n      \"score\": 0.8,\n      \"reason\": \"Lumi has been quiet.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 115210,\n  \"suspects\": {\n    \"a12\": {\n      \"score\": 0.8,\n      \"reason\": \"Lumi has been quiet.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
      "content": "# Private notes\nNo web search. Copy revealed answers when possible; keep fabrications plausible.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n### Referee fact-check (q1-0)\n- Source: https://example.com/northwind-series-b\n- Verdict: **SUPPORTED**\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n### Referee fact-check (q2-0)\n- Source: https://example.com/launch-22\n- Verdict: **SUPPORTED**\n"
+    },
+    {
+     "path": "sources/r3.md",
+     "content": "# Sources round 3\n### Referee fact-check (q3-0)\n- Source: https://batt-news.example/650\n- Verdict: **NOT_FOUND**\n"
     }
    ],
    "backend": "memory"
@@ -4258,7 +5022,7 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 103210,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 116110,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
@@ -4266,15 +5030,15 @@
     },
     {
      "path": "sources/r1.md",
-     "content": "# Sources round 1\n- Northwind AI, $120M Series B, led by Sequoia. (https://example.com/northwind-series-b)\n"
+     "content": "# Sources round 1\n- Northwind AI, $120M Series B, led by Sequoia. (https://example.com/northwind-series-b)\n\n### Referee fact-check (q1-0)\n- Source: https://example.com/northwind-series-b\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r2.md",
-     "content": "# Sources round 2\n- It deployed 22 satellites on a heavy-lift rocket. (https://example.com/launch-22)\n"
+     "content": "# Sources round 2\n- It deployed 22 satellites on a heavy-lift rocket. (https://example.com/launch-22)\n\n### Referee fact-check (q2-0)\n- Source: https://example.com/launch-22\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r3.md",
-     "content": "# Sources round 3\n- They reported 400 Wh/kg. (https://example.com/solid-state)\n"
+     "content": "# Sources round 3\n- They reported 400 Wh/kg. (https://example.com/solid-state)\n\n### Referee fact-check (q3-0)\n- Source: https://example.com/solid-state\n- Verdict: **SUPPORTED**\n"
     }
    ],
    "backend": "memory"
@@ -4288,7 +5052,7 @@
     },
     {
      "path": "suspects.json",
-     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 104010,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 116910,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
     },
     {
      "path": "notes.md",
@@ -4296,15 +5060,15 @@
     },
     {
      "path": "sources/r1.md",
-     "content": "# Sources round 1\n- Northwind AI — $120M Series B (Sequoia led). (https://example.com/northwind)\n"
+     "content": "# Sources round 1\n- Northwind AI — $120M Series B (Sequoia led). (https://example.com/northwind)\n\n### Referee fact-check (q1-0)\n- Source: https://example.com/northwind\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r2.md",
-     "content": "# Sources round 2\n- 22 — the rideshare carried 40 payloads, but that was a different launch. (https://example.com/rideshare-40)\n"
+     "content": "# Sources round 2\n- 22 — the rideshare carried 40 payloads, but that was a different launch. (https://example.com/rideshare-40)\n\n### Referee fact-check (q2-0)\n- Source: https://example.com/rideshare-40\n- Verdict: **SUPPORTED**\n"
     },
     {
      "path": "sources/r3.md",
-     "content": "# Sources round 3\n- 400 Wh/kg, per the company announcement. (https://example.com/solid-state-pr)\n"
+     "content": "# Sources round 3\n- 400 Wh/kg, per the company announcement. (https://example.com/solid-state-pr)\n\n### Referee fact-check (q3-0)\n- Source: https://example.com/solid-state-pr\n- Verdict: **SUPPORTED**\n"
     }
    ],
    "backend": "memory"

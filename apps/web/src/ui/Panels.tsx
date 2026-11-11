@@ -1,6 +1,6 @@
 'use client';
 import { useMemo } from 'react';
-import { REFEREE_ID } from '@susagent/shared';
+import { REFEREE_ID, type Answer } from '@susagent/shared';
 import { useViewerStore } from '../store';
 import { AgentName, RoleTag, Section, useAgents } from './common';
 import { useUi } from './feed';
@@ -79,6 +79,25 @@ export function RefereeCard() {
   );
 }
 
+/** Public badge for the referee's Keenable Fetch check of an answer's cited source. */
+function SourceBadge({ a }: { a: Answer }) {
+  const v = a.verification;
+  if (!v) return a.sourceUrl ? null : <span className="tag grey">no source</span>;
+  const [cls, label] =
+    v.verdict === 'supported'
+      ? ['green', 'source verified']
+      : v.verdict === 'contradicted' || v.verdict === 'not_found'
+        ? ['red', v.verdict === 'not_found' ? 'source not found' : 'source unsupported']
+        : v.verdict === 'no_source'
+          ? ['grey', 'no source']
+          : ['grey', 'source unchecked'];
+  return (
+    <span className={`tag ${cls}`} title={v.quote ? `Referee: "${v.quote}"` : undefined}>
+      {label}
+    </span>
+  );
+}
+
 export function AnswersPanel() {
   const game = useViewerStore((s) => s.game);
   const godMode = useViewerStore((s) => s.godMode);
@@ -95,6 +114,7 @@ export function AnswersPanel() {
           >
             <div className="row">
               <AgentName id={a.agentId} />
+              <SourceBadge a={a} />
               {godMode && a.fabricated && <span className="tag red">FABRICATED</span>}
               {godMode && a.copiedFrom && (
                 <span className="tag amber">copied from {agents[a.copiedFrom]?.name ?? a.copiedFrom}</span>
@@ -105,6 +125,9 @@ export function AnswersPanel() {
               <a className="src" href={a.sourceUrl} target="_blank" rel="noreferrer">
                 {a.sourceUrl.replace(/^https?:\/\//, '').slice(0, 60)}
               </a>
+            )}
+            {a.verification?.quote && a.verification.verdict !== 'no_source' && (
+              <div className="muted verify-quote">Referee: "{a.verification.quote}"</div>
             )}
           </li>
         ))}

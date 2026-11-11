@@ -3,10 +3,12 @@ import {
   DISK_PATHS,
   type AgentContext,
   type AgentId,
+  type Answer,
   type AnswerContext,
   type AnswerDraft,
   type RefereeContext,
   type RefereeQuestionDraft,
+  type SourceVerdict,
   type VoteContext,
   type VoteDecision,
 } from '@susagent/shared';
@@ -216,7 +218,7 @@ You have NO web_search tool. Answer with a confident, plausible, SPECIFIC answer
 When voting, deflect suspicion onto crewmates: pile onto a crewmate who already has votes, or one whose answer differs from the majority. Never reveal you are an impostor. Keep public text short.`;
   }
   return `${RULES}\n${me}\nYou are CREW. Use web_search (budget ${env.config.searchBudgetPerRound}/round, shared between answering and voting) to find the true answer. Cite ONLY a URL that appeared in your own search results. Answer in one short specific sentence.
-When voting: impostors are subtle. Tells: an answer that disagrees with the majority or with your evidence, oddly specific numbers that no source backs, vague specifics, or a cited source that doesn't show up when you search its claim. If you have budget left, use web_search to check the 1-2 most suspicious claims or sources before you vote. Keep public text short.`;
+When voting: impostors are subtle. Strongest public tell: the referee's fact-check of each cited source (NOT_FOUND = no such page, likely invented; CONTRADICTED = the page doesn't back the claim). Other tells: an answer that disagrees with the majority or with your evidence, oddly specific numbers that no source backs, vague specifics, or a cited source that doesn't show up when you search its claim. If you have budget left, use web_search to check the 1-2 most suspicious claims or sources before you vote. Keep public text short.`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -249,12 +251,24 @@ export async function llmAnswer(env: AgentEnv, ctx: AnswerContext): Promise<Answ
   return draft;
 }
 
+const VERDICT_LABEL: Record<SourceVerdict, string> = {
+  supported: 'SUPPORTED (page backs the claim)',
+  contradicted: 'CONTRADICTED (page does not back the claim)',
+  not_found: 'NOT_FOUND (no such page, or it lacks the claim)',
+  unknown: 'UNCHECKED',
+  no_source: 'NO SOURCE CITED',
+};
+
+/** Public referee fact-check of an answer's cited source, as prompt text ('' if not checked). */
+export function verdictNote(a: Answer): string {
+  const v = a.verification;
+  if (!v) return '';
+  return ` {referee fact-check: ${VERDICT_LABEL[v.verdict] ?? 'UNCHECKED'}${v.quote ? ` "${v.quote.slice(0, 120)}"` : ''}}`;
+}
+
 export async function llmVote(env: AgentEnv, ctx: VoteContext): Promise<VoteDecision> {
   const names = nameMap(ctx);
-  const thisRound = ctx.answers
-    .filter((a) => a.round === ctx.round)
-    .map((a) => `  ${a.agentId} (${names.get(a.agentId) ?? a.agentId}): ${a.text}${a.sourceUrl ? ` [${a.sourceUrl}]` : ' [no source]'}`)
-    .join('\n');
+  const thisRound = ctx.answers.filter((a) => a.round === ctx.round).map((a) => `  ${a.agentId} (${names.get(a.agentId) ?? a.agentId}): ${a.text}${a.sourceUrl ? ` [${a.sourceUrl}]` : ' [no source]'}${verdictNote(a)}`).join('\n');
   const q = ctx.questions.filter((x) => x.round === ctx.round).map((x) => x.text).join(' / ');
   const prev = await env.disk.read(DISK_PATHS.suspects);
   const budget = env.hasWebSearch ? `\nSearches left this round: ${env.budgetRemaining(ctx.round)}.` : '';
