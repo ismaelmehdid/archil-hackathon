@@ -233,3 +233,4 @@ details summary { cursor: pointer; color: #6d6782; font-family: ui-monospace, Co
 @keyframes susFade { to { opacity: 0; transform: translateY(-14px); } }
 @keyframes bannerIn { 0% { transform: scale(0.3) rotate(-10deg); opacity: 0; } 60% { transform: scale(1.12) rotate(3deg); opacity: 1; } 80% { transform: scale(0.97) rotate(-1deg); } 100% { transform: scale(1) rotate(0); } }
 @keyframes bannerOut { to { transform: translateY(-24px) scale(0.9); opacity: 0; } }
+.hof-dot { font-weight: 800; margin-right: 3px; }

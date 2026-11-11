@@ -1,9 +1,9 @@
 'use client';
-import { useMemo } from 'react';
-import { REFEREE_ID } from '@susagent/shared';
+import { useEffect, useMemo, useState } from 'react';
+import { API_ROUTES, REFEREE_ID, type HallOfFameStats } from '@susagent/shared';
 import { useViewerStore } from '../store';
 import { AgentName, RoleTag, Section, useAgents } from './common';
-import { useUi } from './feed';
+import { SERVER_URL, useUi } from './feed';
 
 export function LobbyCard() {
   const game = useViewerStore((s) => s.game);
@@ -247,6 +247,83 @@ export function ThoughtsPanel() {
             </li>
           ))}
       </ul>
+    </Section>
+  );
+}
+
+/** Cross-game stats from GET /api/stats. Fetched on load and shortly after each game_over. */
+export function HallOfFameCard() {
+  const source = useViewerStore((s) => s.source);
+  const gameId = useViewerStore((s) => s.game?.gameId ?? null);
+  const over = useViewerStore((s) => s.game?.status === 'over');
+  const [stats, setStats] = useState<HallOfFameStats | null>(null);
+  useEffect(() => {
+    if (source !== 'live') return;
+    let alive = true;
+    const load = () =>
+      fetch(SERVER_URL + API_ROUTES.stats, { signal: AbortSignal.timeout(8000) })
+        .then((r) => (r.ok ? (r.json() as Promise<HallOfFameStats>) : null))
+        .then((s) => {
+          if (alive && s) setStats(s);
+        })
+        .catch(() => undefined);
+    void load();
+    // The server writes the game's rows asynchronously after game_over: refetch a few times.
+    const timers = over ? [4000, 12_000, 25_000].map((ms) => setTimeout(load, ms)) : [];
+    return () => {
+      alive = false;
+      timers.forEach(clearTimeout);
+    };
+  }, [source, gameId, over]);
+  if (source !== 'live' || !stats) return null;
+  const pct = (x: number | null) => (x === null ? '-' : `${Math.round(x * 100)}%`);
+  return (
+    <Section
+      title="Hall of fame"
+      right={<span className="muted" title={stats.backend === 'archil' ? 'SQLite on a persistent Archil disk' : 'in-memory (this server only)'}>{stats.totalGames} games · {stats.backend === 'archil' ? 'Archil SQLite' : 'memory'}</span>}
+    >
+      <p className="small">
+        Crew win rate <b>{pct(stats.crewWinRate)}</b>
+        <span className="muted"> ({stats.crewWins}/{stats.totalGames})</span>
+      </p>
+      <p className="small">
+        Best detective:{' '}
+        {stats.bestDetective ? (
+          <>
+            <b>{stats.bestDetective.name}</b>
+            <span className="muted">
+              {' '}
+              {pct(stats.bestDetective.ratio)} correct votes over {stats.bestDetective.games} games
+            </span>
+          </>
+        ) : (
+          <span className="muted">not enough games yet</span>
+        )}
+      </p>
+      <p className="small">
+        Most convincing impostor:{' '}
+        {stats.mostConvincingImpostor ? (
+          <>
+            <b>{stats.mostConvincingImpostor.name}</b>
+            <span className="muted">
+              {' '}
+              survived {stats.mostConvincingImpostor.survived}/{stats.mostConvincingImpostor.impostorGames} impostor games
+            </span>
+          </>
+        ) : (
+          <span className="muted">none survived yet</span>
+        )}
+      </p>
+      {stats.lastGames.length > 0 && (
+        <p className="small muted" title="Last games, newest first (C = crew win, I = impostor win)">
+          Last {stats.lastGames.length}:{' '}
+          {stats.lastGames.map((g) => (
+            <span key={g.gameId} title={`${g.gameId}: ${g.winner} won in ${g.rounds} rounds, ${g.agentCount} agents`} className="hof-dot" style={{ color: g.winner === 'crew' ? 'var(--crew)' : 'var(--imp)' }}>
+              {g.winner === 'crew' ? 'C' : 'I'}
+            </span>
+          ))}
+        </p>
+      )}
     </Section>
   );
 }
