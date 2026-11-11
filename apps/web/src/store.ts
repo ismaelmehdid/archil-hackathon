@@ -149,6 +149,12 @@ export function reduce(s: Data, e: GameEvent): Partial<Data> {
     case 'suspicion_updated':
       g.suspicion = e.scores;
       break;
+    case 'copy_suspected':
+      g.copySuspicions = [
+        ...(g.copySuspicions ?? []),
+        { round: e.round, agentId: e.agentId, fromAgentId: e.fromAgentId, phrase: e.phrase, via: e.via },
+      ];
+      break;
     case 'disk_updated':
       break;
     case 'agent_eliminated':

@@ -25,6 +25,7 @@ import {
   type VoteContext,
   type VoteDecision,
 } from '@susagent/shared';
+import { MemoryCouncil } from '../agents/council';
 import { makeRng, pick, type Rng } from './rules';
 
 export const FAKE_MODE: ModeInfo = { llm: 'mock', disks: 'memory', search: 'mock', impostorEgressBlocked: false };
@@ -109,7 +110,7 @@ export function createFakeAgentFactory(seed = 42): AgentFactory {
       // provisioning: emit agent_ready (the engine fills in any we miss)
       hooks.emit({ type: 'agent_ready', agentId: REFEREE_ID, backend: 'memory' });
       for (const a of agents) hooks.emit({ type: 'agent_ready', agentId: a.id, backend: 'memory' });
-      return { referee, agents };
+      return { referee, agents, council: new MemoryCouncil() };
     },
   };
 }

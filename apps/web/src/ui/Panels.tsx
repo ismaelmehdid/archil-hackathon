@@ -82,6 +82,7 @@ export function AnswersPanel() {
   const foldKey = `${game?.round}:${compact}`;
   const [openKey, setOpenKey] = useState<string | null>(null);
   const folded = compact && openKey !== foldKey;
+  const copies = game?.copySuspicions?.filter((c) => c.round === game.round) ?? [];
   return (
     <Section
       title="Answers"
@@ -121,6 +122,13 @@ export function AnswersPanel() {
           </li>
         ))}
       </ul>
+      {copies.map((c) => (
+        <p key={`${c.agentId}-${c.fromAgentId}`} className="copy-flag fade-in">
+          <span className="tag amber">{c.via === 'archil-grep' ? 'Archil grep' : 'grep'}: copy suspected</span>{' '}
+          <AgentName id={c.agentId} /> looks copied from <AgentName id={c.fromAgentId} />{' '}
+          <span className="muted">"{c.phrase}"</span>
+        </p>
+      ))}
     </Section>
   );
 }

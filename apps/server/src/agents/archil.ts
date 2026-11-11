@@ -1,5 +1,6 @@
 import * as archil from 'disk';
-import type { AgentId, DiskSnapshot } from '@susagent/shared';
+import type { AgentId, Answer, CopySuspicion, CouncilRuntime, DiskSnapshot } from '@susagent/shared';
+import { MemoryCouncil, councilPath, detectWith } from './council';
 import { type AgentDisk, norm, toFiles } from './disk';
 import type { ActorRole } from './env';
 
@@ -66,16 +67,16 @@ export class ArchilDisk implements AgentDisk {
 }
 
 /** Up to 3 attempts with 0.5 s / 1.5 s backoff; treats 404 as success (already gone). */
-async function retry(fn: () => Promise<unknown>, what: string): Promise<void> {
+async function retry(fn: () => Promise<unknown>, what: string, attempts = 3): Promise<void> {
   let last: unknown;
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < attempts; i++) {
     try {
       await fn();
       return;
     } catch (err) {
       if ((err as { status?: number }).status === 404) return;
       last = err;
-      if (i < 2) await new Promise((r) => setTimeout(r, i === 0 ? 500 : 1500));
+      if (i < attempts - 1) await new Promise((r) => setTimeout(r, i === 0 ? 500 : 1500 * i));
     }
   }
   const e = last as { status?: number; code?: string; message?: string };
@@ -105,6 +106,77 @@ export async function createArchilDisk(gameId: string, agentId: AgentId): Promis
 }
 
 /**
+ * Shared council disk (susagent-<gameId>-council). Every sandbox mounts it at /mnt/council with
+ * conditional:true (many readers/writers, no checkout). Each agent owns only r<N>/<agentId>.md; the server
+ * writes it via putObject (durable once it resolves), and the referee (orchestrator) runs disk.grep only
+ * after all of the round's writes resolved — handoff through the orchestrator, no polling.
+ * Falls back to the in-memory regex scan if grep fails.
+ */
+export class ArchilCouncil implements CouncilRuntime {
+  readonly backend = 'archil' as const;
+  private local = new MemoryCouncil();
+  /** Last grep stats, for logs. */
+  lastGrep: { durationMs?: number; stoppedReason?: string; error?: string } = {};
+
+  constructor(private disk: archil.Disk) {}
+
+  get diskId() {
+    return this.disk.id;
+  }
+
+  /** Per-key write chain so multi-question rounds never land an older version over a newer one. */
+  private chains = new Map<string, Promise<void>>();
+
+  async writeAnswer(a: Answer): Promise<void> {
+    await this.local.writeAnswer(a);
+    const key = councilPath(a.round, a.agentId);
+    const next = (this.chains.get(key) ?? Promise.resolve())
+      .catch(() => undefined)
+      .then(() => withTimeout(this.disk.putObject(key, this.local.files.get(key)! + '\n'), 10_000, `council putObject ${key}`))
+      .then(() => undefined);
+    this.chains.set(key, next);
+    await next;
+  }
+
+  async detectCopies(round: number, answers: Answer[], questionText: string): Promise<CopySuspicion[]> {
+    try {
+      return await detectWith(
+        async (r, patterns) => {
+          const res = await withTimeout(
+            this.disk.grep({ directory: `r${r}`, pattern: patterns.join('\n'), recursive: true, ignoreCase: true, maxDurationSeconds: 10, maxResults: 500 }),
+            15_000,
+            'council grep',
+          );
+          this.lastGrep = { durationMs: (res as { durationMs?: number }).durationMs, stoppedReason: res.stoppedReason };
+          // A partial scan could hide a third agent's file and turn a shared phrase into a false pair.
+          if (res.stoppedReason !== 'completed') throw new Error(`grep stopped early: ${res.stoppedReason}`);
+          console.log(`[council] disk.grep r${r}/ (${patterns.length} phrases): ${res.matches.length} matches, ${res.stoppedReason}, ${this.lastGrep.durationMs ?? '?'} ms`);
+          return res.matches.map((m) => ({ file: m.file, text: m.text }));
+        },
+        round,
+        answers,
+        questionText,
+        'archil-grep',
+      );
+    } catch (err) {
+      this.lastGrep = { error: String((err as Error).message ?? err).slice(0, 160) };
+      console.warn(`[council] disk.grep failed, falling back to local regex scan: ${this.lastGrep.error}`);
+      return this.local.detectCopies(round, answers, questionText);
+    }
+  }
+
+  /** Must run after every sandbox mounting this disk is stopped + deleted. */
+  async dispose(): Promise<void> {
+    await retry(() => withTimeout(this.disk.delete(), 15_000, 'council disk delete'), `council disk ${this.disk.id}`, 6); // ~1 min: a sandbox may still be releasing its mount
+  }
+}
+
+export async function createCouncilDisk(gameId: string): Promise<ArchilCouncil> {
+  const { disk } = await withTimeout(archil.createDisk({ name: safeName(`susagent-${gameId}-council`) }), 20_000, 'createDisk council');
+  return new ArchilCouncil(disk);
+}
+
+/**
  * Per-role sandbox firewall (Archil Developer plan+):
  *  - crew + referee: deny by default; allow api.keenable.ai (firewall injects X-API-Key, so the key never
  *    enters the sandbox) and api.openai.com.
@@ -127,15 +199,27 @@ export interface SandboxOutcome {
   error?: string;
 }
 
-/** Creates the agent's sandbox (agent disk mounted read-only at /mnt/archil) with its role firewall. */
-export async function createAgentSandbox(gameId: string, agentId: AgentId, role: ActorRole, disk: ArchilDisk): Promise<SandboxOutcome> {
+/**
+ * Creates the agent's sandbox (agent disk mounted read-only at /mnt/archil; shared council disk, if any,
+ * at /mnt/council with conditional:true) with its role firewall.
+ */
+export async function createAgentSandbox(
+  gameId: string,
+  agentId: AgentId,
+  role: ActorRole,
+  disk: ArchilDisk,
+  councilDiskId?: string,
+): Promise<SandboxOutcome> {
   let pending: Promise<archil.Sandbox> | null = null;
   try {
     pending = archil.createSandbox(
       {
         name: safeName(`susagent-${gameId}-${agentId}`),
         baseImage: 'node:24-bookworm',
-        mounts: [{ disk: disk.diskId, path: '/mnt/archil', readOnly: true }],
+        mounts: [
+          { disk: disk.diskId, path: '/mnt/archil', readOnly: true },
+          ...(councilDiskId ? [{ disk: councilDiskId, path: '/mnt/council', conditional: true }] : []),
+        ],
         network: egressFor(role),
         idleTtlSeconds: 900,
         maxTtlSeconds: 3600,

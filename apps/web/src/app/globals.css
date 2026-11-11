@@ -252,3 +252,4 @@ details summary { cursor: pointer; color: #6d6782; font-family: ui-monospace, Co
 button.fold { background: var(--panel2); border: none; border-radius: 999px; padding: 2px 10px; font-family: var(--fun); font-weight: 600; font-size: 12px; color: var(--accent); }
 button.fold:hover { background: #ece6ff; }
 .hof-dot { font-weight: 800; margin-right: 3px; }
+.copy-flag { font-size: 12px; margin: 6px 0 0; line-height: 1.5; }

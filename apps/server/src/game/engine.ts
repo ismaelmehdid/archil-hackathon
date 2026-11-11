@@ -12,6 +12,8 @@ import {
   type Answer,
   type AnswerContext,
   type AnswerDraft,
+  type CopySuspicion,
+  type CouncilRuntime,
   type GameConfig,
   type GameEvent,
   type GameEventPayload,
@@ -96,21 +98,29 @@ export async function disposeRuntimes(
   referee: RefereeRuntime | null,
   agents: AgentRuntime[],
   log?: (level: 'info' | 'warn', msg: string) => void,
+  council?: CouncilRuntime | null,
 ): Promise<{ ok: number; failed: number }> {
   const all: { id: string; rt: { dispose(): Promise<void> } }[] = [
     ...(referee ? [{ id: REFEREE_ID as string, rt: referee }] : []),
     ...agents.map((a) => ({ id: a.id, rt: a })),
   ];
-  if (all.length === 0) return { ok: 0, failed: 0 };
+  if (all.length === 0 && !council) return { ok: 0, failed: 0 };
   const t0 = Date.now();
-  const results = await Promise.allSettled(
-    all.map(({ rt }) =>
-      Promise.race([
-        Promise.resolve().then(() => rt.dispose()),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('dispose timed out after 120 s')), 120_000).unref?.()),
-      ]),
-    ),
-  );
+  const withTimeout = (fn: () => Promise<void>) =>
+    Promise.race([
+      Promise.resolve().then(fn),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('dispose timed out after 120 s')), 120_000).unref?.()),
+    ]);
+  // Agent runtimes first: each stops + deletes its sandbox (which mounts the council disk) then its own disk.
+  const disposals = all.map(({ rt }) => Promise.resolve().then(() => rt.dispose()));
+  const results = await Promise.allSettled(disposals.map((d) => withTimeout(() => d)));
+  // Council disk last, once no sandbox mounts it any more.
+  if (council) {
+    // A timed-out agent dispose may still be stopping its sandbox: give it up to 60 s more to release the mount.
+    await Promise.race([Promise.allSettled(disposals), new Promise((r) => setTimeout(r, 60_000).unref?.())]);
+    all.push({ id: 'council', rt: council });
+    results.push(...(await Promise.allSettled([withTimeout(() => council.dispose())])));
+  }
   const failures = results
     .map((r, i) => (r.status === 'rejected' ? `${all[i]!.id}: ${String((r.reason as Error)?.message ?? r.reason)}` : null))
     .filter((x): x is string => !!x);
@@ -242,7 +252,12 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
   phase(0, 'lobby');
 
   let referee: RefereeRuntime | null = null;
+  let council: CouncilRuntime | null = null;
   let runtimes = new Map<AgentId, AgentRuntime>();
+  /** Copy flags from the referee's council grep, all rounds. */
+  const copyFlags: CopySuspicion[] = [];
+  /** Writes still in flight to the council disk (awaited before the round's grep). */
+  let councilWrites: Promise<unknown>[] = [];
   const questions: RefereeQuestion[] = [];
   const answers: Answer[] = [];
   const votes: Vote[] = [];
@@ -289,9 +304,16 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
     if (disposed) return;
     disposed = true;
     // After game_over only failures go to the game log (game_over stays last); success is console-only.
-    await disposeRuntimes(gameId, why, referee, [...runtimes.values()], (level, msg) => {
-      if (toGameLog || level !== 'info') log(level, msg);
-    });
+    await disposeRuntimes(
+      gameId,
+      why,
+      referee,
+      [...runtimes.values()],
+      (level, msg) => {
+        if (toGameLog || level !== 'info') log(level, msg);
+      },
+      council,
+    );
   };
   const finish = async (force = false): Promise<GameSnapshot> => {
     // Cross-game lessons: completed games only, after game_over, BEFORE disposal. Never blocks > 35 s.
@@ -315,8 +337,13 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
     createP.then(
       (r) => {
         if (!gaveUp || !r) return;
-        void disposeRuntimes(gameId, 'late provisioning after stop/timeout', r.referee, r.agents, (level, msg) =>
-          log(level, msg),
+        void disposeRuntimes(
+          gameId,
+          'late provisioning after stop/timeout',
+          r.referee,
+          r.agents,
+          (level, msg) => log(level, msg),
+          r.council,
         );
       },
       () => undefined,
@@ -336,6 +363,7 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
       throw new Error('agent provisioning failed');
     }
     referee = created.value.referee;
+    council = created.value.council ?? null;
     runtimes = new Map(created.value.agents.map((r) => [r.id, r]));
     opts.onRuntimes?.(created.value);
     const backend = factory.mode.disks === 'archil' ? 'archil' : 'memory';
@@ -414,6 +442,9 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
         await runAnswering(round, topic, question);
       }
 
+      // ---- referee greps the shared council disk for copied answers ----
+      await runCopyCheck(round);
+
       // ---- voting ----
       phase(round, 'voting');
       say(round, 'Answers are in. To the council — vote for who you think is the impostor.');
@@ -487,6 +518,44 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
   }
 
   /* ------------------------------------------------------------------ */
+
+  async function runCopyCheck(round: number): Promise<void> {
+    const c = council;
+    if (!c) return;
+    const pending = councilWrites;
+    councilWrites = [];
+    const roundAnswers = answers.filter((a) => a.round === round);
+    if (roundAnswers.length < 2) return;
+    const qText = questions.filter((q) => q.round === round).map((q) => q.text).join(' ');
+    const r = await guarded(
+      'council.detectCopies',
+      async () => {
+        await Promise.all(pending);
+        return c.detectCopies(round, roundAnswers, qText);
+      },
+      () => [] as CopySuspicion[],
+      Math.min(timeoutMs, 25_000),
+      log,
+      signal,
+    );
+    if (signal?.aborted) throw new Aborted();
+    const aliveIds = new Set(alive().map((a) => a.id));
+    const flags = (r.value ?? []).filter((f) => aliveIds.has(f.agentId));
+    log('info', `council ${c.backend === 'archil' ? 'Archil grep' : 'regex scan'} r${round}/: ${flags.length} copy flag(s)`);
+    for (const f of flags) {
+      copyFlags.push(f);
+      emit({ type: 'copy_suspected', ...f });
+    }
+    if (flags.length) {
+      say(
+        round,
+        `Archil grep on the council disk: ${flags
+          .map((f) => `${agentById(f.agentId).name}'s answer looks copied from ${agentById(f.fromAgentId).name} ("${f.phrase}")`)
+          .join('; ')}.`,
+      );
+      await beat(1);
+    }
+  }
 
   async function runAnswering(round: number, topic: string, question: RefereeQuestion): Promise<void> {
     // SEALED: collect every answer (crew first, then impostors with optional whispers), reveal nothing
@@ -568,6 +637,14 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
       if (copiedFrom) answer.copiedFrom = copiedFrom;
       answers.push(answer);
       emit({ type: 'answer_submitted', answer });
+      if (council) {
+        const c = council;
+        councilWrites.push(
+          Promise.resolve()
+            .then(() => c.writeAnswer({ ...answer }))
+            .catch((err) => log('warn', `council write ${answer.agentId}: ${String((err as Error)?.message ?? err).slice(0, 120)}`)),
+        );
+      }
       await beat(1);
     }
   }
@@ -611,6 +688,7 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
           phase: 'voting',
           candidates,
           votesSoFar: roundVotes.slice(),
+          copySuspicions: copyFlags.filter((f) => f.round === round),
         };
         const rt = runtimes.get(voter.id);
         const fb = (): VoteDecision => ({
