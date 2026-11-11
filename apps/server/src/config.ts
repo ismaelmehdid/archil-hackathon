@@ -13,6 +13,9 @@ export const serverEnv = {
   engineFake: flag(env.SUSAGENT_ENGINE_FAKE),
   pacingMs: env.PACING_MS !== undefined && env.PACING_MS !== '' ? Number(env.PACING_MS) : undefined,
   eliminationsPerRound: Number(env.ELIMINATIONS_PER_ROUND) || 0,
+  /** 0..1, unset = contract default. */
+  impostorWhisperChance:
+    env.IMPOSTOR_WHISPER_CHANCE !== undefined && env.IMPOSTOR_WHISPER_CHANCE !== '' ? Number(env.IMPOSTOR_WHISPER_CHANCE) : undefined,
   /** Per agent call timeout. */
   agentTimeoutMs: Number(env.AGENT_TIMEOUT_MS) || 45_000,
   /** Delay before AUTO_START launches the next game after game_over. */
@@ -27,6 +30,9 @@ export function buildConfig(req: CreateGameRequest = {}): GameConfig {
     agentCount: serverEnv.agentCount,
     mock: serverEnv.mock,
     ...(serverEnv.eliminationsPerRound > 0 ? { eliminationsPerRound: serverEnv.eliminationsPerRound } : {}),
+    ...(serverEnv.impostorWhisperChance !== undefined && Number.isFinite(serverEnv.impostorWhisperChance)
+      ? { impostorWhisperChance: serverEnv.impostorWhisperChance }
+      : {}),
     ...(serverEnv.pacingMs !== undefined && Number.isFinite(serverEnv.pacingMs) ? { pacingMs: serverEnv.pacingMs } : {}),
   };
   const merged: GameConfig = {

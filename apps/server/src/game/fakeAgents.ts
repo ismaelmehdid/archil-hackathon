@@ -149,17 +149,21 @@ function makeAgent(
         disk.write(`${DISK_PATHS.sourcesDir}/r${ctx.round}.md`, `# Sources r${ctx.round}\n- ${key}\n`);
         draft = { text: key, sourceUrl: 'https://example.com/roundup' };
       } else {
-        const crewAnswers = ctx.revealedForThisQuestion.filter((a) => !ctx.fellowImpostors.includes(a.agentId));
-        const copy = crewAnswers.length > 0 && rng() < 0.35 ? pick(crewAnswers, rng) : undefined;
-        if (copy) {
+        const w = ctx.whisper;
+        if (w) {
+          const gist = w.text.replace(/^someone mentioned\s+/i, '');
           hooks.emit({
             type: 'agent_thought',
             agentId: id,
             round: ctx.round,
             phase: 'answering',
-            text: `Copying ${copy.agentId}'s answer to blend in.`,
+            text: `Whisper says: "${w.text}". Building on it.`,
           });
-          draft = { text: copy.text, sourceUrl: copy.sourceUrl, copiedFrom: copy.agentId };
+          draft = {
+            text: `It was ${gist}, as far as I could tell.`,
+            sourceUrl: 'https://news-totally-real.example/story',
+            copiedFrom: w.fromAgentId,
+          };
         } else {
           hooks.emit({
             type: 'agent_thought',

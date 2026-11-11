@@ -1,16 +1,21 @@
 /**
- * THE MOLE â€” shared contracts (v2: referee format).
+ * SusAgent — shared contracts (v2: referee format).
  *
  * Single source of truth for every package (server engine, agents, web UI, 3D scene, QA).
- * OWNER: lead/reviewer. Teammates must NOT edit this file â€” message the lead to request changes.
+ * OWNER: lead/reviewer. Teammates must NOT edit this file — message the lead to request changes.
  *
  * Game flow (5 rounds by default):
  *   lobby -> [ round_started -> question -> answering -> voting -> reveal ] x N -> game_over
  *   - question:  the REFEREE agent asks a question about this round's (recent-news) topic.
- *   - answering: every alive agent answers. Crew may web_search (budget per round). Impostors have NO
- *                search tool and must invent a plausible answer (or copy one already revealed).
- *   - voting:    every alive agent votes publicly for who it thinks is an impostor. Votes stream
- *                one by one in real time (vote_cast) so viewers see who votes for whom.
+ *   - answering: SEALED. Every alive agent answers without seeing anyone else's answer to this
+ *                question; all answers are revealed afterwards in SHUFFLED order. Crew may web_search
+ *                (budget per round) and must cite only URLs their own searches returned. Impostors have
+ *                NO search tool: they invent a plausible answer + source, helped sometimes by a vague
+ *                "whisper" (see GameConfig.impostorWhisperChance).
+ *   - voting:    every alive agent votes publicly for who it thinks is an impostor. Crew may spend
+ *                leftover search budget to verify suspicious claims/sources before voting. Votes
+ *                stream one by one in real time (vote_cast) so viewers see who votes for whom.
+ *   Balance target ("hard to guess, not impossible"): crew win rate ~40-60% at 12 agents.
  *   - reveal:    the most-voted agent is eliminated and its role revealed.
  *   Crew wins when all impostors are out. Impostors win at parity (impostors >= crew) or if any
  *   impostor survives the last round.
@@ -73,8 +78,15 @@ export interface GameConfig {
    * games stay winnable for the crew within `rounds`. One agent_eliminated event per eliminated agent.
    */
   eliminationsPerRound: number;
-  /** Web searches a crewmate may use per round. Default 3. */
+  /** Web searches a crewmate may use per round (answering + verification while voting). Default 3. */
   searchBudgetPerRound: number;
+  /**
+   * BALANCE KNOB. Per question, per impostor: chance (0..1) to receive a "whisper", a vague
+   * text-only paraphrase of ONE random crew answer to this question (no URL, no name, may be a
+   * wrong crew answer). 0 = impostors always answer blind (easy to catch); 1 = always hinted
+   * (hard). The whisper keeps only the gist: key name/entity, no numbers, dates or URL. Default 0.5.
+   */
+  impostorWhisperChance: number;
   /** Max answer length in characters the engine accepts (truncates beyond). Default 280. */
   maxAnswerChars: number;
   /** Minimum ms between visible beats (answers revealed, votes cast) so humans can follow. Default 700. */
@@ -97,6 +109,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   questionsPerRound: 1,
   eliminationsPerRound: 0,
   searchBudgetPerRound: 3,
+  impostorWhisperChance: 0.5,
   maxAnswerChars: 280,
   pacingMs: 700,
   mock: false,
@@ -158,7 +171,7 @@ export interface Room {
 export type AgentLocation =
   | { kind: 'room'; roomId: RoomId }
   | { kind: 'council' }
-  | { kind: 'void' }; // eliminated â€” fell off
+  | { kind: 'void' }; // eliminated — fell off
 
 /* ------------------------------------------------------------------ */
 /* Questions, answers, searches, votes, suspicion                      */
@@ -360,7 +373,7 @@ export type GameEventPayload =
   | { type: 'vote_cast'; vote: Vote; tally: Tally }
   /** Public aggregate suspicion 0..1 (mean of alive agents' suspects.json scores). 3D ring color. */
   | { type: 'suspicion_updated'; scores: Record<AgentId, number> }
-  /** A file on agentId's disk changed â€” UI may refetch GET .../disk. */
+  /** A file on agentId's disk changed — UI may refetch GET .../disk. */
   | { type: 'disk_updated'; agentId: AgentId; path: string }
   /** Voting result. Followed by agent_moved {to:{kind:'void'}} for the same agent. Ties -> random pick among tied. */
   | { type: 'agent_eliminated'; round: number; agentId: AgentId; role: Role; tally: Tally }
@@ -465,10 +478,13 @@ export interface AnswerContext extends AgentContext {
   phase: 'answering';
   question: RefereeQuestion;
   /**
-   * Answers to THIS question already revealed. The engine collects crew answers first and reveals
-   * them progressively; impostors answer after roughly half are visible, so they may copy/blend.
+   * Impostors only, sometimes (GameConfig.impostorWhisperChance): a vague hint derived by the
+   * ENGINE from one random crew answer to THIS question (crew answers are collected first, then
+   * impostors are called). Never contains a URL; `text` never names the crewmate. `fromAgentId`
+   * is for setting AnswerDraft.copiedFrom (god-only bookkeeping) and must not be shown to the model.
+   * Answers are sealed: nobody sees other answers to this question before the reveal.
    */
-  revealedForThisQuestion: Answer[];
+  whisper?: { text: string; fromAgentId: AgentId };
   maxChars: number;
 }
 
@@ -478,12 +494,13 @@ export interface VoteContext extends AgentContext {
   candidates: AgentId[];
   /** Votes already cast this round (live, visible to later voters). */
   votesSoFar: Vote[];
+  // Crew may spend leftover search budget (tracked by the agent layer) to verify claims/sources.
 }
 
 export interface AnswerDraft {
   text: string;
   sourceUrl?: string;
-  /** Impostor copied this agent's revealed answer. */
+  /** Impostor built this answer from a whisper derived from this agent's answer. */
   copiedFrom?: AgentId;
 }
 
@@ -504,7 +521,7 @@ export interface AgentHooks {
 export interface AgentRuntime {
   readonly id: AgentId;
   readonly role: Role;
-  /** false for impostors â€” the web_search tool is ABSENT from their tool list, not just forbidden. */
+  /** false for impostors — the web_search tool is ABSENT from their tool list, not just forbidden. */
   readonly hasWebSearch: boolean;
   /** Answer the referee's question; append to answers.md. */
   answer(ctx: AnswerContext): Promise<AnswerDraft>;

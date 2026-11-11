@@ -24,6 +24,20 @@ export function toolsFor(role: ActorRole): string[] {
 /** Everything an agent/referee runtime needs: identity, disk, hooks, budget bookkeeping. */
 export class AgentEnv {
   private searchesUsed = new Map<number, number>();
+  /** Every search result this agent got, per round (crew may only cite these URLs). */
+  private results = new Map<number, SearchResult[]>();
+
+  resultsFor(round: number): SearchResult[] {
+    return this.results.get(round) ?? [];
+  }
+
+  /** Citation guard: keep url only if it came from this agent's own results this round; else best own result; else none. */
+  fixCitation(round: number, url?: string): string | undefined {
+    const rs = this.resultsFor(round).filter((r) => r.url);
+    if (!rs.length) return undefined;
+    if (url && rs.some((r) => sameUrl(r.url, url))) return url;
+    return rs[0]!.url;
+  }
   private writeChain: Promise<void> = Promise.resolve();
 
   constructor(
@@ -92,6 +106,7 @@ export class AgentEnv {
       type: 'search_performed',
       search: { agentId: this.id, round, query, results, budgetRemaining: this.budgetRemaining(round), mock },
     });
+    this.results.set(round, [...this.resultsFor(round), ...results]);
     const path = `${DISK_PATHS.sourcesDir}/r${round}.md`;
     const block =
       `### ${query}\n` + results.map((r) => `- [${r.title}](${r.url})\n  ${r.snippet}`).join('\n') + '\n\n';
@@ -149,3 +164,8 @@ export class AgentEnv {
 }
 
 export const round2 = (n: number) => Math.round(Math.max(0, Math.min(1, n)) * 100) / 100;
+
+export function sameUrl(a: string, b: string): boolean {
+  const n = (u: string) => u.trim().toLowerCase().replace(/[?#].*$/, '').replace(/\/+$/, '').replace(/^https?:\/\/(www\.)?/, '');
+  return n(a) === n(b);
+}

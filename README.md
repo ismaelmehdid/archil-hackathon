@@ -18,13 +18,32 @@ private notes: `answers.md`, `suspects.json`, `notes.md`, `sources/r<N>.md`.
 - **Eliminations per round:** auto = `max(1, ceil(impostors * 1.5 / rounds))`, so 1 for 6-12 agents and 3 for 50 (override with `eliminationsPerRound`). At least one agent always survives.
 - **5 rounds**, each one:
   1. **Question:** the referee asks one question about this round's topic (with a hidden answer key).
-  2. **Answering:** every alive agent answers. Crew may `web_search` (budget 3 per round). Impostors
-     can't search; they answer after about half the crew answers are visible, so they can blend in.
-  3. **Voting:** every alive agent votes live; votes stream in one by one (beams in the 3D view).
+  2. **Answering (sealed):** every alive agent answers without seeing anyone else's answer to this
+     question. Crew may `web_search` (budget 3 per round) and must cite only URLs their own searches
+     returned. Impostors can't search, so they invent a plausible answer and source. Sometimes they
+     get a **whisper** (see below). Once all answers are in, they are revealed in **shuffled order**, so
+     answering last gives nothing away.
+  3. **Voting:** every alive agent votes live; votes stream in one by one (beams in the 3D view). Crew
+     may spend leftover search budget to check suspicious claims or sources first.
   4. **Reveal:** the most-voted agent(s) are eliminated and their roles revealed. Ties are broken randomly among the tied agents.
 - **Win conditions:**
   - **Crew wins** when every impostor has been eliminated.
   - **Impostors win** at parity (alive impostors >= alive crew), or if any impostor survives the last round.
+
+### Whispers and balance
+
+For each question, each impostor has an `impostorWhisperChance` chance (default `0.5`) of getting a
+**whisper**. The engine picks one random crew answer to that question, which may itself be wrong, and
+boils it down to its gist. URLs, domains, numbers, dates, money and the crewmate's name are all
+stripped, which leaves something like `someone mentioned Fal`. If nothing usable is left, there is no
+whisper. With `0` impostors always answer blind and are easy to catch; with `1` they get a hint
+whenever one exists, which makes them hard to catch.
+
+- Set it per server with env `IMPOSTOR_WHISPER_CHANCE=0.5` (0..1), or per game with
+  `POST /api/games {"impostorWhisperChance": 0.25}`. Values are clamped to 0..1.
+- **Balance target:** "hard to guess, but not impossible", which means a crew win rate of about
+  40-60% at 12 agents. `pnpm test:balance` runs 40 mock games at each of 0 / 0.25 / 0.5 / 0.75 / 1
+  and prints crew win %, average rounds, and the % of rounds where an impostor was eliminated.
 
 ## Quick start
 
@@ -60,6 +79,7 @@ Copy `.env.example` to `.env` at the repo root. Every key is optional, and a mis
 | `WEB_PORT` | First port `pnpm demo` tries for the viewer (default 3000; scans upward if busy). |
 | `AUTO_START` | `1` makes the server start a game on boot and again after each game_over. |
 | `AGENT_COUNT` | Number of agents in auto-started games (default 12, max 50). |
+| `IMPOSTOR_WHISPER_CHANCE` | Chance (0..1, default 0.5) that an impostor gets a vague whisper per question. Lower = easier for the crew. See "Whispers and balance". |
 | `NEXT_PUBLIC_SERVER_URL` | Where the viewer finds the server (default `http://localhost:4000`). |
 
 ### How impostors are cut off from search
@@ -122,7 +142,7 @@ HTTP API (default `http://localhost:4000`):
 
 ```bash
 pnpm test         # vitest: engine rules, impostor has no web_search, replay fixture checks
-pnpm test:balance # 20 mock 12-agent games, prints the crew win rate (informational)
+pnpm test:balance # whisper-chance sweep: 40 mock 12-agent games per value, prints a balance table (informational)
 pnpm e2e          # headless 6-agent game in mock mode; prints a round log, fails if no game_over in 2 min
 pnpm typecheck    # tsc across all workspaces
 ```

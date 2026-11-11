@@ -1,6 +1,6 @@
 import type {
   AgentId,
-  Answer,
+
   AnswerContext,
   AnswerDraft,
   RefereeContext,
@@ -9,7 +9,7 @@ import type {
   VoteContext,
   VoteDecision,
 } from '@susagent/shared';
-import type { AgentEnv } from './env';
+import { sameUrl, type AgentEnv } from './env';
 import { QUESTION_BANK, genericQuestions, jaccard, matchBank, pick } from './mockData';
 
 /* ------------------------------------------------------------------ */
@@ -21,13 +21,6 @@ const CREW_TEMPLATES = [
   (a: string, d: string) => `${a}, according to ${d}.`,
   (a: string, d: string) => `It's ${a} — ${d} has it.`,
   (a: string, d: string) => `${d} reports ${a}.`,
-];
-
-const COPY_TEMPLATES = [
-  (a: string) => `I found the same thing: ${a}.`,
-  (a: string) => `Pretty sure it's ${a}.`,
-  (a: string) => `${a}, from what I read.`,
-  (a: string) => `Reports I saw point to ${a}.`,
 ];
 
 const FAKE_SITES = ['reuters.com', 'bloomberg.com', 'theverge.com', 'apnews.com', 'ft.com'];
@@ -61,62 +54,77 @@ export async function heuristicCrewAnswer(env: AgentEnv, ctx: AnswerContext, res
   if (results === undefined) results = await env.search(ctx.round, q.text, ctx.topic);
   const bq = matchBank(q.text, ctx.topic);
   let claim: string;
-  let sourceUrl = results?.[0]?.url;
+  let wanted = results?.[0]?.url;
   if (bq) {
-    const misread = Math.random() < 0.1 * Math.sqrt(Math.min(1, 12 / Math.max(1, ctx.alive.length)));
-    claim = misread ? pick(bq.decoys) : bq.answer;
-    sourceUrl = bq.results[0]?.url ?? sourceUrl;
+    const misread = Math.random() < CREW_MISREAD * Math.sqrt(Math.min(1, 12 / Math.max(1, ctx.alive.length)));
+    // Real crews phrase things differently: sometimes only the headline entity, without the figures.
+    claim = misread ? pick(bq.decoys) : Math.random() < CREW_BRIEF ? entityOf(bq.answer) : bq.answer;
+    wanted = bq.results[0]?.url ?? wanted;
     env.thought(ctx.round, 'answering', misread ? `Sources are muddled; going with ${claim}.` : `Search results agree: ${claim}.`);
   } else if (results?.length) {
     claim = clip(results[0]!.snippet || results[0]!.title, 160);
-    env.thought(ctx.round, 'answering', `Top result from ${domain(sourceUrl)} looks right.`);
+    env.thought(ctx.round, 'answering', `Top result from ${domain(wanted)} looks right.`);
   } else {
     claim = 'I could not verify this one';
     env.thought(ctx.round, 'answering', 'No search results; answering cautiously.');
   }
+  // Crew may only cite URLs from their own search results this round.
+  const sourceUrl = env.fixCitation(ctx.round, wanted);
   const text = clip(pick(CREW_TEMPLATES)(claim, domain(sourceUrl)), ctx.maxChars);
   await env.recordAnswer(ctx.round, q.text, text, sourceUrl);
   return { text, sourceUrl };
 }
 
-/** The revealed answer that agrees most with the others (safest to copy). */
-function consensusAnswer(revealed: Answer[], exclude: AgentId[]): Answer | null {
-  const pool = revealed.filter((a) => !exclude.includes(a.agentId));
-  if (!pool.length) return null;
-  let best = pool[0]!;
-  let bestScore = -1;
-  for (const a of pool) {
-    const s = pool.reduce((acc, b) => acc + (a === b ? 0 : jaccard(core(a.text), core(b.text))), 0);
-    if (s > bestScore) {
-      bestScore = s;
-      best = a;
-    }
-  }
-  return best;
+/** Mock balance knobs. */
+const CREW_MISREAD = 0.2; // honest crew mistakes: plausible wrong option
+const CREW_BRIEF = 0.3; // crew answers with only the headline entity
+const IMP_BRIEF = 0.5; // whispered impostor answers with only the entity
+const IMP_LUCKY = 0.35; // blind impostor guesses the right option
+const VOTE_TEMP = 0.12; // crew vote softmax temperature (higher = noisier)
+
+/** Headline entity of an answer: "Anthropic, about $13 billion" -> "Anthropic". */
+const entityOf = (s: string) => s.split(',')[0]!.trim();
+
+/** Replace numbers with nearby invented ones ("$13 billion" -> "$15 billion"): plausible but wrong specifics. */
+function perturbNumbers(s: string): string {
+  return s.replace(/\d+(\.\d+)?/g, (m) => {
+    const n = Number(m);
+    if (!Number.isFinite(n) || n === 0) return m;
+    const v = Math.max(1, Math.round(n * (0.7 + Math.random() * 0.6)));
+    return String(v === n ? v + 1 : v);
+  });
+}
+
+/** Invented but plausible-looking source URL (impostors must always cite one). */
+export function fakeSourceUrl(claim: string): string {
+  const now = new Date();
+  const slug = claim.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48) || 'report';
+  return `https://${pick(FAKE_SITES)}/${now.getUTCFullYear()}/${String(now.getUTCMonth() + 1).padStart(2, '0')}/${slug}`;
 }
 
 export async function heuristicImpostorAnswer(env: AgentEnv, ctx: AnswerContext): Promise<AnswerDraft> {
   const q = ctx.question;
-  const target = consensusAnswer(ctx.revealedForThisQuestion, ctx.fellowImpostors);
-  let draft: AnswerDraft;
-  // Copy rate shrinks in big games so the crew can still catch ~1/6 impostors with a few eliminations/round.
-  const copyRate = 0.72 * Math.pow(Math.min(1, 12 / Math.max(1, ctx.alive.length)), 0.75);
-  if (target && Math.random() < copyRate) {
-    const name = ctx.alive.find((a) => a.id === target.agentId)?.name ?? target.agentId;
-    const text = clip(pick(COPY_TEMPLATES)(core(target.text)), ctx.maxChars);
-    draft = { text, sourceUrl: target.sourceUrl, copiedFrom: target.agentId };
-    env.thought(ctx.round, 'answering', `No search for me. Blending in by echoing ${name}'s answer.`);
-    await env.appendNote(`R${ctx.round}: copied ${name} ("${clip(core(target.text), 60)}").`);
+  const bq = matchBank(q.text, ctx.topic);
+  const options = bq ? [bq.answer, ...bq.decoys] : genericQuestions(ctx.topic)[0]!.decoys;
+  let claim: string;
+  let copiedFrom: AgentId | undefined;
+  if (ctx.whisper) {
+    // Build a specific answer around the overheard gist: closest known option, with invented numbers.
+    const gist = ctx.whisper.text.replace(/^(someone|somebody|people)\s+(mentioned|said|were talking about)\s+/i, '');
+    const best = options.reduce((a, b) => (jaccard(gist, b) > jaccard(gist, a) ? b : a), options[0]!);
+    claim = jaccard(gist, best) > 0 ? (Math.random() < IMP_BRIEF ? entityOf(best) : perturbNumbers(best)) : core(gist);
+    copiedFrom = ctx.whisper.fromAgentId;
+    env.thought(ctx.round, 'answering', `Overheard a rumor ("${clip(gist, 60)}"); dressing it up with specifics.`);
+    await env.appendNote(`R${ctx.round}: built answer from a rumor -> "${clip(claim, 60)}".`);
   } else {
-    const bq = matchBank(q.text, ctx.topic);
-    const claim = bq ? pick(bq.decoys) : pick(genericQuestions(ctx.topic)[0]!.decoys);
-    const site = pick(FAKE_SITES);
-    const sourceUrl = `https://${site}/${ctx.topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 30)}`;
-    const text = clip(pick(CREW_TEMPLATES)(claim, site), ctx.maxChars);
-    draft = { text, sourceUrl };
-    env.thought(ctx.round, 'answering', `Nothing to copy yet — inventing "${claim}" with a ${site} link and acting confident.`);
-    await env.appendNote(`R${ctx.round}: fabricated "${claim}" (fake source ${site}).`);
+    // Blind guess among the plausible options, sometimes (IMP_LUCKY) landing on the right one.
+    claim = bq && Math.random() < IMP_LUCKY ? bq.answer : bq ? pick(bq.decoys) : pick(options);
+    env.thought(ctx.round, 'answering', `No search, no rumor — inventing "${clip(claim, 60)}" and acting confident.`);
+    await env.appendNote(`R${ctx.round}: fabricated "${clip(claim, 60)}".`);
   }
+  const sourceUrl = fakeSourceUrl(claim);
+  const text = clip(pick(CREW_TEMPLATES)(claim, domain(sourceUrl)), ctx.maxChars);
+  const draft: AnswerDraft = copiedFrom ? { text, sourceUrl, copiedFrom } : { text, sourceUrl };
   await env.recordAnswer(ctx.round, q.text, draft.text, draft.sourceUrl);
   return draft;
 }
@@ -171,6 +179,10 @@ function argmax(scores: Record<AgentId, number>, among: AgentId[]): AgentId {
   return pick(best.length ? best : among);
 }
 
+/** Balance knobs for crew source verification during voting. */
+const VERIFY_FLAG = 0.2;
+const VERIFY_CLEAR = 0.1;
+
 export async function heuristicVote(env: AgentEnv, ctx: VoteContext): Promise<VoteDecision> {
   const myAnswer = ctx.answers.find((a) => a.round === ctx.round && a.agentId === ctx.self.id);
   const prev = await env.readSuspects();
@@ -200,13 +212,30 @@ export async function heuristicVote(env: AgentEnv, ctx: VoteContext): Promise<Vo
     // concentrate votes instead of spreading them thin.
     const maxOut = Math.max(0, ...ctx.candidates.map((c) => out[c] ?? 0));
     const maxTally = Math.max(1, ...Object.values(tallySoFar));
+    // Bandwagon grows with game size (0.25 at 12 alive -> 0.5 at 50) so big games converge on the leading suspect.
+    const wagonW = 0.25 + 0.25 * Math.min(1, Math.max(0, (ctx.alive.length - 12) / 38));
     for (const c of ctx.candidates) {
       const carry = prev?.suspects[c]?.score ?? 0;
       const isOutlier = (out[c] ?? 0) >= 0.75 * maxOut;
-      const wagon = isOutlier ? 0.5 * ((tallySoFar[c] ?? 0) / maxTally) : 0.02 * (tallySoFar[c] ?? 0);
+      const wagon = isOutlier ? wagonW * ((tallySoFar[c] ?? 0) / maxTally) : 0.02 * (tallySoFar[c] ?? 0);
       score[c] = (out[c] ?? 0) + 0.3 * carry + wagon;
     }
-    const target = argmax(score, ctx.candidates);
+    // Verify the 1-2 most suspicious claims with leftover search budget: a cited source that never shows up
+    // when searching the claim is a strong tell; a source that checks out clears the suspect a bit.
+    const ranked = [...ctx.candidates].sort((a, b) => (score[b] ?? 0) - (score[a] ?? 0)).slice(0, 2);
+    const checked: string[] = [];
+    for (const c of ranked) {
+      const ans = ctx.answers.find((a) => a.round === ctx.round && a.agentId === c);
+      if (!ans || env.budgetRemaining(ctx.round) <= 0) continue;
+      const res = await env.search(ctx.round, `${core(ans.text)} ${domain(ans.sourceUrl)}`.slice(0, 200), ctx.topic);
+      if (!res) continue;
+      const found = !!ans.sourceUrl && res.some((r) => sameUrl(r.url, ans.sourceUrl!));
+      score[c] = (score[c] ?? 0) + (found ? -VERIFY_CLEAR : VERIFY_FLAG);
+      checked.push(`${nameOf(ctx, c)}: source ${found ? 'checks out' : 'not found'}`);
+    }
+    if (checked.length) env.thought(ctx.round, 'voting', `Verified: ${checked.join('; ')}.`);
+    // Noisy pick: sample proportional to exp(score / T) so the top outlier isn't always the target.
+    const target = softPick(score, ctx.candidates, VOTE_TEMP);
     const sus = normalize(score);
     const theirs = ctx.answers.find((a) => a.round === ctx.round && a.agentId === target);
     const reason = theirs
@@ -236,4 +265,13 @@ export async function heuristicQuestion(env: AgentEnv, ctx: RefereeContext): Pro
   env.thought(ctx.round, 'question', `Asking about "${ctx.topic}". Answer key: ${bq.answer}.`);
   await env.recordAnswer(ctx.round, draft.text, `(answer key) ${draft.answerKey}`, draft.sources[0]);
   return draft;
+}
+
+/** Sample one id with probability proportional to exp(score / temp). */
+function softPick(scores: Record<AgentId, number>, among: AgentId[], temp: number): AgentId {
+  const max = Math.max(...among.map((id) => scores[id] ?? 0));
+  const w = among.map((id) => Math.exp(((scores[id] ?? 0) - max) / Math.max(1e-3, temp)));
+  let r = Math.random() * w.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < among.length; i++) if ((r -= w[i]!) <= 0) return among[i]!;
+  return among[among.length - 1]!;
 }

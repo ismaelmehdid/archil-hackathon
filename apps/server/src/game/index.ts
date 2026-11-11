@@ -19,5 +19,6 @@ export {
   ISLAND_NAMES,
   type Rng,
 } from './rules';
+export { makeWhisper } from './whisper';
 export { createFakeAgentFactory, FAKE_MODE } from './fakeAgents';
 export { GameManager, type GameRun, type GameManagerOptions } from './manager';

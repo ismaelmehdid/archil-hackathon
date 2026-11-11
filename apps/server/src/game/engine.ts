@@ -27,6 +27,7 @@ import {
   type VoteDecision,
 } from '@susagent/shared';
 import { reduceEvent } from './reducer';
+import { makeWhisper } from './whisper';
 import {
   aliveRooms,
   assignRoles,
@@ -53,7 +54,7 @@ export interface RunGameOptions {
   timeoutMs?: number;
   /** Called once runtimes are provisioned (GameManager uses it for disk reads). */
   onRuntimes?: (r: { referee: RefereeRuntime; agents: AgentRuntime[] }) => void;
-  /** Dispose runtimes when the game ends. Default true (GameManager passes false to keep disks readable). */
+  /** Dispose runtimes when the game ends. Default true. */
   disposeOnEnd?: boolean;
 }
 
@@ -172,6 +173,12 @@ async function guarded<T>(
   });
 }
 
+function clamp01(v: unknown, dflt: number): number {
+  const n = Number(v);
+  if (v === undefined || v === null || v === '' || !Number.isFinite(n)) return dflt;
+  return Math.min(1, Math.max(0, n));
+}
+
 export function normalizeConfig(c: GameConfig): GameConfig {
   const n = Math.round(Number(c.agentCount) || DEFAULT_CONFIG.agentCount);
   return {
@@ -182,6 +189,7 @@ export function normalizeConfig(c: GameConfig): GameConfig {
     rounds: Math.max(1, Math.round(Number(c.rounds) || DEFAULT_CONFIG.rounds)),
     questionsPerRound: Math.max(1, Math.round(Number(c.questionsPerRound) || 1)),
     eliminationsPerRound: Math.max(0, Math.round(Number(c.eliminationsPerRound) || 0)),
+    impostorWhisperChance: clamp01(c.impostorWhisperChance, DEFAULT_CONFIG.impostorWhisperChance),
     maxAnswerChars: Math.max(20, Math.round(Number(c.maxAnswerChars) || DEFAULT_CONFIG.maxAnswerChars)),
     pacingMs: Math.max(0, Number(c.pacingMs ?? DEFAULT_CONFIG.pacingMs) || 0),
     models: { ...DEFAULT_CONFIG.models, ...(c.models ?? {}) },
@@ -474,83 +482,85 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
   /* ------------------------------------------------------------------ */
 
   async function runAnswering(round: number, topic: string, question: RefereeQuestion): Promise<void> {
+    // SEALED: collect every answer (crew first, then impostors with optional whispers), reveal nothing
+    // until all are in, then reveal everything in shuffled order, pacingMs apart.
     const living = alive();
     const crew = living.filter((a) => roles[a.id] === 'crew');
     const imps = living.filter((a) => roles[a.id] === 'impostor');
-    const revealedHere: Answer[] = [];
-    const queue: { agent: AgentPublic; draft: AnswerDraft }[] = [];
-    let wake: (() => void) | null = null;
-    const push = (agent: AgentPublic, draft: AnswerDraft) => {
-      queue.push({ agent, draft });
-      const w = wake;
-      wake = null;
-      w?.();
-    };
-    const ask = (agent: AgentPublic) => {
+    const fallback = (): AnswerDraft => ({ text: "I'm not sure." });
+    const ask = (agent: AgentPublic, whisper?: AnswerContext['whisper']): Promise<AnswerDraft> => {
       const ctx: AnswerContext = {
         ...baseCtx(agent, round, topic, 'answering'),
         phase: 'answering',
         question,
-        revealedForThisQuestion: revealedHere.slice(),
         maxChars: config.maxAnswerChars,
       };
+      if (whisper) ctx.whisper = whisper;
       const rt = runtimes.get(agent.id);
-      void guarded<AnswerDraft>(
+      return guarded<AnswerDraft>(
         `${agent.id}.answer`,
         async () => {
           if (!rt) throw new Error('no runtime');
           return rt.answer(ctx);
         },
-        () => ({ text: "I'm not sure." }),
+        fallback,
         timeoutMs,
         log,
         signal,
-      ).then((r) => push(agent, r.value ?? { text: "I'm not sure." }));
+      ).then((r) => (r.value && typeof r.value === 'object' ? r.value : fallback()));
     };
-
-    crew.forEach(ask);
-    const threshold = Math.ceil(crew.length / 2);
-    let impsStarted = false;
-    const startImps = () => {
-      if (impsStarted) return;
-      impsStarted = true;
-      imps.forEach(ask);
-    };
-    if (threshold === 0) startImps();
-
-    let revealed = 0;
-    let revealedCrew = 0;
-    const total = crew.length + imps.length;
-    while (revealed < total) {
-      if (signal?.aborted) throw new Aborted();
-      if (queue.length === 0) {
-        await waitWake((w) => (wake = w), signal);
-        continue;
-      }
-      const { agent, draft } = queue.shift()!;
-      const role = roles[agent.id]!;
-      let text = String(draft?.text ?? '').trim() || "I'm not sure.";
+    const normText = (d: AnswerDraft) => {
+      let text = String(d?.text ?? '').trim() || "I'm not sure.";
       if (text.length > config.maxAnswerChars) text = text.slice(0, config.maxAnswerChars - 1) + '…';
-      const copiedFrom =
-        role === 'impostor' && draft.copiedFrom && draft.copiedFrom !== agent.id && ids.includes(draft.copiedFrom)
-          ? draft.copiedFrom
-          : undefined;
+      return text;
+    };
+
+    // Let viewers know why nothing shows up yet when collection is slow.
+    const sealedTimer = setTimeout(() => {
+      if (!signal?.aborted) say(round, 'Answers are sealed… revealing soon.');
+    }, 5000);
+    let drafts: { agent: AgentPublic; draft: AnswerDraft; whisperFrom?: AgentId }[];
+    try {
+      const crewDrafts = await Promise.all(crew.map(async (agent) => ({ agent, draft: await ask(agent) })));
+      if (signal?.aborted) throw new Aborted();
+
+      // Whispers: each impostor, with probability impostorWhisperChance, gets the gist of ONE random crew answer.
+      const sources = crewDrafts
+        .map((c) => ({ from: c.agent.id, gist: makeWhisper(normText(c.draft)) }))
+        .filter((x): x is { from: AgentId; gist: string } => !!x.gist);
+      const impDrafts = await Promise.all(
+        imps.map(async (agent) => {
+          let whisper: AnswerContext['whisper'];
+          if (sources.length > 0 && rng() < config.impostorWhisperChance) {
+            const src = pick(sources, rng)!;
+            whisper = { text: src.gist, fromAgentId: src.from };
+          }
+          return { agent, draft: await ask(agent, whisper), whisperFrom: whisper?.fromAgentId };
+        }),
+      );
+      if (signal?.aborted) throw new Aborted();
+      drafts = [...crewDrafts, ...impDrafts];
+    } finally {
+      clearTimeout(sealedTimer);
+    }
+
+    for (const { agent, draft, whisperFrom } of shuffle(drafts, rng)) {
+      if (signal?.aborted) throw new Aborted();
+      const role = roles[agent.id]!;
+      // copiedFrom is god-only bookkeeping: only trusted if it names this impostor's own whisper source.
+      const copiedFrom = role === 'impostor' && whisperFrom && draft.copiedFrom === whisperFrom ? whisperFrom : undefined;
       const answer: Answer = {
         id: `${question.id}-${agent.id}`,
         questionId: question.id,
         round,
         agentId: agent.id,
-        text,
+        text: normText(draft),
         fabricated: role === 'impostor' && !copiedFrom,
       };
       if (draft.sourceUrl) answer.sourceUrl = String(draft.sourceUrl);
       if (copiedFrom) answer.copiedFrom = copiedFrom;
       answers.push(answer);
-      revealedHere.push(answer);
       emit({ type: 'answer_submitted', answer });
-      revealed++;
-      if (role === 'crew') revealedCrew++;
-      if (!impsStarted && revealedCrew >= threshold) startImps();
       await beat(1);
     }
   }

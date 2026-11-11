@@ -12,6 +12,8 @@ import {
 } from '@susagent/shared';
 import type { AgentEnv } from './env';
 import { toolsFor } from './env';
+import { fakeSourceUrl, heuristicQuestion } from './heuristic';
+import { tokens } from './mockData';
 
 const MAX_STEPS = 4;
 // Reasoning models spend part of this on (minimal) reasoning tokens.
@@ -204,16 +206,17 @@ function history(ctx: AgentContext): string {
   return lines.join('\n') || '(first round)';
 }
 
-const RULES = `Game "SusAgent": AI agents answer a referee's recent-news question each round, then publicly vote out who they think is an impostor. Crewmates have a web_search tool; impostors do not and must bluff. Crew wins when all impostors are out; impostors win at parity or by surviving the last round.`;
+const RULES = `Game "SusAgent": AI agents answer a referee's recent-news question each round. Answers are sealed (nobody sees others' answers until all are revealed). Then everyone publicly votes out who they think is an impostor. Crewmates have a web_search tool; impostors do not and must bluff. Crew wins when all impostors are out; impostors win at parity or by surviving the last round.`;
 
 function systemFor(env: AgentEnv, ctx: AgentContext): string {
   const me = `You are ${ctx.self.name} (id ${ctx.self.id}). Round ${ctx.round}/${ctx.totalRounds}.`;
   if (ctx.role === 'impostor') {
     return `${RULES}\n${me}\nYou are an IMPOSTOR. Fellow impostors (never vote for them): ${ctx.fellowImpostors.join(', ') || 'none'}.
-You have NO web_search tool. To answer, invent a plausible, specific answer, or copy/blend an answer other agents already revealed (paraphrase it lightly and set copied_from to that agent's id). Match the tone and length of the crew. Cite a plausible source URL.
-When voting, deflect suspicion onto crewmates: pile onto a crewmate who already has votes, or one whose answer looks off. Never reveal you are an impostor. Keep public text short.`;
+You have NO web_search tool. Answer with a confident, plausible, SPECIFIC answer (a concrete name/number/date), one short sentence like a crewmate who just searched. No hedging ("I think", "maybe", "reportedly"). ALWAYS give a source_url: invent a realistic article URL on a real news domain (e.g. reuters.com, theverge.com, techcrunch.com) with a plausible slug. Be subtle: match the crew's style and length.
+When voting, deflect suspicion onto crewmates: pile onto a crewmate who already has votes, or one whose answer differs from the majority. Never reveal you are an impostor. Keep public text short.`;
   }
-  return `${RULES}\n${me}\nYou are CREW. Use web_search (budget ${env.config.searchBudgetPerRound}/round) to find the true answer and cite a source. When voting, find impostors: answers that disagree with the evidence/majority, vague answers, suspicious sources, or answers that copy others too closely. Keep public text short.`;
+  return `${RULES}\n${me}\nYou are CREW. Use web_search (budget ${env.config.searchBudgetPerRound}/round, shared between answering and voting) to find the true answer. Cite ONLY a URL that appeared in your own search results. Answer in one short specific sentence.
+When voting: impostors are subtle. Tells: an answer that disagrees with the majority or with your evidence, oddly specific numbers that no source backs, vague specifics, or a cited source that doesn't show up when you search its claim. If you have budget left, use web_search to check the 1-2 most suspicious claims or sources before you vote. Keep public text short.`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -221,27 +224,41 @@ When voting, deflect suspicion onto crewmates: pile onto a crewmate who already 
 /* ------------------------------------------------------------------ */
 
 export async function llmAnswer(env: AgentEnv, ctx: AnswerContext): Promise<AnswerDraft> {
-  const names = nameMap(ctx);
-  const revealed = ctx.revealedForThisQuestion.map((a) => `  ${a.agentId} (${names.get(a.agentId) ?? a.agentId}): ${a.text}${a.sourceUrl ? ` [${a.sourceUrl}]` : ''}`).join('\n');
-  const user = `Topic: ${ctx.topic}\nReferee question: ${ctx.question.text}\n\nAnswers already revealed for this question:\n${revealed || '  (none yet)'}\n\nEarlier:\n${history(ctx)}\n\nAnswer in under ${Math.min(ctx.maxChars, 200)} characters, then call submit_answer.`;
+  const rumor =
+    ctx.role === 'impostor' && ctx.whisper
+      ? `\nYou overheard a rumor about the answer: "${ctx.whisper.text}". Build a plausible, specific answer around it.`
+      : '';
+  const user = `Topic: ${ctx.topic}\nReferee question: ${ctx.question.text}${rumor}\n\nEarlier:\n${history(ctx)}\n\nAnswer in under ${Math.min(ctx.maxChars, 200)} characters, then call submit_answer.`;
   const input = await runLoop(env, ctx.round, ctx.topic, systemFor(env, ctx), user, 'submit_answer');
   const text = String(input.text ?? '').trim().slice(0, ctx.maxChars);
   if (!text) throw new Error('empty answer');
-  const copied = typeof input.copied_from === 'string' && ctx.revealedForThisQuestion.some((a) => a.agentId === input.copied_from) ? input.copied_from : undefined;
-  const draft: AnswerDraft = { text, sourceUrl: typeof input.source_url === 'string' && input.source_url ? input.source_url : undefined };
-  if (ctx.role === 'impostor' && copied) draft.copiedFrom = copied;
+  const cited = typeof input.source_url === 'string' && /^https?:\/\//.test(input.source_url) ? input.source_url : undefined;
+  const draft: AnswerDraft = { text };
+  if (ctx.role === 'impostor') {
+    // A missing source would be an obvious tell: always cite one (invented if the model forgot).
+    draft.sourceUrl = cited ?? fakeSourceUrl(text);
+    if (ctx.whisper) draft.copiedFrom = ctx.whisper.fromAgentId;
+  } else {
+    // Crew may only cite URLs from their own search results this round (enforced, not just prompted).
+    const fixed = env.fixCitation(ctx.round, cited);
+    if (fixed) draft.sourceUrl = fixed;
+  }
   env.thought(ctx.round, 'answering', String(input.private_reasoning ?? (ctx.role === 'impostor' ? 'Bluffing.' : 'Answered from search.')));
-  if (ctx.role === 'impostor') await env.appendNote(`R${ctx.round}: answered "${text.slice(0, 80)}"${copied ? ` (copied ${copied})` : ' (invented)'}`);
+  if (ctx.role === 'impostor') await env.appendNote(`R${ctx.round}: answered "${text.slice(0, 80)}"${ctx.whisper ? ' (from a rumor)' : ' (invented)'}`);
   await env.recordAnswer(ctx.round, ctx.question.text, text, draft.sourceUrl);
   return draft;
 }
 
 export async function llmVote(env: AgentEnv, ctx: VoteContext): Promise<VoteDecision> {
   const names = nameMap(ctx);
-  const thisRound = ctx.answers.filter((a) => a.round === ctx.round).map((a) => `  ${a.agentId} (${names.get(a.agentId) ?? a.agentId}): ${a.text}${a.sourceUrl ? ` [${a.sourceUrl}]` : ''}`).join('\n');
+  const thisRound = ctx.answers
+    .filter((a) => a.round === ctx.round)
+    .map((a) => `  ${a.agentId} (${names.get(a.agentId) ?? a.agentId}): ${a.text}${a.sourceUrl ? ` [${a.sourceUrl}]` : ' [no source]'}`)
+    .join('\n');
   const q = ctx.questions.filter((x) => x.round === ctx.round).map((x) => x.text).join(' / ');
   const prev = await env.disk.read(DISK_PATHS.suspects);
-  const user = `Question this round: ${q}\nAnswers this round:\n${thisRound}\n\nVotes so far this round: ${ctx.votesSoFar.map((v) => `${v.voterId}->${v.targetId} ("${v.reason}")`).join('; ') || 'none'}\n\nEarlier:\n${history(ctx)}\n\nYour previous suspects.json: ${prev ? prev.slice(0, 800) : '(none)'}\n\nCandidates: ${ctx.candidates.join(', ')}. Call cast_vote with one target_id from the candidates.`;
+  const budget = env.hasWebSearch ? `\nSearches left this round: ${env.budgetRemaining(ctx.round)}.` : '';
+  const user = `Question this round: ${q}\nAnswers this round:\n${thisRound}\n\nVotes so far this round: ${ctx.votesSoFar.map((v) => `${v.voterId}->${v.targetId} ("${v.reason}")`).join('; ') || 'none'}\n\nEarlier:\n${history(ctx)}\n\nYour previous suspects.json: ${prev ? prev.slice(0, 800) : '(none)'}${budget}\n\nCandidates: ${ctx.candidates.join(', ')}. Call cast_vote with one target_id from the candidates.`;
   const input = await runLoop(env, ctx.round, ctx.topic, systemFor(env, ctx), user, 'cast_vote', { candidates: ctx.candidates });
   const targetId = String(input.target_id ?? '');
   if (!ctx.candidates.includes(targetId)) throw new Error(`invalid vote target ${targetId}`);
@@ -257,16 +274,38 @@ export async function llmVote(env: AgentEnv, ctx: VoteContext): Promise<VoteDeci
   return { targetId, reason, suspicion };
 }
 
+/** Answer key must be a short single fact, literally backed by the referee's own search results. */
+export function validateAnswerKey(key: string, resultsText: string): string | null {
+  if (!key) return 'empty answer key';
+  if (key.length > 60) return 'answer key longer than 60 characters';
+  if (/\?|better:|\bor\b|\/|;/i.test(key)) return 'answer key is ambiguous (contains "?", "better:", "or", "/" or ";")';
+  const toks = tokens(key);
+  const hay = new Set(tokens(resultsText));
+  const hit = toks.filter((t) => hay.has(t)).length;
+  if (toks.length && hit / toks.length < 0.6) return 'answer key is not directly present in your search results';
+  return null;
+}
+
 export async function llmQuestion(env: AgentEnv, ctx: RefereeContext): Promise<RefereeQuestionDraft> {
   env.log('info', `LLM calls so far this game: ${llmCallCount(env.opts.gameId)}`);
-  const system = `You are the REFEREE of "SusAgent". Each round you ask ONE question about recent news on the round topic. It must have a short, checkable answer (a name, number, date or place) that a web search can verify. Use web_search first (results are limited to the last 7 days), base the question on what you find, and give the answer key with source URLs. Avoid repeating earlier questions. Keep the question under 160 characters.`;
-  const user = `Round ${ctx.round}/${ctx.totalRounds}. Topic: ${ctx.topic}\nEarlier questions: ${ctx.previousQuestions.map((q) => q.text).join(' | ') || 'none'}\nSearch, then call submit_question.`;
-  const input = await runLoop(env, ctx.round, ctx.topic, system, user, 'submit_question', { forceFirstTool: true });
-  const text = String(input.text ?? '').trim().slice(0, 240);
-  const answerKey = String(input.answer_key ?? '').trim().slice(0, 160);
-  if (!text || !answerKey) throw new Error('incomplete referee question');
-  const sources = Array.isArray(input.sources) ? input.sources.map(String).slice(0, 5) : [];
-  env.thought(ctx.round, 'question', String(input.private_reasoning ?? `Answer key: ${answerKey}`));
-  await env.recordAnswer(ctx.round, text, `(answer key) ${answerKey}`, sources[0]);
-  return { text, answerKey, sources };
+  const system = `You are the REFEREE of "SusAgent". Each round you ask ONE question about recent news on the round topic. Use web_search first (results are limited to the last 7 days). Only ask a question whose answer is a short, single, unambiguous fact (a name, number, date or place, at most a few words) that appears LITERALLY in one of your search results. The answer_key must be just that fact: no alternatives, no question marks, no commentary. Give the source URLs where it appears. Avoid repeating earlier questions. Keep the question under 160 characters.`;
+  let user = `Round ${ctx.round}/${ctx.totalRounds}. Topic: ${ctx.topic}\nEarlier questions: ${ctx.previousQuestions.map((q) => q.text).join(' | ') || 'none'}\nSearch, then call submit_question.`;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const input = await runLoop(env, ctx.round, ctx.topic, system, user, 'submit_question', {
+      forceFirstTool: attempt === 0 || env.budgetRemaining(ctx.round) > 0,
+    });
+    const text = String(input.text ?? '').trim().slice(0, 240);
+    const answerKey = String(input.answer_key ?? '').trim();
+    const resultsText = env.resultsFor(ctx.round).map((r) => `${r.title} ${r.snippet}`).join(' ');
+    const problem = !text ? 'empty question' : validateAnswerKey(answerKey, resultsText);
+    if (!problem) {
+      const sources = Array.isArray(input.sources) ? input.sources.map(String).slice(0, 5) : [];
+      env.thought(ctx.round, 'question', String(input.private_reasoning ?? `Answer key: ${answerKey}`));
+      await env.recordAnswer(ctx.round, text, `(answer key) ${answerKey}`, sources[0]);
+      return { text, answerKey, sources };
+    }
+    env.log('warn', `referee question rejected (${problem}): "${answerKey.slice(0, 80)}"${attempt === 0 ? ', retrying once' : ', using canned bank'}`);
+    user += `\n\nYour previous attempt was rejected: ${problem}. Ask a different question whose answer is a short fact copied from your search results.`;
+  }
+  return heuristicQuestion(env, ctx);
 }
