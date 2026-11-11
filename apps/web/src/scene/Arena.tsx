@@ -4,9 +4,12 @@ import { Component, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { useViewerStore } from '../store';
-import { computeLayout, type Layout } from './layout';
-import { PALETTE } from './shared';
-import { Islands } from './Islands';
+import { computeLayout, seatAngle, type Layout } from './layout';
+import { REFEREE_ID } from '@susagent/shared';
+import { PALETTE, SPEECH_MS, focus } from './shared';
+import { Clouds, Poofs } from './Fx';
+import { Clearing } from './Clearing';
+import { Forest } from './Forest';
 import { Referee } from './Referee';
 import { AgentBlob } from './AgentBlob';
 import { VoteBeams } from './VoteBeams';
@@ -14,7 +17,7 @@ import { LabelLayer, LabelProjector } from './labels';
 
 const FALLBACK_ROOMS = ['r1', 'r2'];
 
-/** Keeps islands + referee on screen if a dynamic part of the scene throws; retries on next game. */
+/** Keeps the clearing + referee on screen if a dynamic part of the scene throws; retries on next game. */
 class SceneBoundary extends Component<{ children: ReactNode; resetKey: string }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
@@ -57,7 +60,7 @@ function CameraRig({ ring, council }: { ring: number; council: number }) {
   const anim = useRef<{ from: number; to: number; t0: number } | null>(null);
 
   useEffect(() => {
-    // Fit the whole ring (islands ~ ring + island radius) into the view.
+    // Fit the whole home ring (plus the forest edge) into the view.
     const d = focusCouncil ? voteD : baseD;
     const az = Math.PI / 4;
     camera.position.set(Math.sin(az) * 0.8, 0.75, Math.cos(az) * 0.8).setLength(d);
@@ -89,12 +92,18 @@ function CameraRig({ ring, council }: { ring: number; council: number }) {
 
 function Agents({ layout }: { layout: Layout }) {
   const agents = useViewerStore((s) => s.game?.agents);
+  // Council slots follow each agent's home angle, so everyone walks (roughly) straight in to vote.
   const slots = useMemo(() => {
     const m: Record<string, number> = {};
-    let i = 0;
-    for (const a of agents ?? []) m[a.id] = a.alive ? i++ : -1;
-    return { m, n: i };
-  }, [agents]);
+    const alive = (agents ?? []).filter((a) => a.alive);
+    const ang = (a: { roomId: string; seat: number }) => {
+      const x = seatAngle(layout, a.roomId, a.seat) % (Math.PI * 2);
+      return x < 0 ? x + Math.PI * 2 : x;
+    };
+    alive.sort((a, b) => ang(a) - ang(b)).forEach((a, i) => (m[a.id] = i));
+    for (const a of agents ?? []) if (!(a.id in m)) m[a.id] = -1;
+    return { m, n: alive.length };
+  }, [agents, layout]);
   return (
     <group>
       {(agents ?? []).map((a) => (
@@ -128,15 +137,20 @@ function World() {
 
   return (
     <>
-      <fog attach="fog" args={[PALETTE.sky, layout.ringRadius * 2, layout.ringRadius * 6]} />
+      <fog attach="fog" args={[PALETTE.fog, layout.ringRadius * 2.4, layout.ringRadius * 6.5]} />
+      <Clouds radius={layout.ringRadius} />
       <CameraRig ring={layout.ringRadius} council={layout.councilRadius} />
-      <Islands layout={layout} roomIds={roomIds} />
+      <Forest radius={layout.clearingRadius} />
+      <Clearing layout={layout} />
       <Referee />
       <SceneBoundary resetKey={gameId}>
         <group key={gameId}>
           <Agents layout={layout} />
           <VoteBeams />
         </group>
+      </SceneBoundary>
+      <SceneBoundary resetKey={gameId}>
+        <Poofs />
       </SceneBoundary>
     </>
   );
@@ -188,19 +202,47 @@ function useDevHook() {
   }, []);
 }
 
+/** Tracks the newest speaker so every blob (and the referee) can turn and look at them. */
+function useSpeakerFocus() {
+  useEffect(() => {
+    const pick = (speech: ReturnType<typeof useViewerStore.getState>['speech']) => {
+      const now = performance.now();
+      let best: string | null = null;
+      let score = -Infinity;
+      for (const id in speech) {
+        const b = speech[id];
+        if (now - b.at >= SPEECH_MS) continue;
+        // Agents win over the referee when both talk at once.
+        const sc = b.at - (id === REFEREE_ID ? 400 : 0);
+        if (sc > score) {
+          score = sc;
+          best = id;
+        }
+      }
+      focus.id = best;
+      focus.at = best ? speech[best].at : 0;
+    };
+    pick(useViewerStore.getState().speech);
+    return useViewerStore.subscribe((s, prev) => {
+      if (s.speech !== prev.speech) pick(s.speech);
+    });
+  }, []);
+}
+
 export default function Arena() {
   useDevHook();
+  useSpeakerFocus();
   return (
-    <div style={{ position: 'absolute', inset: 0, background: PALETTE.sky }}>
+    <div className="sky" style={{ position: 'absolute', inset: 0 }}>
       <Canvas
         camera={{ position: [0, 30, 44], fov: 50, near: 0.1, far: 400 }}
         dpr={[1, 1.75]}
-        gl={{ antialias: true }}
+        gl={{ antialias: true, alpha: true }}
+        flat
       >
-        <color attach="background" args={[PALETTE.sky]} />
-        <hemisphereLight args={['#dfe9ff', '#3a3040', 0.7]} />
-        <ambientLight intensity={0.3} />
-        <directionalLight position={[20, 35, 15]} intensity={1.5} />
+        <hemisphereLight args={['#ffffff', '#c7b6e8', 0.85]} />
+        <ambientLight intensity={0.2} />
+        <directionalLight position={[20, 35, 15]} intensity={0.95} color="#fff4e0" />
         <World />
         <LabelProjector />
         <R3fHandle />
