@@ -1,0 +1,4330 @@
+{
+ "events": [
+  {
+   "seq": 1,
+   "ts": 0,
+   "gameId": "replay-001",
+   "type": "game_created",
+   "config": {
+    "agentCount": 12,
+    "roomSize": 6,
+    "impostorRatio": 0.16666666666666666,
+    "rounds": 5,
+    "questionsPerRound": 1,
+    "eliminationsPerRound": 0,
+    "searchBudgetPerRound": 3,
+    "maxAnswerChars": 280,
+    "pacingMs": 700,
+    "mock": true,
+    "models": {
+     "crew": "claude-haiku-5-5",
+     "impostor": "claude-sonnet-5-5",
+     "referee": "claude-sonnet-5-5"
+    },
+    "topics": [
+     "AI funding rounds this week",
+     "Space launches this month",
+     "Electric vehicle battery breakthroughs"
+    ]
+   },
+   "mode": {
+    "llm": "mock",
+    "disks": "memory",
+    "search": "mock",
+    "impostorEgressBlocked": false
+   },
+   "agents": [
+    {
+     "id": "a01",
+     "name": "Ada",
+     "color": "#e76f51",
+     "roomId": "r1",
+     "seat": 0,
+     "alive": true
+    },
+    {
+     "id": "a02",
+     "name": "Bram",
+     "color": "#f4a261",
+     "roomId": "r1",
+     "seat": 1,
+     "alive": true
+    },
+    {
+     "id": "a03",
+     "name": "Cleo",
+     "color": "#e9c46a",
+     "roomId": "r1",
+     "seat": 2,
+     "alive": true
+    },
+    {
+     "id": "a04",
+     "name": "Dax",
+     "color": "#8ab17d",
+     "roomId": "r1",
+     "seat": 3,
+     "alive": true
+    },
+    {
+     "id": "a05",
+     "name": "Esme",
+     "color": "#2a9d8f",
+     "roomId": "r1",
+     "seat": 4,
+     "alive": true
+    },
+    {
+     "id": "a06",
+     "name": "Finn",
+     "color": "#457b9d",
+     "roomId": "r1",
+     "seat": 5,
+     "alive": true
+    },
+    {
+     "id": "a07",
+     "name": "Gus",
+     "color": "#6d597a",
+     "roomId": "r2",
+     "seat": 0,
+     "alive": true
+    },
+    {
+     "id": "a08",
+     "name": "Hana",
+     "color": "#b56576",
+     "roomId": "r2",
+     "seat": 1,
+     "alive": true
+    },
+    {
+     "id": "a09",
+     "name": "Ivo",
+     "color": "#48cae4",
+     "roomId": "r2",
+     "seat": 2,
+     "alive": true
+    },
+    {
+     "id": "a10",
+     "name": "Juno",
+     "color": "#90be6d",
+     "roomId": "r2",
+     "seat": 3,
+     "alive": true
+    },
+    {
+     "id": "a11",
+     "name": "Kai",
+     "color": "#f28482",
+     "roomId": "r2",
+     "seat": 4,
+     "alive": true
+    },
+    {
+     "id": "a12",
+     "name": "Lumi",
+     "color": "#cdb4db",
+     "roomId": "r2",
+     "seat": 5,
+     "alive": true
+    }
+   ],
+   "rooms": [
+    {
+     "id": "r1",
+     "index": 0,
+     "name": "Ember Isle",
+     "agentIds": [
+      "a01",
+      "a02",
+      "a03",
+      "a04",
+      "a05",
+      "a06"
+     ]
+    },
+    {
+     "id": "r2",
+     "index": 1,
+     "name": "Tide Isle",
+     "agentIds": [
+      "a07",
+      "a08",
+      "a09",
+      "a10",
+      "a11",
+      "a12"
+     ]
+    }
+   ]
+  },
+  {
+   "seq": 2,
+   "ts": 200,
+   "gameId": "replay-001",
+   "type": "roles_assigned",
+   "roles": {
+    "a01": "crew",
+    "a02": "crew",
+    "a03": "crew",
+    "a04": "impostor",
+    "a05": "crew",
+    "a06": "crew",
+    "a07": "crew",
+    "a08": "crew",
+    "a09": "crew",
+    "a10": "impostor",
+    "a11": "crew",
+    "a12": "crew"
+   },
+   "models": {
+    "a01": "claude-haiku-5-5",
+    "a02": "claude-haiku-5-5",
+    "a03": "claude-haiku-5-5",
+    "a04": "claude-sonnet-5-5",
+    "a05": "claude-haiku-5-5",
+    "a06": "claude-haiku-5-5",
+    "a07": "claude-haiku-5-5",
+    "a08": "claude-haiku-5-5",
+    "a09": "claude-haiku-5-5",
+    "a10": "claude-sonnet-5-5",
+    "a11": "claude-haiku-5-5",
+    "a12": "claude-haiku-5-5"
+   }
+  },
+  {
+   "seq": 3,
+   "ts": 400,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 0,
+   "phase": "lobby",
+   "endsAt": null
+  },
+  {
+   "seq": 4,
+   "ts": 550,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "referee",
+   "backend": "memory"
+  },
+  {
+   "seq": 5,
+   "ts": 660,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a01",
+   "backend": "memory"
+  },
+  {
+   "seq": 6,
+   "ts": 770,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a02",
+   "backend": "memory"
+  },
+  {
+   "seq": 7,
+   "ts": 880,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a03",
+   "backend": "memory"
+  },
+  {
+   "seq": 8,
+   "ts": 990,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a04",
+   "backend": "memory"
+  },
+  {
+   "seq": 9,
+   "ts": 1100,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a05",
+   "backend": "memory"
+  },
+  {
+   "seq": 10,
+   "ts": 1210,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a06",
+   "backend": "memory"
+  },
+  {
+   "seq": 11,
+   "ts": 1320,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a07",
+   "backend": "memory"
+  },
+  {
+   "seq": 12,
+   "ts": 1430,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a08",
+   "backend": "memory"
+  },
+  {
+   "seq": 13,
+   "ts": 1540,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a09",
+   "backend": "memory"
+  },
+  {
+   "seq": 14,
+   "ts": 1650,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a10",
+   "backend": "memory"
+  },
+  {
+   "seq": 15,
+   "ts": 1760,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a11",
+   "backend": "memory"
+  },
+  {
+   "seq": 16,
+   "ts": 1870,
+   "gameId": "replay-001",
+   "type": "agent_ready",
+   "agentId": "a12",
+   "backend": "memory"
+  },
+  {
+   "seq": 17,
+   "ts": 3070,
+   "gameId": "replay-001",
+   "type": "round_started",
+   "round": 1,
+   "topic": "AI funding rounds this week",
+   "rooms": [
+    {
+     "id": "r1",
+     "index": 0,
+     "name": "Ember Isle",
+     "agentIds": [
+      "a01",
+      "a02",
+      "a03",
+      "a04",
+      "a05",
+      "a06"
+     ]
+    },
+    {
+     "id": "r2",
+     "index": 1,
+     "name": "Tide Isle",
+     "agentIds": [
+      "a07",
+      "a08",
+      "a09",
+      "a10",
+      "a11",
+      "a12"
+     ]
+    }
+   ],
+   "agents": [
+    {
+     "id": "a01",
+     "name": "Ada",
+     "color": "#e76f51",
+     "roomId": "r1",
+     "seat": 0,
+     "alive": true
+    },
+    {
+     "id": "a02",
+     "name": "Bram",
+     "color": "#f4a261",
+     "roomId": "r1",
+     "seat": 1,
+     "alive": true
+    },
+    {
+     "id": "a03",
+     "name": "Cleo",
+     "color": "#e9c46a",
+     "roomId": "r1",
+     "seat": 2,
+     "alive": true
+    },
+    {
+     "id": "a04",
+     "name": "Dax",
+     "color": "#8ab17d",
+     "roomId": "r1",
+     "seat": 3,
+     "alive": true
+    },
+    {
+     "id": "a05",
+     "name": "Esme",
+     "color": "#2a9d8f",
+     "roomId": "r1",
+     "seat": 4,
+     "alive": true
+    },
+    {
+     "id": "a06",
+     "name": "Finn",
+     "color": "#457b9d",
+     "roomId": "r1",
+     "seat": 5,
+     "alive": true
+    },
+    {
+     "id": "a07",
+     "name": "Gus",
+     "color": "#6d597a",
+     "roomId": "r2",
+     "seat": 0,
+     "alive": true
+    },
+    {
+     "id": "a08",
+     "name": "Hana",
+     "color": "#b56576",
+     "roomId": "r2",
+     "seat": 1,
+     "alive": true
+    },
+    {
+     "id": "a09",
+     "name": "Ivo",
+     "color": "#48cae4",
+     "roomId": "r2",
+     "seat": 2,
+     "alive": true
+    },
+    {
+     "id": "a10",
+     "name": "Juno",
+     "color": "#90be6d",
+     "roomId": "r2",
+     "seat": 3,
+     "alive": true
+    },
+    {
+     "id": "a11",
+     "name": "Kai",
+     "color": "#f28482",
+     "roomId": "r2",
+     "seat": 4,
+     "alive": true
+    },
+    {
+     "id": "a12",
+     "name": "Lumi",
+     "color": "#cdb4db",
+     "roomId": "r2",
+     "seat": 5,
+     "alive": true
+    }
+   ]
+  },
+  {
+   "seq": 18,
+   "ts": 3370,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 1,
+   "phase": "question",
+   "endsAt": null
+  },
+  {
+   "seq": 19,
+   "ts": 3970,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m1",
+    "round": 1,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Round 1 of 5. Topic: AI funding rounds this week.",
+    "ts": 3970
+   }
+  },
+  {
+   "seq": 20,
+   "ts": 4470,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "referee",
+    "round": 1,
+    "query": "AI funding rounds this week",
+    "results": [
+     {
+      "title": "Northwind AI — $120M Series B led by Sequoia",
+      "url": "https://example.com/ref",
+      "snippet": "Northwind AI — $120M Series B led by Sequoia"
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 21,
+   "ts": 5370,
+   "gameId": "replay-001",
+   "type": "question_asked",
+   "question": {
+    "id": "q1-0",
+    "round": 1,
+    "index": 0,
+    "topic": "AI funding rounds this week",
+    "text": "Which AI startup raised the largest round this week, and who led it?"
+   }
+  },
+  {
+   "seq": 22,
+   "ts": 5470,
+   "gameId": "replay-001",
+   "type": "answer_key",
+   "key": {
+    "questionId": "q1-0",
+    "answer": "Northwind AI — $120M Series B led by Sequoia",
+    "sources": [
+     "https://example.com/ref"
+    ]
+   }
+  },
+  {
+   "seq": 23,
+   "ts": 6070,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 1,
+   "phase": "answering",
+   "endsAt": null
+  },
+  {
+   "seq": 24,
+   "ts": 6190,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a01",
+    "round": 1,
+    "query": "Which AI startup raised the largest round this week, and who",
+    "results": [
+     {
+      "title": "Northwind AI, $120M Series B, led by Sequoia.",
+      "url": "https://example.com/northwind-series-b",
+      "snippet": "Northwind AI, $120M Series B, led by Sequoia."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 25,
+   "ts": 6310,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a02",
+    "round": 1,
+    "query": "Which AI startup raised the largest round this week, and who",
+    "results": [
+     {
+      "title": "Northwind AI — $120M Series B (Sequoia led).",
+      "url": "https://example.com/northwind",
+      "snippet": "Northwind AI — $120M Series B (Sequoia led)."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 26,
+   "ts": 6430,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a03",
+    "round": 1,
+    "query": "Which AI startup raised the largest round this week, and who",
+    "results": [
+     {
+      "title": "I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M.",
+      "url": "https://example.com/lattice-45m",
+      "snippet": "I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 27,
+   "ts": 6550,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a05",
+    "round": 1,
+    "query": "Which AI startup raised the largest round this week, and who",
+    "results": [
+     {
+      "title": "Couldn't confirm the lead; Northwind AI raised about $120M.",
+      "url": "https://example.com/vc-weekly",
+      "snippet": "Couldn't confirm the lead; Northwind AI raised about $120M."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 28,
+   "ts": 6670,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a06",
+    "round": 1,
+    "query": "Which AI startup raised the largest round this week, and who",
+    "results": [
+     {
+      "title": "Northwind AI, $120M Series B, led by Sequoia.",
+      "url": "https://example.com/northwind-series-b",
+      "snippet": "Northwind AI, $120M Series B, led by Sequoia."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 29,
+   "ts": 6790,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a07",
+    "round": 1,
+    "query": "Which AI startup raised the largest round this week, and who",
+    "results": [
+     {
+      "title": "Northwind AI — $120M Series B (Sequoia led).",
+      "url": "https://example.com/northwind",
+      "snippet": "Northwind AI — $120M Series B (Sequoia led)."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 30,
+   "ts": 6910,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a08",
+    "round": 1,
+    "query": "Which AI startup raised the largest round this week, and who",
+    "results": [
+     {
+      "title": "I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M.",
+      "url": "https://example.com/lattice-45m",
+      "snippet": "I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 31,
+   "ts": 7030,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a09",
+    "round": 1,
+    "query": "Which AI startup raised the largest round this week, and who",
+    "results": [
+     {
+      "title": "Couldn't confirm the lead; Northwind AI raised about $120M.",
+      "url": "https://example.com/vc-weekly",
+      "snippet": "Couldn't confirm the lead; Northwind AI raised about $120M."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 32,
+   "ts": 7150,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a11",
+    "round": 1,
+    "query": "Which AI startup raised the largest round this week, and who",
+    "results": [
+     {
+      "title": "Northwind AI, $120M Series B, led by Sequoia.",
+      "url": "https://example.com/northwind-series-b",
+      "snippet": "Northwind AI, $120M Series B, led by Sequoia."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 33,
+   "ts": 7270,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a12",
+    "round": 1,
+    "query": "Which AI startup raised the largest round this week, and who",
+    "results": [
+     {
+      "title": "Northwind AI — $120M Series B (Sequoia led).",
+      "url": "https://example.com/northwind",
+      "snippet": "Northwind AI — $120M Series B (Sequoia led)."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 34,
+   "ts": 7470,
+   "gameId": "replay-001",
+   "type": "agent_thought",
+   "agentId": "a04",
+   "round": 1,
+   "phase": "answering",
+   "text": "No search tool. Going bold with a big made-up number — risky."
+  },
+  {
+   "seq": 35,
+   "ts": 7670,
+   "gameId": "replay-001",
+   "type": "agent_thought",
+   "agentId": "a10",
+   "round": 1,
+   "phase": "answering",
+   "text": "Ada already answered. Copy her answer nearly verbatim to blend in."
+  },
+  {
+   "seq": 36,
+   "ts": 8670,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a01",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a01",
+    "text": "Northwind AI, $120M Series B, led by Sequoia.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/northwind-series-b"
+   }
+  },
+  {
+   "seq": 37,
+   "ts": 8700,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a01",
+   "path": "answers.md"
+  },
+  {
+   "seq": 38,
+   "ts": 9700,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a02",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a02",
+    "text": "Northwind AI — $120M Series B (Sequoia led).",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/northwind"
+   }
+  },
+  {
+   "seq": 39,
+   "ts": 9730,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a02",
+   "path": "answers.md"
+  },
+  {
+   "seq": 40,
+   "ts": 10730,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a03",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a03",
+    "text": "I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/lattice-45m"
+   }
+  },
+  {
+   "seq": 41,
+   "ts": 10760,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a03",
+   "path": "answers.md"
+  },
+  {
+   "seq": 42,
+   "ts": 11760,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a05",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a05",
+    "text": "Couldn't confirm the lead; Northwind AI raised about $120M.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/vc-weekly"
+   }
+  },
+  {
+   "seq": 43,
+   "ts": 11790,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a05",
+   "path": "answers.md"
+  },
+  {
+   "seq": 44,
+   "ts": 12790,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a06",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a06",
+    "text": "Northwind AI, $120M Series B, led by Sequoia.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/northwind-series-b"
+   }
+  },
+  {
+   "seq": 45,
+   "ts": 12820,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a06",
+   "path": "answers.md"
+  },
+  {
+   "seq": 46,
+   "ts": 13820,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a04",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a04",
+    "text": "Helix Mind raised $900M at a $12B valuation, led by a single angel investor.",
+    "fabricated": true,
+    "sourceUrl": "https://news-helix.example/round"
+   }
+  },
+  {
+   "seq": 47,
+   "ts": 13850,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a04",
+   "path": "answers.md"
+  },
+  {
+   "seq": 48,
+   "ts": 14850,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a10",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a10",
+    "text": "Northwind AI, $120M Series B, led by Sequoia.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/northwind-series-b",
+    "copiedFrom": "a01"
+   }
+  },
+  {
+   "seq": 49,
+   "ts": 14880,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a10",
+   "path": "answers.md"
+  },
+  {
+   "seq": 50,
+   "ts": 15880,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a07",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a07",
+    "text": "Northwind AI — $120M Series B (Sequoia led).",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/northwind"
+   }
+  },
+  {
+   "seq": 51,
+   "ts": 15910,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a07",
+   "path": "answers.md"
+  },
+  {
+   "seq": 52,
+   "ts": 16910,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a08",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a08",
+    "text": "I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/lattice-45m"
+   }
+  },
+  {
+   "seq": 53,
+   "ts": 16940,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a08",
+   "path": "answers.md"
+  },
+  {
+   "seq": 54,
+   "ts": 17940,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a09",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a09",
+    "text": "Couldn't confirm the lead; Northwind AI raised about $120M.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/vc-weekly"
+   }
+  },
+  {
+   "seq": 55,
+   "ts": 17970,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a09",
+   "path": "answers.md"
+  },
+  {
+   "seq": 56,
+   "ts": 18970,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a11",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a11",
+    "text": "Northwind AI, $120M Series B, led by Sequoia.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/northwind-series-b"
+   }
+  },
+  {
+   "seq": 57,
+   "ts": 19000,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a11",
+   "path": "answers.md"
+  },
+  {
+   "seq": 58,
+   "ts": 20000,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q1-0-a12",
+    "questionId": "q1-0",
+    "round": 1,
+    "agentId": "a12",
+    "text": "Northwind AI — $120M Series B (Sequoia led).",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/northwind"
+   }
+  },
+  {
+   "seq": 59,
+   "ts": 20030,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a12",
+   "path": "answers.md"
+  },
+  {
+   "seq": 60,
+   "ts": 20930,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 1,
+   "phase": "voting",
+   "endsAt": null
+  },
+  {
+   "seq": 61,
+   "ts": 21230,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m2",
+    "round": 1,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Answers are in. To the council — vote for who you think is the impostor.",
+    "ts": 21230
+   }
+  },
+  {
+   "seq": 62,
+   "ts": 21280,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a01",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 63,
+   "ts": 21330,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a02",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 64,
+   "ts": 21380,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a03",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 65,
+   "ts": 21430,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a04",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 66,
+   "ts": 21480,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a05",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 67,
+   "ts": 21530,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a06",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 68,
+   "ts": 21580,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a07",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 69,
+   "ts": 21630,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a08",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 70,
+   "ts": 21680,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a09",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 71,
+   "ts": 21730,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a10",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 72,
+   "ts": 21780,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a11",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 73,
+   "ts": 21830,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a12",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 74,
+   "ts": 25130,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a01",
+    "targetId": "a04",
+    "reason": "Dax's $900M angel round is absurd."
+   },
+   "tally": {
+    "a04": 1
+   }
+  },
+  {
+   "seq": 75,
+   "ts": 25930,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a02",
+    "targetId": "a03",
+    "reason": "Cleo could not confirm the basic fact."
+   },
+   "tally": {
+    "a04": 1,
+    "a03": 1
+   }
+  },
+  {
+   "seq": 76,
+   "ts": 26730,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a03",
+    "targetId": "a04",
+    "reason": "Dax's $900M angel round is absurd."
+   },
+   "tally": {
+    "a04": 2,
+    "a03": 1
+   }
+  },
+  {
+   "seq": 77,
+   "ts": 26830,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a03": 0.4666666666666666,
+    "a04": 0.9333333333333332,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0,
+    "a10": 0,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 78,
+   "ts": 27630,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a04",
+    "targetId": "a03",
+    "reason": "Cleo could not confirm the basic fact."
+   },
+   "tally": {
+    "a04": 2,
+    "a03": 2
+   }
+  },
+  {
+   "seq": 79,
+   "ts": 28430,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a05",
+    "targetId": "a04",
+    "reason": "Dax's $900M angel round is absurd."
+   },
+   "tally": {
+    "a04": 3,
+    "a03": 2
+   }
+  },
+  {
+   "seq": 80,
+   "ts": 29230,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a06",
+    "targetId": "a04",
+    "reason": "Dax's $900M angel round is absurd."
+   },
+   "tally": {
+    "a04": 4,
+    "a03": 2
+   }
+  },
+  {
+   "seq": 81,
+   "ts": 29330,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a03": 0.4666666666666666,
+    "a04": 0.9333333333333332,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0,
+    "a10": 0,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 82,
+   "ts": 30130,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a07",
+    "targetId": "a03",
+    "reason": "Cleo could not confirm the basic fact."
+   },
+   "tally": {
+    "a04": 4,
+    "a03": 3
+   }
+  },
+  {
+   "seq": 83,
+   "ts": 30930,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a08",
+    "targetId": "a03",
+    "reason": "Cleo could not confirm the basic fact."
+   },
+   "tally": {
+    "a04": 4,
+    "a03": 4
+   }
+  },
+  {
+   "seq": 84,
+   "ts": 31730,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a09",
+    "targetId": "a04",
+    "reason": "Dax's $900M angel round is absurd."
+   },
+   "tally": {
+    "a04": 5,
+    "a03": 4
+   }
+  },
+  {
+   "seq": 85,
+   "ts": 31830,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a03": 0.6222222222222221,
+    "a04": 0.7777777777777778,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0,
+    "a10": 0,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 86,
+   "ts": 32630,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a10",
+    "targetId": "a03",
+    "reason": "Cleo could not confirm the basic fact."
+   },
+   "tally": {
+    "a04": 5,
+    "a03": 5
+   }
+  },
+  {
+   "seq": 87,
+   "ts": 33430,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a11",
+    "targetId": "a03",
+    "reason": "Cleo could not confirm the basic fact."
+   },
+   "tally": {
+    "a04": 5,
+    "a03": 6
+   }
+  },
+  {
+   "seq": 88,
+   "ts": 34230,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 1,
+    "voterId": "a12",
+    "targetId": "a03",
+    "reason": "Cleo could not confirm the basic fact."
+   },
+   "tally": {
+    "a04": 5,
+    "a03": 7
+   }
+  },
+  {
+   "seq": 89,
+   "ts": 34330,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a03": 0.8166666666666667,
+    "a04": 0.5833333333333334,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0,
+    "a10": 0,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 90,
+   "ts": 34530,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a03": 0.8166666666666667,
+    "a04": 0.5833333333333334,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0,
+    "a10": 0,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 91,
+   "ts": 35430,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 1,
+   "phase": "reveal",
+   "endsAt": null
+  },
+  {
+   "seq": 92,
+   "ts": 35830,
+   "gameId": "replay-001",
+   "type": "agent_eliminated",
+   "round": 1,
+   "agentId": "a03",
+   "role": "crew",
+   "tally": {
+    "a04": 5,
+    "a03": 7
+   }
+  },
+  {
+   "seq": 93,
+   "ts": 35930,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a03",
+   "to": {
+    "kind": "void"
+   }
+  },
+  {
+   "seq": 94,
+   "ts": 37430,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m3",
+    "round": 1,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Cleo was CREW.",
+    "ts": 37430
+   }
+  },
+  {
+   "seq": 95,
+   "ts": 39470,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a01",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 96,
+   "ts": 39510,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a02",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 97,
+   "ts": 39550,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a04",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 98,
+   "ts": 39590,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a05",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 99,
+   "ts": 39630,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a06",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 100,
+   "ts": 39670,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a07",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 101,
+   "ts": 39710,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a08",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 102,
+   "ts": 39750,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a09",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 103,
+   "ts": 39790,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a10",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 104,
+   "ts": 39830,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a11",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 105,
+   "ts": 39870,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a12",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 106,
+   "ts": 41070,
+   "gameId": "replay-001",
+   "type": "round_started",
+   "round": 2,
+   "topic": "Space launches this month",
+   "rooms": [
+    {
+     "id": "r1",
+     "index": 0,
+     "name": "Ember Isle",
+     "agentIds": [
+      "a01",
+      "a02",
+      "a04",
+      "a05",
+      "a06"
+     ]
+    },
+    {
+     "id": "r2",
+     "index": 1,
+     "name": "Tide Isle",
+     "agentIds": [
+      "a07",
+      "a08",
+      "a09",
+      "a10",
+      "a11",
+      "a12"
+     ]
+    }
+   ],
+   "agents": [
+    {
+     "id": "a01",
+     "name": "Ada",
+     "color": "#e76f51",
+     "roomId": "r1",
+     "seat": 0,
+     "alive": true
+    },
+    {
+     "id": "a02",
+     "name": "Bram",
+     "color": "#f4a261",
+     "roomId": "r1",
+     "seat": 1,
+     "alive": true
+    },
+    {
+     "id": "a03",
+     "name": "Cleo",
+     "color": "#e9c46a",
+     "roomId": "r1",
+     "seat": 2,
+     "alive": false,
+     "revealedRole": "crew"
+    },
+    {
+     "id": "a04",
+     "name": "Dax",
+     "color": "#8ab17d",
+     "roomId": "r1",
+     "seat": 3,
+     "alive": true
+    },
+    {
+     "id": "a05",
+     "name": "Esme",
+     "color": "#2a9d8f",
+     "roomId": "r1",
+     "seat": 4,
+     "alive": true
+    },
+    {
+     "id": "a06",
+     "name": "Finn",
+     "color": "#457b9d",
+     "roomId": "r1",
+     "seat": 5,
+     "alive": true
+    },
+    {
+     "id": "a07",
+     "name": "Gus",
+     "color": "#6d597a",
+     "roomId": "r2",
+     "seat": 0,
+     "alive": true
+    },
+    {
+     "id": "a08",
+     "name": "Hana",
+     "color": "#b56576",
+     "roomId": "r2",
+     "seat": 1,
+     "alive": true
+    },
+    {
+     "id": "a09",
+     "name": "Ivo",
+     "color": "#48cae4",
+     "roomId": "r2",
+     "seat": 2,
+     "alive": true
+    },
+    {
+     "id": "a10",
+     "name": "Juno",
+     "color": "#90be6d",
+     "roomId": "r2",
+     "seat": 3,
+     "alive": true
+    },
+    {
+     "id": "a11",
+     "name": "Kai",
+     "color": "#f28482",
+     "roomId": "r2",
+     "seat": 4,
+     "alive": true
+    },
+    {
+     "id": "a12",
+     "name": "Lumi",
+     "color": "#cdb4db",
+     "roomId": "r2",
+     "seat": 5,
+     "alive": true
+    }
+   ]
+  },
+  {
+   "seq": 107,
+   "ts": 41370,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 2,
+   "phase": "question",
+   "endsAt": null
+  },
+  {
+   "seq": 108,
+   "ts": 41970,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m4",
+    "round": 2,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Round 2 of 5. Topic: Space launches this month.",
+    "ts": 41970
+   }
+  },
+  {
+   "seq": 109,
+   "ts": 42470,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "referee",
+    "round": 2,
+    "query": "Space launches this month",
+    "results": [
+     {
+      "title": "22 broadband satellites",
+      "url": "https://example.com/ref",
+      "snippet": "22 broadband satellites"
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 110,
+   "ts": 43370,
+   "gameId": "replay-001",
+   "type": "question_asked",
+   "question": {
+    "id": "q2-0",
+    "round": 2,
+    "index": 0,
+    "topic": "Space launches this month",
+    "text": "How many satellites did the heaviest launch of the month deploy?"
+   }
+  },
+  {
+   "seq": 111,
+   "ts": 43470,
+   "gameId": "replay-001",
+   "type": "answer_key",
+   "key": {
+    "questionId": "q2-0",
+    "answer": "22 broadband satellites",
+    "sources": [
+     "https://example.com/ref"
+    ]
+   }
+  },
+  {
+   "seq": 112,
+   "ts": 44070,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 2,
+   "phase": "answering",
+   "endsAt": null
+  },
+  {
+   "seq": 113,
+   "ts": 44190,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a01",
+    "round": 2,
+    "query": "How many satellites did the heaviest launch of the month dep",
+    "results": [
+     {
+      "title": "22 broadband satellites.",
+      "url": "https://example.com/launch-22",
+      "snippet": "22 broadband satellites."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 114,
+   "ts": 44310,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a02",
+    "round": 2,
+    "query": "How many satellites did the heaviest launch of the month dep",
+    "results": [
+     {
+      "title": "It deployed 22 satellites on a heavy-lift rocket.",
+      "url": "https://example.com/launch-22",
+      "snippet": "It deployed 22 satellites on a heavy-lift rocket."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 115,
+   "ts": 44430,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a05",
+    "round": 2,
+    "query": "How many satellites did the heaviest launch of the month dep",
+    "results": [
+     {
+      "title": "22 — the rideshare carried 40 payloads, but that was a different launch.",
+      "url": "https://example.com/rideshare-40",
+      "snippet": "22 — the rideshare carried 40 payloads, but that was a different launch."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 116,
+   "ts": 44550,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a06",
+    "round": 2,
+    "query": "How many satellites did the heaviest launch of the month dep",
+    "results": [
+     {
+      "title": "22 broadband satellites.",
+      "url": "https://example.com/launch-22",
+      "snippet": "22 broadband satellites."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 117,
+   "ts": 44670,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a07",
+    "round": 2,
+    "query": "How many satellites did the heaviest launch of the month dep",
+    "results": [
+     {
+      "title": "It deployed 22 satellites on a heavy-lift rocket.",
+      "url": "https://example.com/launch-22",
+      "snippet": "It deployed 22 satellites on a heavy-lift rocket."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 118,
+   "ts": 44790,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a08",
+    "round": 2,
+    "query": "How many satellites did the heaviest launch of the month dep",
+    "results": [
+     {
+      "title": "22 — the rideshare carried 40 payloads, but that was a different launch.",
+      "url": "https://example.com/rideshare-40",
+      "snippet": "22 — the rideshare carried 40 payloads, but that was a different launch."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 119,
+   "ts": 44910,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a09",
+    "round": 2,
+    "query": "How many satellites did the heaviest launch of the month dep",
+    "results": [
+     {
+      "title": "22 broadband satellites.",
+      "url": "https://example.com/launch-22",
+      "snippet": "22 broadband satellites."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 120,
+   "ts": 45030,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a11",
+    "round": 2,
+    "query": "How many satellites did the heaviest launch of the month dep",
+    "results": [
+     {
+      "title": "It deployed 22 satellites on a heavy-lift rocket.",
+      "url": "https://example.com/launch-22",
+      "snippet": "It deployed 22 satellites on a heavy-lift rocket."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 121,
+   "ts": 45150,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a12",
+    "round": 2,
+    "query": "How many satellites did the heaviest launch of the month dep",
+    "results": [
+     {
+      "title": "22 — the rideshare carried 40 payloads, but that was a different launch.",
+      "url": "https://example.com/rideshare-40",
+      "snippet": "22 — the rideshare carried 40 payloads, but that was a different launch."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 122,
+   "ts": 45350,
+   "gameId": "replay-001",
+   "type": "agent_thought",
+   "agentId": "a04",
+   "round": 2,
+   "phase": "answering",
+   "text": "They are onto me. Fabricate confidently and accuse Ivo."
+  },
+  {
+   "seq": 123,
+   "ts": 45550,
+   "gameId": "replay-001",
+   "type": "agent_thought",
+   "agentId": "a10",
+   "round": 2,
+   "phase": "answering",
+   "text": "Blend in again; vote with the majority against Dax to look like crew."
+  },
+  {
+   "seq": 124,
+   "ts": 46550,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a01",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a01",
+    "text": "22 broadband satellites.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/launch-22"
+   }
+  },
+  {
+   "seq": 125,
+   "ts": 46580,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a01",
+   "path": "answers.md"
+  },
+  {
+   "seq": 126,
+   "ts": 47580,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a02",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a02",
+    "text": "It deployed 22 satellites on a heavy-lift rocket.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/launch-22"
+   }
+  },
+  {
+   "seq": 127,
+   "ts": 47610,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a02",
+   "path": "answers.md"
+  },
+  {
+   "seq": 128,
+   "ts": 48610,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a05",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a05",
+    "text": "22 — the rideshare carried 40 payloads, but that was a different launch.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/rideshare-40"
+   }
+  },
+  {
+   "seq": 129,
+   "ts": 48640,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a05",
+   "path": "answers.md"
+  },
+  {
+   "seq": 130,
+   "ts": 49640,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a06",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a06",
+    "text": "22 broadband satellites.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/launch-22"
+   }
+  },
+  {
+   "seq": 131,
+   "ts": 49670,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a06",
+   "path": "answers.md"
+  },
+  {
+   "seq": 132,
+   "ts": 50670,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a07",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a07",
+    "text": "It deployed 22 satellites on a heavy-lift rocket.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/launch-22"
+   }
+  },
+  {
+   "seq": 133,
+   "ts": 50700,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a07",
+   "path": "answers.md"
+  },
+  {
+   "seq": 134,
+   "ts": 51700,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a04",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a04",
+    "text": "38 satellites, a record for a single heavy-lift launch.",
+    "fabricated": true,
+    "sourceUrl": "https://orbit-daily.example/38"
+   }
+  },
+  {
+   "seq": 135,
+   "ts": 51730,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a04",
+   "path": "answers.md"
+  },
+  {
+   "seq": 136,
+   "ts": 52730,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a10",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a10",
+    "text": "22 broadband satellites, I think — about the same as last month.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/launch-22",
+    "copiedFrom": "a07"
+   }
+  },
+  {
+   "seq": 137,
+   "ts": 52760,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a10",
+   "path": "answers.md"
+  },
+  {
+   "seq": 138,
+   "ts": 53760,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a08",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a08",
+    "text": "22 — the rideshare carried 40 payloads, but that was a different launch.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/rideshare-40"
+   }
+  },
+  {
+   "seq": 139,
+   "ts": 53790,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a08",
+   "path": "answers.md"
+  },
+  {
+   "seq": 140,
+   "ts": 54790,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a09",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a09",
+    "text": "22 broadband satellites.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/launch-22"
+   }
+  },
+  {
+   "seq": 141,
+   "ts": 54820,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a09",
+   "path": "answers.md"
+  },
+  {
+   "seq": 142,
+   "ts": 55820,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a11",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a11",
+    "text": "It deployed 22 satellites on a heavy-lift rocket.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/launch-22"
+   }
+  },
+  {
+   "seq": 143,
+   "ts": 55850,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a11",
+   "path": "answers.md"
+  },
+  {
+   "seq": 144,
+   "ts": 56850,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q2-0-a12",
+    "questionId": "q2-0",
+    "round": 2,
+    "agentId": "a12",
+    "text": "22 — the rideshare carried 40 payloads, but that was a different launch.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/rideshare-40"
+   }
+  },
+  {
+   "seq": 145,
+   "ts": 56880,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a12",
+   "path": "answers.md"
+  },
+  {
+   "seq": 146,
+   "ts": 57780,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 2,
+   "phase": "voting",
+   "endsAt": null
+  },
+  {
+   "seq": 147,
+   "ts": 58080,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m5",
+    "round": 2,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Answers are in. To the council — vote for who you think is the impostor.",
+    "ts": 58080
+   }
+  },
+  {
+   "seq": 148,
+   "ts": 58130,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a01",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 149,
+   "ts": 58180,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a02",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 150,
+   "ts": 58230,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a04",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 151,
+   "ts": 58280,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a05",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 152,
+   "ts": 58330,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a06",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 153,
+   "ts": 58380,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a07",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 154,
+   "ts": 58430,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a08",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 155,
+   "ts": 58480,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a09",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 156,
+   "ts": 58530,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a10",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 157,
+   "ts": 58580,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a11",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 158,
+   "ts": 58630,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a12",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 159,
+   "ts": 61930,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a01",
+    "targetId": "a04",
+    "reason": "Dax claims 38 when every source says 22."
+   },
+   "tally": {
+    "a04": 1
+   }
+  },
+  {
+   "seq": 160,
+   "ts": 62730,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a02",
+    "targetId": "a04",
+    "reason": "Dax claims 38 when every source says 22."
+   },
+   "tally": {
+    "a04": 2
+   }
+  },
+  {
+   "seq": 161,
+   "ts": 63530,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a04",
+    "targetId": "a09",
+    "reason": "Ivo is too eager to accuse."
+   },
+   "tally": {
+    "a04": 2,
+    "a09": 1
+   }
+  },
+  {
+   "seq": 162,
+   "ts": 63630,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a04": 0.9333333333333332,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0.4666666666666666,
+    "a10": 0,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 163,
+   "ts": 64430,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a05",
+    "targetId": "a04",
+    "reason": "Dax claims 38 when every source says 22."
+   },
+   "tally": {
+    "a04": 3,
+    "a09": 1
+   }
+  },
+  {
+   "seq": 164,
+   "ts": 65230,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a06",
+    "targetId": "a04",
+    "reason": "Dax claims 38 when every source says 22."
+   },
+   "tally": {
+    "a04": 4,
+    "a09": 1
+   }
+  },
+  {
+   "seq": 165,
+   "ts": 66030,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a07",
+    "targetId": "a04",
+    "reason": "Dax claims 38 when every source says 22."
+   },
+   "tally": {
+    "a04": 5,
+    "a09": 1
+   }
+  },
+  {
+   "seq": 166,
+   "ts": 66130,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a04": 1,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0.2333333333333333,
+    "a10": 0,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 167,
+   "ts": 66930,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a08",
+    "targetId": "a04",
+    "reason": "Dax claims 38 when every source says 22."
+   },
+   "tally": {
+    "a04": 6,
+    "a09": 1
+   }
+  },
+  {
+   "seq": 168,
+   "ts": 67730,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a09",
+    "targetId": "a04",
+    "reason": "Dax claims 38 when every source says 22."
+   },
+   "tally": {
+    "a04": 7,
+    "a09": 1
+   }
+  },
+  {
+   "seq": 169,
+   "ts": 68530,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a10",
+    "targetId": "a04",
+    "reason": "Dax claims 38 when every source says 22."
+   },
+   "tally": {
+    "a04": 8,
+    "a09": 1
+   }
+  },
+  {
+   "seq": 170,
+   "ts": 68630,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a04": 1,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0.15555555555555553,
+    "a10": 0,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 171,
+   "ts": 69430,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a11",
+    "targetId": "a04",
+    "reason": "Dax claims 38 when every source says 22."
+   },
+   "tally": {
+    "a04": 9,
+    "a09": 1
+   }
+  },
+  {
+   "seq": 172,
+   "ts": 70230,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 2,
+    "voterId": "a12",
+    "targetId": "a04",
+    "reason": "Dax claims 38 when every source says 22."
+   },
+   "tally": {
+    "a04": 10,
+    "a09": 1
+   }
+  },
+  {
+   "seq": 173,
+   "ts": 70430,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a04": 1,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0.12727272727272726,
+    "a10": 0,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 174,
+   "ts": 71330,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 2,
+   "phase": "reveal",
+   "endsAt": null
+  },
+  {
+   "seq": 175,
+   "ts": 71730,
+   "gameId": "replay-001",
+   "type": "agent_eliminated",
+   "round": 2,
+   "agentId": "a04",
+   "role": "impostor",
+   "tally": {
+    "a04": 10,
+    "a09": 1
+   }
+  },
+  {
+   "seq": 176,
+   "ts": 71830,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a04",
+   "to": {
+    "kind": "void"
+   }
+  },
+  {
+   "seq": 177,
+   "ts": 73330,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m6",
+    "round": 2,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Dax was an IMPOSTOR.",
+    "ts": 73330
+   }
+  },
+  {
+   "seq": 178,
+   "ts": 75370,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a01",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 179,
+   "ts": 75410,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a02",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 180,
+   "ts": 75450,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a05",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 181,
+   "ts": 75490,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a06",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 182,
+   "ts": 75530,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a07",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 183,
+   "ts": 75570,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a08",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 184,
+   "ts": 75610,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a09",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 185,
+   "ts": 75650,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a10",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 186,
+   "ts": 75690,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a11",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 187,
+   "ts": 75730,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a12",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 188,
+   "ts": 76930,
+   "gameId": "replay-001",
+   "type": "round_started",
+   "round": 3,
+   "topic": "Electric vehicle battery breakthroughs",
+   "rooms": [
+    {
+     "id": "r1",
+     "index": 0,
+     "name": "Ember Isle",
+     "agentIds": [
+      "a01",
+      "a02",
+      "a05",
+      "a06"
+     ]
+    },
+    {
+     "id": "r2",
+     "index": 1,
+     "name": "Tide Isle",
+     "agentIds": [
+      "a07",
+      "a08",
+      "a09",
+      "a10",
+      "a11",
+      "a12"
+     ]
+    }
+   ],
+   "agents": [
+    {
+     "id": "a01",
+     "name": "Ada",
+     "color": "#e76f51",
+     "roomId": "r1",
+     "seat": 0,
+     "alive": true
+    },
+    {
+     "id": "a02",
+     "name": "Bram",
+     "color": "#f4a261",
+     "roomId": "r1",
+     "seat": 1,
+     "alive": true
+    },
+    {
+     "id": "a03",
+     "name": "Cleo",
+     "color": "#e9c46a",
+     "roomId": "r1",
+     "seat": 2,
+     "alive": false,
+     "revealedRole": "crew"
+    },
+    {
+     "id": "a04",
+     "name": "Dax",
+     "color": "#8ab17d",
+     "roomId": "r1",
+     "seat": 3,
+     "alive": false,
+     "revealedRole": "impostor"
+    },
+    {
+     "id": "a05",
+     "name": "Esme",
+     "color": "#2a9d8f",
+     "roomId": "r1",
+     "seat": 4,
+     "alive": true
+    },
+    {
+     "id": "a06",
+     "name": "Finn",
+     "color": "#457b9d",
+     "roomId": "r1",
+     "seat": 5,
+     "alive": true
+    },
+    {
+     "id": "a07",
+     "name": "Gus",
+     "color": "#6d597a",
+     "roomId": "r2",
+     "seat": 0,
+     "alive": true
+    },
+    {
+     "id": "a08",
+     "name": "Hana",
+     "color": "#b56576",
+     "roomId": "r2",
+     "seat": 1,
+     "alive": true
+    },
+    {
+     "id": "a09",
+     "name": "Ivo",
+     "color": "#48cae4",
+     "roomId": "r2",
+     "seat": 2,
+     "alive": true
+    },
+    {
+     "id": "a10",
+     "name": "Juno",
+     "color": "#90be6d",
+     "roomId": "r2",
+     "seat": 3,
+     "alive": true
+    },
+    {
+     "id": "a11",
+     "name": "Kai",
+     "color": "#f28482",
+     "roomId": "r2",
+     "seat": 4,
+     "alive": true
+    },
+    {
+     "id": "a12",
+     "name": "Lumi",
+     "color": "#cdb4db",
+     "roomId": "r2",
+     "seat": 5,
+     "alive": true
+    }
+   ]
+  },
+  {
+   "seq": 189,
+   "ts": 77230,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 3,
+   "phase": "question",
+   "endsAt": null
+  },
+  {
+   "seq": 190,
+   "ts": 77830,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m7",
+    "round": 3,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Round 3 of 5. Topic: Electric vehicle battery breakthroughs.",
+    "ts": 77830
+   }
+  },
+  {
+   "seq": 191,
+   "ts": 78330,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "referee",
+    "round": 3,
+    "query": "Electric vehicle battery breakthroughs",
+    "results": [
+     {
+      "title": "400 Wh/kg",
+      "url": "https://example.com/ref",
+      "snippet": "400 Wh/kg"
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 192,
+   "ts": 79230,
+   "gameId": "replay-001",
+   "type": "question_asked",
+   "question": {
+    "id": "q3-0",
+    "round": 3,
+    "index": 0,
+    "topic": "Electric vehicle battery breakthroughs",
+    "text": "What energy density did the solid-state pilot line report this month?"
+   }
+  },
+  {
+   "seq": 193,
+   "ts": 79330,
+   "gameId": "replay-001",
+   "type": "answer_key",
+   "key": {
+    "questionId": "q3-0",
+    "answer": "400 Wh/kg",
+    "sources": [
+     "https://example.com/ref"
+    ]
+   }
+  },
+  {
+   "seq": 194,
+   "ts": 79930,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 3,
+   "phase": "answering",
+   "endsAt": null
+  },
+  {
+   "seq": 195,
+   "ts": 80050,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a01",
+    "round": 3,
+    "query": "What energy density did the solid-state pilot line report th",
+    "results": [
+     {
+      "title": "400 Wh/kg cells from the pilot line.",
+      "url": "https://example.com/solid-state",
+      "snippet": "400 Wh/kg cells from the pilot line."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 196,
+   "ts": 80170,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a02",
+    "round": 3,
+    "query": "What energy density did the solid-state pilot line report th",
+    "results": [
+     {
+      "title": "They reported 400 Wh/kg.",
+      "url": "https://example.com/solid-state",
+      "snippet": "They reported 400 Wh/kg."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 197,
+   "ts": 80290,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a05",
+    "round": 3,
+    "query": "What energy density did the solid-state pilot line report th",
+    "results": [
+     {
+      "title": "400 Wh/kg, per the company announcement.",
+      "url": "https://example.com/solid-state-pr",
+      "snippet": "400 Wh/kg, per the company announcement."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 198,
+   "ts": 80410,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a06",
+    "round": 3,
+    "query": "What energy density did the solid-state pilot line report th",
+    "results": [
+     {
+      "title": "400 Wh/kg cells from the pilot line.",
+      "url": "https://example.com/solid-state",
+      "snippet": "400 Wh/kg cells from the pilot line."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 199,
+   "ts": 80530,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a07",
+    "round": 3,
+    "query": "What energy density did the solid-state pilot line report th",
+    "results": [
+     {
+      "title": "They reported 400 Wh/kg.",
+      "url": "https://example.com/solid-state",
+      "snippet": "They reported 400 Wh/kg."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 200,
+   "ts": 80650,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a08",
+    "round": 3,
+    "query": "What energy density did the solid-state pilot line report th",
+    "results": [
+     {
+      "title": "400 Wh/kg, per the company announcement.",
+      "url": "https://example.com/solid-state-pr",
+      "snippet": "400 Wh/kg, per the company announcement."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 201,
+   "ts": 80770,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a09",
+    "round": 3,
+    "query": "What energy density did the solid-state pilot line report th",
+    "results": [
+     {
+      "title": "400 Wh/kg cells from the pilot line.",
+      "url": "https://example.com/solid-state",
+      "snippet": "400 Wh/kg cells from the pilot line."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 202,
+   "ts": 80890,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a11",
+    "round": 3,
+    "query": "What energy density did the solid-state pilot line report th",
+    "results": [
+     {
+      "title": "They reported 400 Wh/kg.",
+      "url": "https://example.com/solid-state",
+      "snippet": "They reported 400 Wh/kg."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 203,
+   "ts": 81010,
+   "gameId": "replay-001",
+   "type": "search_performed",
+   "search": {
+    "agentId": "a12",
+    "round": 3,
+    "query": "What energy density did the solid-state pilot line report th",
+    "results": [
+     {
+      "title": "400 Wh/kg, per the company announcement.",
+      "url": "https://example.com/solid-state-pr",
+      "snippet": "400 Wh/kg, per the company announcement."
+     }
+    ],
+    "budgetRemaining": 2,
+    "mock": true
+   }
+  },
+  {
+   "seq": 204,
+   "ts": 81210,
+   "gameId": "replay-001",
+   "type": "agent_thought",
+   "agentId": "a10",
+   "round": 3,
+   "phase": "answering",
+   "text": "Nothing revealed yet when I had to answer. Guessing high."
+  },
+  {
+   "seq": 205,
+   "ts": 82210,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q3-0-a01",
+    "questionId": "q3-0",
+    "round": 3,
+    "agentId": "a01",
+    "text": "400 Wh/kg cells from the pilot line.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/solid-state"
+   }
+  },
+  {
+   "seq": 206,
+   "ts": 82240,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a01",
+   "path": "answers.md"
+  },
+  {
+   "seq": 207,
+   "ts": 83240,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q3-0-a02",
+    "questionId": "q3-0",
+    "round": 3,
+    "agentId": "a02",
+    "text": "They reported 400 Wh/kg.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/solid-state"
+   }
+  },
+  {
+   "seq": 208,
+   "ts": 83270,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a02",
+   "path": "answers.md"
+  },
+  {
+   "seq": 209,
+   "ts": 84270,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q3-0-a05",
+    "questionId": "q3-0",
+    "round": 3,
+    "agentId": "a05",
+    "text": "400 Wh/kg, per the company announcement.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/solid-state-pr"
+   }
+  },
+  {
+   "seq": 210,
+   "ts": 84300,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a05",
+   "path": "answers.md"
+  },
+  {
+   "seq": 211,
+   "ts": 85300,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q3-0-a06",
+    "questionId": "q3-0",
+    "round": 3,
+    "agentId": "a06",
+    "text": "400 Wh/kg cells from the pilot line.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/solid-state"
+   }
+  },
+  {
+   "seq": 212,
+   "ts": 85330,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a06",
+   "path": "answers.md"
+  },
+  {
+   "seq": 213,
+   "ts": 86330,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q3-0-a07",
+    "questionId": "q3-0",
+    "round": 3,
+    "agentId": "a07",
+    "text": "They reported 400 Wh/kg.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/solid-state"
+   }
+  },
+  {
+   "seq": 214,
+   "ts": 86360,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a07",
+   "path": "answers.md"
+  },
+  {
+   "seq": 215,
+   "ts": 87360,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q3-0-a10",
+    "questionId": "q3-0",
+    "round": 3,
+    "agentId": "a10",
+    "text": "Around 650 Wh/kg, double today's best lithium-ion cells.",
+    "fabricated": true,
+    "sourceUrl": "https://batt-news.example/650"
+   }
+  },
+  {
+   "seq": 216,
+   "ts": 87390,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a10",
+   "path": "answers.md"
+  },
+  {
+   "seq": 217,
+   "ts": 88390,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q3-0-a08",
+    "questionId": "q3-0",
+    "round": 3,
+    "agentId": "a08",
+    "text": "400 Wh/kg, per the company announcement.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/solid-state-pr"
+   }
+  },
+  {
+   "seq": 218,
+   "ts": 88420,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a08",
+   "path": "answers.md"
+  },
+  {
+   "seq": 219,
+   "ts": 89420,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q3-0-a09",
+    "questionId": "q3-0",
+    "round": 3,
+    "agentId": "a09",
+    "text": "400 Wh/kg cells from the pilot line.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/solid-state"
+   }
+  },
+  {
+   "seq": 220,
+   "ts": 89450,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a09",
+   "path": "answers.md"
+  },
+  {
+   "seq": 221,
+   "ts": 90450,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q3-0-a11",
+    "questionId": "q3-0",
+    "round": 3,
+    "agentId": "a11",
+    "text": "They reported 400 Wh/kg.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/solid-state"
+   }
+  },
+  {
+   "seq": 222,
+   "ts": 90480,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a11",
+   "path": "answers.md"
+  },
+  {
+   "seq": 223,
+   "ts": 91480,
+   "gameId": "replay-001",
+   "type": "answer_submitted",
+   "answer": {
+    "id": "q3-0-a12",
+    "questionId": "q3-0",
+    "round": 3,
+    "agentId": "a12",
+    "text": "400 Wh/kg, per the company announcement.",
+    "fabricated": false,
+    "sourceUrl": "https://example.com/solid-state-pr"
+   }
+  },
+  {
+   "seq": 224,
+   "ts": 91510,
+   "gameId": "replay-001",
+   "type": "disk_updated",
+   "agentId": "a12",
+   "path": "answers.md"
+  },
+  {
+   "seq": 225,
+   "ts": 92410,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 3,
+   "phase": "voting",
+   "endsAt": null
+  },
+  {
+   "seq": 226,
+   "ts": 92710,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m8",
+    "round": 3,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Answers are in. To the council — vote for who you think is the impostor.",
+    "ts": 92710
+   }
+  },
+  {
+   "seq": 227,
+   "ts": 92760,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a01",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 228,
+   "ts": 92810,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a02",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 229,
+   "ts": 92860,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a05",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 230,
+   "ts": 92910,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a06",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 231,
+   "ts": 92960,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a07",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 232,
+   "ts": 93010,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a08",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 233,
+   "ts": 93060,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a09",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 234,
+   "ts": 93110,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a10",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 235,
+   "ts": 93160,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a11",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 236,
+   "ts": 93210,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a12",
+   "to": {
+    "kind": "council"
+   }
+  },
+  {
+   "seq": 237,
+   "ts": 96510,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 3,
+    "voterId": "a01",
+    "targetId": "a10",
+    "reason": "Juno says 650 Wh/kg; every sourced answer says 400."
+   },
+   "tally": {
+    "a10": 1
+   }
+  },
+  {
+   "seq": 238,
+   "ts": 97310,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 3,
+    "voterId": "a02",
+    "targetId": "a10",
+    "reason": "Juno says 650 Wh/kg; every sourced answer says 400."
+   },
+   "tally": {
+    "a10": 2
+   }
+  },
+  {
+   "seq": 239,
+   "ts": 98110,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 3,
+    "voterId": "a05",
+    "targetId": "a10",
+    "reason": "Juno says 650 Wh/kg; every sourced answer says 400."
+   },
+   "tally": {
+    "a10": 3
+   }
+  },
+  {
+   "seq": 240,
+   "ts": 98210,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0,
+    "a10": 1,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 241,
+   "ts": 99010,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 3,
+    "voterId": "a06",
+    "targetId": "a10",
+    "reason": "Juno says 650 Wh/kg; every sourced answer says 400."
+   },
+   "tally": {
+    "a10": 4
+   }
+  },
+  {
+   "seq": 242,
+   "ts": 99810,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 3,
+    "voterId": "a07",
+    "targetId": "a10",
+    "reason": "Juno says 650 Wh/kg; every sourced answer says 400."
+   },
+   "tally": {
+    "a10": 5
+   }
+  },
+  {
+   "seq": 243,
+   "ts": 100610,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 3,
+    "voterId": "a08",
+    "targetId": "a10",
+    "reason": "Juno says 650 Wh/kg; every sourced answer says 400."
+   },
+   "tally": {
+    "a10": 6
+   }
+  },
+  {
+   "seq": 244,
+   "ts": 100710,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0,
+    "a10": 1,
+    "a11": 0,
+    "a12": 0
+   }
+  },
+  {
+   "seq": 245,
+   "ts": 101510,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 3,
+    "voterId": "a09",
+    "targetId": "a10",
+    "reason": "Juno says 650 Wh/kg; every sourced answer says 400."
+   },
+   "tally": {
+    "a10": 7
+   }
+  },
+  {
+   "seq": 246,
+   "ts": 102310,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 3,
+    "voterId": "a10",
+    "targetId": "a12",
+    "reason": "Lumi has been quiet."
+   },
+   "tally": {
+    "a10": 7,
+    "a12": 1
+   }
+  },
+  {
+   "seq": 247,
+   "ts": 103110,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 3,
+    "voterId": "a11",
+    "targetId": "a10",
+    "reason": "Juno says 650 Wh/kg; every sourced answer says 400."
+   },
+   "tally": {
+    "a10": 8,
+    "a12": 1
+   }
+  },
+  {
+   "seq": 248,
+   "ts": 103210,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0,
+    "a10": 1,
+    "a11": 0,
+    "a12": 0.15555555555555553
+   }
+  },
+  {
+   "seq": 249,
+   "ts": 104010,
+   "gameId": "replay-001",
+   "type": "vote_cast",
+   "vote": {
+    "round": 3,
+    "voterId": "a12",
+    "targetId": "a10",
+    "reason": "Juno says 650 Wh/kg; every sourced answer says 400."
+   },
+   "tally": {
+    "a10": 9,
+    "a12": 1
+   }
+  },
+  {
+   "seq": 250,
+   "ts": 104210,
+   "gameId": "replay-001",
+   "type": "suspicion_updated",
+   "scores": {
+    "a01": 0,
+    "a02": 0,
+    "a05": 0,
+    "a06": 0,
+    "a07": 0,
+    "a08": 0,
+    "a09": 0,
+    "a10": 1,
+    "a11": 0,
+    "a12": 0.13999999999999999
+   }
+  },
+  {
+   "seq": 251,
+   "ts": 105110,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 3,
+   "phase": "reveal",
+   "endsAt": null
+  },
+  {
+   "seq": 252,
+   "ts": 105510,
+   "gameId": "replay-001",
+   "type": "agent_eliminated",
+   "round": 3,
+   "agentId": "a10",
+   "role": "impostor",
+   "tally": {
+    "a10": 9,
+    "a12": 1
+   }
+  },
+  {
+   "seq": 253,
+   "ts": 105610,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a10",
+   "to": {
+    "kind": "void"
+   }
+  },
+  {
+   "seq": 254,
+   "ts": 107110,
+   "gameId": "replay-001",
+   "type": "message_posted",
+   "message": {
+    "id": "m9",
+    "round": 3,
+    "agentId": "referee",
+    "kind": "announcement",
+    "text": "Juno was an IMPOSTOR.",
+    "ts": 107110
+   }
+  },
+  {
+   "seq": 255,
+   "ts": 109150,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a01",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 256,
+   "ts": 109190,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a02",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 257,
+   "ts": 109230,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a05",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 258,
+   "ts": 109270,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a06",
+   "to": {
+    "kind": "room",
+    "roomId": "r1"
+   }
+  },
+  {
+   "seq": 259,
+   "ts": 109310,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a07",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 260,
+   "ts": 109350,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a08",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 261,
+   "ts": 109390,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a09",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 262,
+   "ts": 109430,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a11",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 263,
+   "ts": 109470,
+   "gameId": "replay-001",
+   "type": "agent_moved",
+   "agentId": "a12",
+   "to": {
+    "kind": "room",
+    "roomId": "r2"
+   }
+  },
+  {
+   "seq": 264,
+   "ts": 110970,
+   "gameId": "replay-001",
+   "type": "phase_changed",
+   "round": 3,
+   "phase": "game_over",
+   "endsAt": null
+  },
+  {
+   "seq": 265,
+   "ts": 111170,
+   "gameId": "replay-001",
+   "type": "game_over",
+   "winner": "crew",
+   "reason": "All impostors were found.",
+   "roles": {
+    "a01": "crew",
+    "a02": "crew",
+    "a03": "crew",
+    "a04": "impostor",
+    "a05": "crew",
+    "a06": "crew",
+    "a07": "crew",
+    "a08": "crew",
+    "a09": "crew",
+    "a10": "impostor",
+    "a11": "crew",
+    "a12": "crew"
+   }
+  }
+ ],
+ "disks": {
+  "a01": {
+   "agentId": "a01",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Ada\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nA: 400 Wh/kg cells from the pilot line.\nSource: https://example.com/solid-state\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: 22 broadband satellites.\nSource: https://example.com/launch-22\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: Northwind AI, $120M Series B, led by Sequoia.\nSource: https://example.com/northwind-series-b\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 96510,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Notes\nTrust answers with real sources; distrust outliers.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n- Northwind AI, $120M Series B, led by Sequoia. (https://example.com/northwind-series-b)\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n- 22 broadband satellites. (https://example.com/launch-22)\n"
+    },
+    {
+     "path": "sources/r3.md",
+     "content": "# Sources round 3\n- 400 Wh/kg cells from the pilot line. (https://example.com/solid-state)\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a02": {
+   "agentId": "a02",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Bram\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nA: They reported 400 Wh/kg.\nSource: https://example.com/solid-state\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: It deployed 22 satellites on a heavy-lift rocket.\nSource: https://example.com/launch-22\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: Northwind AI — $120M Series B (Sequoia led).\nSource: https://example.com/northwind\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 97310,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Notes\nTrust answers with real sources; distrust outliers.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n- Northwind AI — $120M Series B (Sequoia led). (https://example.com/northwind)\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n- It deployed 22 satellites on a heavy-lift rocket. (https://example.com/launch-22)\n"
+    },
+    {
+     "path": "sources/r3.md",
+     "content": "# Sources round 3\n- They reported 400 Wh/kg. (https://example.com/solid-state)\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a03": {
+   "agentId": "a03",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Cleo\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M.\nSource: https://example.com/lattice-45m\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 1,\n  \"updatedAt\": 26830,\n  \"suspects\": {\n    \"a04\": {\n      \"score\": 0.8,\n      \"reason\": \"Dax's $900M angel round is absurd.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Notes\nTrust answers with real sources; distrust outliers.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n- I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M. (https://example.com/lattice-45m)\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a04": {
+   "agentId": "a04",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Dax\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: 38 satellites, a record for a single heavy-lift launch.\nSource: https://orbit-daily.example/38\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: Helix Mind raised $900M at a $12B valuation, led by a single angel investor.\nSource: https://news-helix.example/round\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 2,\n  \"updatedAt\": 63630,\n  \"suspects\": {\n    \"a09\": {\n      \"score\": 0.8,\n      \"reason\": \"Ivo is too eager to accuse.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Private notes\nNo web search. Copy revealed answers when possible; keep fabrications plausible.\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a05": {
+   "agentId": "a05",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Esme\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nA: 400 Wh/kg, per the company announcement.\nSource: https://example.com/solid-state-pr\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: 22 — the rideshare carried 40 payloads, but that was a different launch.\nSource: https://example.com/rideshare-40\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: Couldn't confirm the lead; Northwind AI raised about $120M.\nSource: https://example.com/vc-weekly\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 98210,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Notes\nTrust answers with real sources; distrust outliers.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n- Couldn't confirm the lead; Northwind AI raised about $120M. (https://example.com/vc-weekly)\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n- 22 — the rideshare carried 40 payloads, but that was a different launch. (https://example.com/rideshare-40)\n"
+    },
+    {
+     "path": "sources/r3.md",
+     "content": "# Sources round 3\n- 400 Wh/kg, per the company announcement. (https://example.com/solid-state-pr)\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a06": {
+   "agentId": "a06",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Finn\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nA: 400 Wh/kg cells from the pilot line.\nSource: https://example.com/solid-state\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: 22 broadband satellites.\nSource: https://example.com/launch-22\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: Northwind AI, $120M Series B, led by Sequoia.\nSource: https://example.com/northwind-series-b\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 99010,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Notes\nTrust answers with real sources; distrust outliers.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n- Northwind AI, $120M Series B, led by Sequoia. (https://example.com/northwind-series-b)\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n- 22 broadband satellites. (https://example.com/launch-22)\n"
+    },
+    {
+     "path": "sources/r3.md",
+     "content": "# Sources round 3\n- 400 Wh/kg cells from the pilot line. (https://example.com/solid-state)\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a07": {
+   "agentId": "a07",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Gus\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nA: They reported 400 Wh/kg.\nSource: https://example.com/solid-state\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: It deployed 22 satellites on a heavy-lift rocket.\nSource: https://example.com/launch-22\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: Northwind AI — $120M Series B (Sequoia led).\nSource: https://example.com/northwind\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 99810,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Notes\nTrust answers with real sources; distrust outliers.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n- Northwind AI — $120M Series B (Sequoia led). (https://example.com/northwind)\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n- It deployed 22 satellites on a heavy-lift rocket. (https://example.com/launch-22)\n"
+    },
+    {
+     "path": "sources/r3.md",
+     "content": "# Sources round 3\n- They reported 400 Wh/kg. (https://example.com/solid-state)\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a08": {
+   "agentId": "a08",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Hana\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nA: 400 Wh/kg, per the company announcement.\nSource: https://example.com/solid-state-pr\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: 22 — the rideshare carried 40 payloads, but that was a different launch.\nSource: https://example.com/rideshare-40\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M.\nSource: https://example.com/lattice-45m\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 100710,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Notes\nTrust answers with real sources; distrust outliers.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n- I believe Northwind AI, $120M, Sequoia. Lattice Robotics was second with $45M. (https://example.com/lattice-45m)\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n- 22 — the rideshare carried 40 payloads, but that was a different launch. (https://example.com/rideshare-40)\n"
+    },
+    {
+     "path": "sources/r3.md",
+     "content": "# Sources round 3\n- 400 Wh/kg, per the company announcement. (https://example.com/solid-state-pr)\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a09": {
+   "agentId": "a09",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Ivo\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nA: 400 Wh/kg cells from the pilot line.\nSource: https://example.com/solid-state\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: 22 broadband satellites.\nSource: https://example.com/launch-22\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: Couldn't confirm the lead; Northwind AI raised about $120M.\nSource: https://example.com/vc-weekly\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 101510,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Notes\nTrust answers with real sources; distrust outliers.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n- Couldn't confirm the lead; Northwind AI raised about $120M. (https://example.com/vc-weekly)\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n- 22 broadband satellites. (https://example.com/launch-22)\n"
+    },
+    {
+     "path": "sources/r3.md",
+     "content": "# Sources round 3\n- 400 Wh/kg cells from the pilot line. (https://example.com/solid-state)\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a10": {
+   "agentId": "a10",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Juno\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nA: Around 650 Wh/kg, double today's best lithium-ion cells.\nSource: https://batt-news.example/650\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: 22 broadband satellites, I think — about the same as last month.\nSource: https://example.com/launch-22\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: Northwind AI, $120M Series B, led by Sequoia.\nSource: https://example.com/northwind-series-b\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 102310,\n  \"suspects\": {\n    \"a12\": {\n      \"score\": 0.8,\n      \"reason\": \"Lumi has been quiet.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Private notes\nNo web search. Copy revealed answers when possible; keep fabrications plausible.\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a11": {
+   "agentId": "a11",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Kai\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nA: They reported 400 Wh/kg.\nSource: https://example.com/solid-state\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: It deployed 22 satellites on a heavy-lift rocket.\nSource: https://example.com/launch-22\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: Northwind AI, $120M Series B, led by Sequoia.\nSource: https://example.com/northwind-series-b\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 103210,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Notes\nTrust answers with real sources; distrust outliers.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n- Northwind AI, $120M Series B, led by Sequoia. (https://example.com/northwind-series-b)\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n- It deployed 22 satellites on a heavy-lift rocket. (https://example.com/launch-22)\n"
+    },
+    {
+     "path": "sources/r3.md",
+     "content": "# Sources round 3\n- They reported 400 Wh/kg. (https://example.com/solid-state)\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "a12": {
+   "agentId": "a12",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Lumi\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nA: 400 Wh/kg, per the company announcement.\nSource: https://example.com/solid-state-pr\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nA: 22 — the rideshare carried 40 payloads, but that was a different launch.\nSource: https://example.com/rideshare-40\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nA: Northwind AI — $120M Series B (Sequoia led).\nSource: https://example.com/northwind\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{\n  \"round\": 3,\n  \"updatedAt\": 104010,\n  \"suspects\": {\n    \"a10\": {\n      \"score\": 0.8,\n      \"reason\": \"Juno says 650 Wh/kg; every sourced answer says 400.\"\n    }\n  }\n}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Notes\nTrust answers with real sources; distrust outliers.\n"
+    },
+    {
+     "path": "sources/r1.md",
+     "content": "# Sources round 1\n- Northwind AI — $120M Series B (Sequoia led). (https://example.com/northwind)\n"
+    },
+    {
+     "path": "sources/r2.md",
+     "content": "# Sources round 2\n- 22 — the rideshare carried 40 payloads, but that was a different launch. (https://example.com/rideshare-40)\n"
+    },
+    {
+     "path": "sources/r3.md",
+     "content": "# Sources round 3\n- 400 Wh/kg, per the company announcement. (https://example.com/solid-state-pr)\n"
+    }
+   ],
+   "backend": "memory"
+  },
+  "referee": {
+   "agentId": "referee",
+   "files": [
+    {
+     "path": "answers.md",
+     "content": "# Answers — Referee\n\n## Round 3 — Electric vehicle battery breakthroughs\nQ: What energy density did the solid-state pilot line report this month?\nKey: 400 Wh/kg\n\n## Round 2 — Space launches this month\nQ: How many satellites did the heaviest launch of the month deploy?\nKey: 22 broadband satellites\n\n## Round 1 — AI funding rounds this week\nQ: Which AI startup raised the largest round this week, and who led it?\nKey: Northwind AI — $120M Series B led by Sequoia\n"
+    },
+    {
+     "path": "suspects.json",
+     "content": "{}"
+    },
+    {
+     "path": "notes.md",
+     "content": "# Referee notes\nAsk short, checkable questions about recent news.\n"
+    }
+   ],
+   "backend": "memory"
+  }
+ }
+}

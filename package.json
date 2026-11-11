@@ -1,0 +1,22 @@
+{
+  "name": "susagent",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.28.2",
+  "scripts": {
+    "typecheck": "pnpm -r typecheck && tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:balance": "vitest run tests/balance.test.ts --reporter=verbose",
+    "dev:server": "pnpm --filter @susagent/server dev",
+    "dev:web": "pnpm --filter @susagent/web dev",
+    "demo": "node scripts/demo.mjs",
+    "e2e": "tsx scripts/e2e.ts",
+    "replay:gen": "node packages/shared/scripts/gen-replay.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "vitest": "^5.1.0"
+  }
+}

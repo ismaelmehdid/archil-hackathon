@@ -1,0 +1,15 @@
+{
+  "name": "@susagent/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./contracts.ts",
+  "types": "./contracts.ts",
+  "exports": {
+    ".": "./contracts.ts",
+    "./fixtures/replay.json": "./fixtures/replay.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}
