@@ -56,6 +56,8 @@ export interface RunGameOptions {
   seed?: number;
   /** Per agent/referee call timeout. Default 45 s. */
   timeoutMs?: number;
+  /** Timeout for each vote() call (fallback: random valid vote). Default 20 s. */
+  voteTimeoutMs?: number;
   /** Called once runtimes are provisioned (GameManager uses it for disk reads). */
   onRuntimes?: (r: { referee: RefereeRuntime; agents: AgentRuntime[] }) => void;
   /** Dispose runtimes when the game ends. Default true. */
@@ -232,6 +234,9 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
   const signal = opts.signal;
   const rng: Rng = makeRng(opts.seed ?? Math.floor(Math.random() * 2 ** 31));
   const timeoutMs = opts.timeoutMs ?? 45_000;
+  const voteTimeoutMs = opts.voteTimeoutMs ?? 20_000;
+  /** Spacing between live vote_cast events (faster than the general pacing). */
+  const votePacing = Math.min(config.pacingMs, 400);
   const pacing = config.pacingMs;
   const factory = opts.factory;
 
@@ -734,7 +739,8 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
   async function runVoting(round: number, topic: string): Promise<Vote[]> {
     const voters = shuffle(alive(), rng);
     const roundVotes: Vote[] = [];
-    const batchSize = Math.max(4, Math.ceil(voters.length / 6));
+    // Two parallel batches: the second batch still sees the first batch's votes (votesSoFar).
+    const batchSize = Math.max(4, Math.ceil(voters.length / 2));
     let sinceSuspicion = 0;
 
     const emitSuspicion = () => {
@@ -785,7 +791,7 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
             return rt.vote(ctx);
           },
           fb,
-          timeoutMs,
+          voteTimeoutMs,
           log,
           signal,
         ).then((r) => {
@@ -817,7 +823,7 @@ export async function runGame(opts: RunGameOptions): Promise<GameSnapshot> {
         emitted++;
         sinceSuspicion++;
         if (sinceSuspicion >= 3) emitSuspicion();
-        await beat(1);
+        await sleep(votePacing, signal);
       }
     }
     emitSuspicion();

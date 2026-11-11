@@ -19,6 +19,8 @@ import { tokens } from './mockData';
 import { lessonsPrompt } from './lessons';
 
 const MAX_STEPS = 4;
+/** Votes are latency-critical: at most 1 web_search, then cast_vote is forced on step 2. */
+const VOTE_MAX_STEPS = 2;
 // Reasoning models spend part of this on (minimal) reasoning tokens.
 const MAX_TOKENS = 1500;
 
@@ -135,7 +137,7 @@ async function runLoop(
   system: string,
   user: string,
   final: 'submit_answer' | 'cast_vote' | 'submit_question',
-  opts: { forceFirstTool?: boolean; firstTool?: string; candidates?: string[] } = {},
+  opts: { forceFirstTool?: boolean; firstTool?: string; candidates?: string[]; maxSteps?: number } = {},
 ): Promise<Record<string, any>> {
   const tools = toolsForPhase(env, final).map((t) => {
     // Votes: strict schema with target_id / agent_id restricted to the valid candidates.
@@ -149,8 +151,9 @@ async function runLoop(
     { role: 'system', content: system + lessonsPrompt(env.opts.lessons ?? []) },
     { role: 'user', content: user },
   ];
-  for (let step = 0; step < MAX_STEPS; step++) {
-    const last = step === MAX_STEPS - 1;
+  const maxSteps = Math.max(1, Math.min(MAX_STEPS, opts.maxSteps ?? MAX_STEPS));
+  for (let step = 0; step < maxSteps; step++) {
+    const last = step === maxSteps - 1;
     const tool_choice: OpenAI.Chat.Completions.ChatCompletionToolChoiceOption = last
       ? { type: 'function', function: { name: final } }
       : step === 0 && opts.firstTool && tools.some((t) => t.type === 'function' && t.function.name === opts.firstTool)
@@ -166,6 +169,8 @@ async function runLoop(
       messages,
       tools,
       tool_choice,
+      // Short loops (votes): one tool call per step, so at most 1 web_search before the forced cast_vote.
+      ...(maxSteps < MAX_STEPS ? { parallel_tool_calls: false } : {}),
     });
     const msg = res.choices[0]?.message;
     if (!msg) throw new Error('empty completion');
@@ -229,7 +234,7 @@ You have NO web_search tool. Answer with a confident, plausible, SPECIFIC answer
 When voting, deflect suspicion onto crewmates: pile onto a crewmate who already has votes, or one whose answer differs from the majority. Never reveal you are an impostor. Keep public text short.`;
   }
   return `${RULES}\n${me}\nYou are CREW. Use web_search (budget ${env.config.searchBudgetPerRound}/round, shared between answering and voting) to find the true answer. Cite ONLY a URL that appeared in your own search results. Answer in one short specific sentence.
-When voting: impostors are subtle. Strongest public tell: the referee's fact-check of each cited source (NOT_FOUND = no such page, likely invented; CONTRADICTED = the page doesn't back the claim). Other tells: an answer that disagrees with the majority or with your evidence, oddly specific numbers that no source backs, vague specifics, or a cited source that doesn't show up when you search its claim. If you have budget left, use web_search to check the 1-2 most suspicious claims or sources before you vote. Keep public text short.`;
+When voting: impostors are subtle. Strongest public tell: the referee's fact-check of each cited source (NOT_FOUND = no such page, likely invented; CONTRADICTED = the page doesn't back the claim). Other tells: an answer that disagrees with the majority or with your evidence, oddly specific numbers that no source backs, vague specifics, or a cited source that doesn't show up when you search its claim. If you have budget left, you may do at most 1 quick web_search check of the single most suspicious claim or source, then vote. Keep public text short.`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -287,7 +292,7 @@ export async function llmVote(env: AgentEnv, ctx: VoteContext): Promise<VoteDeci
     .map((f) => `  ${f.agentId} (${names.get(f.agentId) ?? f.agentId}) looks copied from ${f.fromAgentId} (${names.get(f.fromAgentId) ?? f.fromAgentId}): shared phrase "${f.phrase}"`)
     .join('\n');
   const user = `Question this round: ${q}\nAnswers this round:\n${thisRound}\n\nReferee's Archil grep over the shared council disk (copy detector):\n${copies || '  no copies flagged'}\n\nVotes so far this round: ${ctx.votesSoFar.map((v) => `${v.voterId}->${v.targetId} ("${v.reason}")`).join('; ') || 'none'}\n\nEarlier:\n${history(ctx)}\n\nYour previous suspects.json: ${prev ? prev.slice(0, 800) : '(none)'}${budget}\n\nCandidates: ${ctx.candidates.join(', ')}. Call cast_vote with one target_id from the candidates.`;
-  const input = await runLoop(env, ctx.round, ctx.topic, systemFor(env, ctx), user, 'cast_vote', { candidates: ctx.candidates });
+  const input = await runLoop(env, ctx.round, ctx.topic, systemFor(env, ctx), user, 'cast_vote', { candidates: ctx.candidates, maxSteps: VOTE_MAX_STEPS });
   const suspicion: Record<AgentId, number> = {};
   // Strict schema returns [{agent_id, score}]; also accept a plain {id: score} map.
   const pairs: [string, unknown][] = Array.isArray(input.suspicion)

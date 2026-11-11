@@ -35,6 +35,7 @@ export interface GameManagerOptions {
   /** Called after each game_over (index.ts uses it for AUTO_START restarts). */
   onGameOver?: (run: GameRun) => void;
   timeoutMs?: number;
+  voteTimeoutMs?: number;
   /** How many finished games to keep in memory. Default 3. */
   keep?: number;
 }
@@ -98,6 +99,7 @@ export class GameManager {
       factory,
       signal: run.abort.signal,
       timeoutMs: this.opts.timeoutMs,
+      voteTimeoutMs: this.opts.voteTimeoutMs,
       // The engine disposes every runtime itself: right after game_over, or on abort. Disk snapshots
       // stay readable afterwards (agents keep a local cache), so the post-game disk route still works.
       disposeOnEnd: true,

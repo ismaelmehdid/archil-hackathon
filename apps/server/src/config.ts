@@ -18,6 +18,8 @@ export const serverEnv = {
     env.IMPOSTOR_WHISPER_CHANCE !== undefined && env.IMPOSTOR_WHISPER_CHANCE !== '' ? Number(env.IMPOSTOR_WHISPER_CHANCE) : undefined,
   /** Per agent call timeout. */
   agentTimeoutMs: Number(env.AGENT_TIMEOUT_MS) || 45_000,
+  /** Per vote() call timeout (random valid vote on timeout). */
+  voteTimeoutMs: Number(env.VOTE_TIMEOUT_MS) || 20_000,
   /** Delay before AUTO_START launches the next game after game_over. */
   restartDelayMs: Number(env.RESTART_DELAY_MS) || 20_000,
 };

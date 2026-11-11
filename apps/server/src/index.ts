@@ -37,6 +37,7 @@ const clearRestart = () => {
 const manager = new GameManager({
   getFactory,
   timeoutMs: serverEnv.agentTimeoutMs,
+  voteTimeoutMs: serverEnv.voteTimeoutMs,
   onGameOver: (run) => {
     // Fire-and-forget: the store never throws, and the game never waits on it. Mock games stay out of
     // the persistent SQLite hall of fame.
