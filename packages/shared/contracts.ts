@@ -426,6 +426,8 @@ export const API_ROUTES = {
   snapshot: (gameId: string) => `/api/games/${gameId}`,
   events: (gameId: string, since = 0) => `/api/games/${gameId}/events?since=${since}`,
   disk: (gameId: string, agentId: AgentId) => `/api/games/${gameId}/agents/${agentId}/disk`,
+  /** GET -> HallOfFameStats (cross-game; SQLite on the persistent Archil disk, in-memory in mock mode). */
+  stats: '/api/stats',
 } as const;
 
 export const DEFAULT_SERVER_PORT = 4000;
@@ -445,6 +447,33 @@ export interface CreateGameResponse {
 
 export interface CurrentGameResponse {
   gameId: string | null;
+}
+
+/** One finished game in the hall of fame. */
+export interface HallOfFameGame {
+  gameId: string;
+  /** Epoch ms. */
+  endedAt: number;
+  winner: Winner;
+  rounds: number;
+  agentCount: number;
+  impostorCount: number;
+}
+
+/** GET /api/stats. Agents are matched across games by display name. */
+export interface HallOfFameStats {
+  /** 'archil' = SQLite on the persistent Archil disk; 'memory' = this server process only. */
+  backend: 'archil' | 'memory';
+  totalGames: number;
+  crewWins: number;
+  /** crewWins / totalGames, null before the first game. */
+  crewWinRate: number | null;
+  /** Highest correct-vote ratio (votes on impostors / votes cast) as crew, min 2 crew games. */
+  bestDetective: { name: string; games: number; correctVotes: number; votesCast: number; ratio: number } | null;
+  /** Survived the most games as impostor (tiebreak: fewest votes against). */
+  mostConvincingImpostor: { name: string; impostorGames: number; survived: number; timesVotedAgainst: number } | null;
+  /** Newest first, at most 10. */
+  lastGames: HallOfFameGame[];
 }
 
 /* ------------------------------------------------------------------ */

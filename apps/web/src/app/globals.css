@@ -153,3 +153,4 @@ details summary { cursor: pointer; color: #b5bdd6; font-family: ui-monospace, Co
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slide { from { opacity: 0; transform: translateX(24px); background: #3a2a6e; } to { opacity: 1; transform: none; } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+.hof-dot { font-weight: 800; margin-right: 3px; }

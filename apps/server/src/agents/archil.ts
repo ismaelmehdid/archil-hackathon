@@ -94,6 +94,11 @@ export function withTimeout<T>(p: Promise<T>, ms: number, what: string): Promise
 
 const safeName = (s: string) => s.toLowerCase().replace(/[^a-z0-9-]+/g, '-').slice(0, 60);
 
+/**
+ * Per-game disks are named `susagent-<gameId>-<agentId>` (gameIds start with "g", so `susagent-gm*`) and
+ * are deleted by dispose() and by the cleanup scripts. The persistent hall-of-fame disk
+ * (`susagent-hall-of-fame`, see stats/store.ts) must NOT match `susagent-gm*` and is never disposed.
+ */
 export async function createArchilDisk(gameId: string, agentId: AgentId): Promise<ArchilDisk> {
   const { disk } = await withTimeout(archil.createDisk({ name: safeName(`susagent-${gameId}-${agentId}`) }), 20_000, 'createDisk');
   return new ArchilDisk(agentId, disk);

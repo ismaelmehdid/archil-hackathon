@@ -7,11 +7,16 @@ import {
   type CreateGameResponse,
   type CurrentGameResponse,
   type GameConfig,
+  type HallOfFameStats,
   type HealthResponse,
 } from '@susagent/shared';
 import { buildConfig, serverEnv } from './config';
 import { GameManager, createFakeAgentFactory } from './game';
 import { createAgentFactory } from './agents';
+import { createStatsStore } from './stats/store';
+
+/** Cross-game hall of fame: SQLite on a persistent Archil disk, or in-memory in mock mode. */
+const statsStore = createStatsStore({ mock: serverEnv.mock || serverEnv.engineFake });
 
 function getFactory(config: GameConfig): AgentFactory {
   if (serverEnv.engineFake) return createFakeAgentFactory(Date.now() & 0xffff);
@@ -33,6 +38,13 @@ const manager = new GameManager({
   getFactory,
   timeoutMs: serverEnv.agentTimeoutMs,
   onGameOver: (run) => {
+    // Fire-and-forget: the store never throws, and the game never waits on it. Mock games stay out of
+    // the persistent SQLite hall of fame.
+    const mockGame = run.config.mock || run.mode.llm === 'mock';
+    if (run.snapshot && !(mockGame && statsStore.backend === 'archil')) {
+      const snap = run.snapshot;
+      void statsStore.recordGame(snap).catch((err) => console.warn('[stats] recordGame failed', err));
+    }
     if (!serverEnv.autoStart) return;
     clearRestart();
     restartTimer = setTimeout(() => {
@@ -66,6 +78,8 @@ app.post(API_ROUTES.games, async (req, reply): Promise<CreateGameResponse> => {
   reply.code(201);
   return { gameId };
 });
+
+app.get(API_ROUTES.stats, async (): Promise<HallOfFameStats> => statsStore.getStats());
 
 app.get(API_ROUTES.current, async (): Promise<CurrentGameResponse> => ({ gameId: manager.currentGameId }));
 

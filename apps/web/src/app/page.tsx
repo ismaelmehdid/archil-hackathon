@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import Header from '../ui/Header';
 import ArenaBoundary from '../ui/ArenaBoundary';
 import { useFeed } from '../ui/feed';
-import { AnswersPanel, HistoryPanel, LiveVotesPanel, LobbyCard, RefereeCard, ThoughtsPanel } from '../ui/Panels';
+import { AnswersPanel, HallOfFameCard, HistoryPanel, LiveVotesPanel, LobbyCard, RefereeCard, ThoughtsPanel } from '../ui/Panels';
 import { Banner, SelectedAgentPanel, WinnerOverlay } from '../ui/Overlays';
 
 const Arena = dynamic(() => import('../scene/Arena'), {
@@ -31,6 +31,7 @@ export default function Page() {
           <AnswersPanel />
           <HistoryPanel />
           <ThoughtsPanel />
+          <HallOfFameCard />
         </aside>
       </main>
       <WinnerOverlay />
